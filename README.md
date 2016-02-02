@@ -1,6 +1,6 @@
 # ConceptQL Specification
 
-ConceptQL (pronounced concept-Q-L) is a high-level language that allows researchers to unambiguously define their research algorithms.
+[ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that allows researchers to unambiguously define their research algorithms.
 
 ## Motivation for ConceptQL
 
