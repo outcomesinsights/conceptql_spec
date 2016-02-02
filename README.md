@@ -26,11 +26,8 @@ For instance, using ConceptQL we can take a statement that looks like this:
 And generate a diagram that looks like this:
 
 
-```YAML
----
-- icd9
-- '412'
-
+```JSON
+["icd9","412"]
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -80,11 +77,8 @@ I find seeing examples to be the quickest way to get a sense of a language.  Her
 Reading ConceptQL in YAML or JSON seems hard to me.  I prefer to explore ConceptQL using directed graphs.  For instance, the diagram for the simple example listed in YAML above is:
 
 
-```YAML
----
-- icd9
-- '412'
-
+```JSON
+["icd9","412"]
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -105,12 +99,8 @@ Reading ConceptQL in YAML or JSON seems hard to me.  I prefer to explore Concept
 Each oval depicts a "operator", or rather, a ConceptQL expression.  An arrow between a pair of operators indicates that the results from the operator on the tail of the arrow pass on to the operator at the head of the arrow.  A simple example should help here:
 
 
-```YAML
----
-- first
-- - cpt
-  - '99214'
-
+```JSON
+["first",["cpt","99214"]]
 ```
 
 ![](README/39d6a8eb71cae51b1d6937c97134e51f04fd47c54535ff0915fe6a8b4f197fb2.png)
@@ -176,11 +166,8 @@ Every table in the CDM structure has a surrogate key column (an ID column).  Whe
 So when we execute this ConceptQL statement, the resulting "stream" is all the person IDs for all male patients in the database:
 
 
-```YAML
----
-- gender
-- Male
-
+```JSON
+["gender","Male"]
 ```
 
 ![](README/c82077b9455d0f9abc2c45ee1a298e38b99c9ce9cd685f65d87b376d7718d7ad.png)
@@ -201,11 +188,8 @@ So when we execute this ConceptQL statement, the resulting "stream" is all the p
 When we execute this ConceptQL statement, the resulting "stream" is all condition_occurrence IDs that match ICD-9 799.22:
 
 
-```YAML
----
-- icd9
-- '799.22'
-
+```JSON
+["icd9","799.22"]
 ```
 
 ![](README/05f9b844571ffceeed2def3025fb60c68552817b8b73d3c8a76939dbc08b7c65.png)
@@ -258,14 +242,8 @@ Because streams represent sets of results, its makes sense to include a operator
         - It does not make sense to union, say, condition_occurrence_ids with visit_occurrence_ids, so streams with different types won't mingle together, but will continue to flow downstream in parallel
 
 
-```YAML
----
-- union
-- - icd9
-  - '412'
-- - icd9
-  - '799.22'
-
+```JSON
+["union",["icd9","412"],["icd9","799.22"]]
 ```
 
 ![](README/ea935ac31f3b57ff373646780a1fba34a38c9e086dc771eb7fc16c65a7e20cfc.png)
@@ -284,17 +262,8 @@ Because streams represent sets of results, its makes sense to include a operator
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
 
-```YAML
----
-- union
-- - union
-  - - icd9
-    - '412'
-  - - icd9
-    - '799.22'
-- - place_of_service_code
-  - '21'
-
+```JSON
+["union",["union",["icd9","412"],["icd9","799.22"]],["place_of_service_code","21"]]
 ```
 
 ![](README/f766f2e3aa13420e3ba0f823ac7956b311ed7c6c20be26b72324fadd87f36712.png)
@@ -313,16 +282,8 @@ Because streams represent sets of results, its makes sense to include a operator
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
 
-```YAML
----
-- union
-- - icd9
-  - '412'
-- - icd9
-  - '799.22'
-- - place_of_service_code
-  - '21'
-
+```JSON
+["union",["icd9","412"],["icd9","799.22"],["place_of_service_code","21"]]
 ```
 
 ![](README/a79274742cf6fac6f6c9f4a0eb651aeb452f9c43b537c8e6ccaefecd05b7105c.png)
@@ -349,14 +310,8 @@ Because streams represent sets of results, its makes sense to include a operator
      a. If only a single stream of a type is upstream, that stream is essentially unaltered as it is passed downstream
 
 
-```YAML
----
-- intersect
-- - icd9
-  - '412'
-- - primary_diagnosis
-  - true
-
+```JSON
+["intersect",["icd9","412"],["primary_diagnosis",true]]
 ```
 
 ![](README/af5ae3787e80bf0771f18f1a04fe4c5d9291e1e0f963ac408a7bc198d2f1ee28.png)
@@ -364,14 +319,8 @@ Because streams represent sets of results, its makes sense to include a operator
 ```No Results.  Statement is experimental.```
 
 
-```YAML
----
-- intersect
-- - icd9
-  - '412'
-- - gender
-  - Male
-
+```JSON
+["intersect",["icd9","412"],["gender","Male"]]
 ```
 
 ![](README/514f263e976d07c0d9e0a86c79bcbdcddc7d444d7b72135294ad78758effd28f.png)
@@ -390,18 +339,8 @@ Because streams represent sets of results, its makes sense to include a operator
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
 
-```YAML
----
-- intersect
-- - icd9
-  - '412'
-- - primary_diagnosis
-  - true
-- - gender
-  - Male
-- - race
-  - White
-
+```JSON
+["intersect",["icd9","412"],["primary_diagnosis",true],["gender","Male"],["race","White"]]
 ```
 
 ![](README/11f57941951bad5a75f9a16f38a31a3c6bf3046a475aac6e398e780892fab4ad.png)
@@ -413,12 +352,8 @@ Because streams represent sets of results, its makes sense to include a operator
 This operator will take the complement of each set of IDs in the incoming streams.
 
 
-```YAML
----
-- complement
-- - icd9
-  - '412'
-
+```JSON
+["complement",["icd9","412"]]
 ```
 
 ![](README/c2157d8a6b73abe4f22ba5042159f32502c74bf6d762be28d2df6831586822c7.png)
@@ -439,15 +374,8 @@ This operator will take the complement of each set of IDs in the incoming stream
 If you're familiar with set operations, the complement of a union is the intersect of the complements of the items unioned.  So in our world, these next two examples are identical:
 
 
-```YAML
----
-- complement
-- - union
-  - - icd9
-    - '412'
-  - - primary_diagnosis
-    - true
-
+```JSON
+["complement",["union",["icd9","412"],["primary_diagnosis",true]]]
 ```
 
 ![](README/02f44ad35d266ddd0a4df1691d26bf4a297b30604fc3f44b0391d6d852d23a9f.png)
@@ -455,16 +383,8 @@ If you're familiar with set operations, the complement of a union is the interse
 ```No Results.  Statement is experimental.```
 
 
-```YAML
----
-- intersect
-- - complement
-  - - icd9
-    - '412'
-- - complement
-  - - primary_diagnosis
-    - true
-
+```JSON
+["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]]
 ```
 
 ![](README/a4450e8c0fe0e2fde92fe9bd61952f907b1976c1aa3ba963b809bed079d42b09.png)
@@ -474,17 +394,8 @@ If you're familiar with set operations, the complement of a union is the interse
 But please be aware that this behavior of complement only affects streams of the same type.  If more than one stream is involved, you need to evaluate the effects of complement on a stream-by-stream basis:
 
 
-```YAML
----
-- complement
-- - union
-  - - icd9
-    - '412'
-  - - primary_diagnosis
-    - true
-  - - cpt
-    - '99214'
-
+```JSON
+["complement",["union",["icd9","412"],["primary_diagnosis",true],["cpt","99214"]]]
 ```
 
 ![](README/dbc66b3ae6bd7123d77dd04b64f8a24498d048725a55c5340b15f5ae0a1ff307.png)
@@ -492,19 +403,8 @@ But please be aware that this behavior of complement only affects streams of the
 ```No Results.  Statement is experimental.```
 
 
-```YAML
----
-- intersect
-- - complement
-  - - icd9
-    - '412'
-- - complement
-  - - primary_diagnosis
-    - true
-- - complement
-  - - cpt
-    - '99214'
-
+```JSON
+["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]],["complement",["cpt","99214"]]]
 ```
 
 ![](README/a9b4528726adec2a90f3f00139d8d0492f13c51f03c2f9ed6a5134b1b26b44a9.png)
@@ -512,20 +412,8 @@ But please be aware that this behavior of complement only affects streams of the
 ```No Results.  Statement is experimental.```
 
 
-```YAML
----
-- union
-- - intersect
-  - - complement
-    - - icd9
-      - '412'
-  - - complement
-    - - primary_diagnosis
-      - true
-- - complement
-  - - cpt
-    - '99214'
-
+```JSON
+["union",["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]],["complement",["cpt","99214"]]]
 ```
 
 ![](README/a4bc7382a1154ea9856544fd48418f3dd9ce474ca94b8859fc323749c6cc1f55.png)
@@ -537,16 +425,8 @@ But please be aware that this behavior of complement only affects streams of the
 This operator takes two sets of incoming streams, a left-hand stream and a right-hand stream.  The operator matches like-type streams between the left-hand and right-hand streams. The operator removes any results in the left-hand stream if they appear in the right-hand stream.  The operator passes only results for the left-hand stream downstream.  The operator discards all results in the right-hand stream. For example:
 
 
-```YAML
----
-- except
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - primary_diagnosis
-  - true
-
+```JSON
+["except",{"left":["icd9","412"],"right":["primary_diagnosis",true]}]
 ```
 
 ![](README/462153be527b28dc2cb5259c0aec62e1f529e8b60dc6e9c23fd1e06e8be933c9.png)
@@ -554,15 +434,8 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 ```No Results.  Statement is experimental.```
 
 
-```YAML
----
-- intersect
-- - icd9
-  - '412'
-- - complement
-  - - primary_diagnosis
-    - true
-
+```JSON
+["intersect",["icd9","412"],["complement",["primary_diagnosis",true]]]
 ```
 
 ![](README/da450cdd0c94a1301bd98560339a45caa8041e09974352a56ecfb144e9a5e4d4.png)
@@ -572,16 +445,8 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 If the left-hand stream has no types that match the right-hand stream, the left-hand stream passes through unaffected:
 
 
-```YAML
----
-- except
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - cpt
-  - '99214'
-
+```JSON
+["except",{"left":["icd9","412"],"right":["cpt","99214"]}]
 ```
 
 ![](README/253845fe6162621af407ebd110296ff4f6d8a3f23ec75dfb4ea8cda30be71262.png)
@@ -602,24 +467,8 @@ If the left-hand stream has no types that match the right-hand stream, the left-
 And just to show how multiple streams behave:
 
 
-```YAML
----
-- except
-- :left:
-  - union
-  - - icd9
-    - '412'
-  - - gender
-    - Male
-  - - cpt
-    - '99214'
-  :right:
-  - union
-  - - primary_diagnosis
-    - true
-  - - race
-    - White
-
+```JSON
+["except",{"left":["union",["icd9","412"],["gender","Male"],["cpt","99214"]],"right":["union",["primary_diagnosis",true],["race","White"]]}]
 ```
 
 ![](README/f0c734b099841a754ae0366afb00e992ad4814479b65e4a7de23c6e3dd85c09a.png)
@@ -636,15 +485,8 @@ And just to show how multiple streams behave:
     - Throw in a few more criteria and you could find the first occurrence of all censor events for each patient
 
 
-```YAML
----
-- first
-- - union
-  - - icd9
-    - '412'
-  - - death
-    - true
-
+```JSON
+["first",["union",["icd9","412"],["death",true]]]
 ```
 
 ![](README/1102fa717b1c2df67af5220bf3ae219afafd79be7bba0c117e301983385ada52.png)
@@ -668,17 +510,8 @@ And just to show how multiple streams behave:
 - Essentially, these two diagrams would be identical:
 
 
-```YAML
----
-- intersect
-- - union
-  - - icd9
-    - '412'
-  - - icd9
-    - '799.22'
-- - cpt
-  - '99214'
-
+```JSON
+["intersect",["union",["icd9","412"],["icd9","799.22"]],["cpt","99214"]]
 ```
 
 ![](README/d64993258ffbef9406d9ab9136de7af530626b3a69e9eeb75835e11f11dabf62.png)
@@ -697,17 +530,8 @@ And just to show how multiple streams behave:
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
 
-```YAML
----
-- intersect
-- - intersect
-  - - icd9
-    - '412'
-  - - icd9
-    - '799.22'
-- - cpt
-  - '99214'
-
+```JSON
+["intersect",["intersect",["icd9","412"],["icd9","799.22"]],["cpt","99214"]]
 ```
 
 ![](README/defbd0b853d895802663f507761ad297d82e167f516c6082686a2a19b76012c5.png)
@@ -752,13 +576,8 @@ When looking at a set of results for a person, perhaps we want to select just th
     - 0 is undefined?
 
 
-```YAML
----
-- occurrence
-- 3
-- - icd9
-  - '412'
-
+```JSON
+["occurrence",3,["icd9","412"]]
 ```
 
 ![](README/328467a6a419c7c05e299b8097e5e000686068ded8dc6d5f2e2de6f51976c315.png)
@@ -781,12 +600,8 @@ When looking at a set of results for a person, perhaps we want to select just th
 - Operator that is shorthand for writing "occurrence: 1"
 
 
-```YAML
----
-- first
-- - icd9
-  - '412'
-
+```JSON
+["first",["icd9","412"]]
 ```
 
 ![](README/04491942fcbd741982514f9eb12aeecf3d54b5b69a2b50c8331f7700169d5521.png)
@@ -809,12 +624,8 @@ When looking at a set of results for a person, perhaps we want to select just th
 - Operator that is just shorthand for writing "occurrence: -1"
 
 
-```YAML
----
-- last
-- - icd9
-  - '412'
-
+```JSON
+["last",["icd9","412"]]
 ```
 
 ![](README/ebacbd092e3d1a3c7b745a381e51e8ff9d63a21db23a16940193e18e57bc866f.png)
@@ -892,17 +703,8 @@ Ryan's Sidebar on These Definitions:
 When comparing results in L against a date range, results in L continue downstream only if they pass the comparison.
 
 
-```YAML
----
-- during
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - date_range
-  - :start: '2010-01-01'
-    :end: '2010-12-31'
-
+```JSON
+["during",{"left":["icd9","412"],"right":["date_range",{"start":"2010-01-01","end":"2010-12-31"}]}]
 ```
 
 ![](README/ba90ef705f7be91c53c5eb4a81a439fa0f7c48532214bd3db3cc5c069160543e.png)
@@ -927,16 +729,8 @@ When comparing results in L against a set of results in R, the temporal operator
     - Any results in the L stream that meet the temporal comparison against any results in the R stream continue downstream
 
 
-```YAML
----
-- during
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - payer
-  - Part A
-
+```JSON
+["during",{"left":["icd9","412"],"right":["payer","Part A"]}]
 ```
 
 ![](README/ed039f82867241393b1a6a7153d3690461103934c72c1f3eaa3d99a12bb40885.png)
@@ -955,16 +749,8 @@ Imagine events 1-1-2-1-2-1.  In my mind, three 1's come before a 2 and two 1's c
 If we're looking for events in L that occur before events in R, then any event in L that occurs before the last event in R technically meet the comparison of "before".  The reverse is true for after: all events in L that occur after the first event in R technically occur after R.
 
 
-```YAML
----
-- before
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - icd9
-  - '799.22'
-
+```JSON
+["before",{"left":["icd9","412"],"right":["icd9","799.22"]}]
 ```
 
 ![](README/ee283d6a4b69cf10da2df703be3a16830be9cd8cd4f68c5f7afdf558ea28fa76.png)
@@ -985,17 +771,8 @@ If we're looking for events in L that occur before events in R, then any event i
 If this is not the behavior you desire, use one of the sequence operators to select which event in R should be the one used to do comparison
 
 
-```YAML
----
-- before
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - first
-  - - icd9
-    - '799.22'
-
+```JSON
+["before",{"left":["icd9","412"],"right":["first",["icd9","799.22"]]}]
 ```
 
 ![](README/de589af36fa854e006a1563c93e644e2210f2a5616babb779f7f38aadb6c1ed7.png)
@@ -1039,19 +816,8 @@ There are situations when the date columns associated with a result should have 
         - See the example below
 
 
-```YAML
----
-- during
-- :left:
-  - icd9
-  - '799.22'
-  :right:
-  - time_window
-  - - icd9
-    - '412'
-  - :start: "-30d"
-    :end: 30d
-
+```JSON
+["during",{"left":["icd9","799.22"],"right":["time_window",["icd9","412"],{"start":"-30d","end":"30d"}]}]
 ```
 
 ![](README/8101d9b89d9ba8070d585432707b43a8acdb4c2a3e9d37c3f7114b5e3ea9e800.png)
@@ -1067,14 +833,8 @@ There are situations when the date columns associated with a result should have 
 | 110498 | 12420479 | condition_occurrence | 2009-04-30 | 2009-04-30 | 799.22 |
 
 
-```YAML
----
-- time_window
-- - icd9
-  - '412'
-- :start: "-2y"
-  :end: "-2y"
-
+```JSON
+["time_window",["icd9","412"],{"start":"-2y","end":"-2y"}]
 ```
 
 ![](README/15268bc45993d3f57ccf915877f91e48bdee684f24faa614249915833cac4af9.png)
@@ -1093,14 +853,8 @@ There are situations when the date columns associated with a result should have 
 | 86 | 9882 | condition_occurrence | 2007-01-03 | 2007-01-09 | 412 |
 
 
-```YAML
----
-- time_window
-- - icd9
-  - '412'
-- :start: "-2m-2d"
-  :end: 3d1y
-
+```JSON
+["time_window",["icd9","412"],{"start":"-2m-2d","end":"3d1y"}]
 ```
 
 ![](README/cc960a268d51ccf2ebde657d36848f780213834844900018bce3d111843f7b0f.png)
@@ -1119,14 +873,8 @@ There are situations when the date columns associated with a result should have 
 | 86 | 9882 | condition_occurrence | 2008-11-01 | 2010-01-12 | 412 |
 
 
-```YAML
----
-- time_window
-- - place_of_service_code
-  - '21'
-- :start: ''
-  :end: start
-
+```JSON
+["time_window",["place_of_service_code","21"],{"start":"","end":"start"}]
 ```
 
 ![](README/886bf85249a704668a55c5161bceaac10be4a41a94b91606f49851dfa017526c.png)
@@ -1145,14 +893,8 @@ There are situations when the date columns associated with a result should have 
 | 17 | 732 | visit_occurrence | 2010-06-16 | 2010-06-16 | Inpatient |
 
 
-```YAML
----
-- time_window
-- - icd9
-  - '412'
-- :start: end
-  :end: start
-
+```JSON
+["time_window",["icd9","412"],{"start":"end","end":"start"}]
 ```
 
 ![](README/6705af65d728c0d5c50d6c4d46253017a91eb459dbb1f40f92449f05d5562f4a.png)
@@ -1175,19 +917,8 @@ There are situations when the date columns associated with a result should have 
 Person streams carry a patient's date of birth in their date columns.  This makes them almost useless when they are part of the L stream of a temporal operator.  But person streams are useful as the R stream.  By ```time_window```ing the patient's date of birth, we can filter based on the patient's age like so:
 
 
-```YAML
----
-- after
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - time_window
-  - - gender
-    - Male
-  - :start: 50y
-    :end: 50y
-
+```JSON
+["after",{"left":["icd9","412"],"right":["time_window",["gender","Male"],{"start":"50y","end":"50y"}]}]
 ```
 
 ![](README/68fac940a32c7e40caacf8e560c61da552d57633d015ba98f2e98ec040a00c5b.png)
@@ -1215,12 +946,8 @@ There are situations where it is appropriate to convert the type of a stream of 
 - E.g. We want to know *if* a person has an old MI, not when an MI or how many MIs occurred
 
 
-```YAML
----
-- person
-- - icd9
-  - '412'
-
+```JSON
+["person",["icd9","412"]]
 ```
 
 ![](README/8ed478d8c81a58a202d0c51348fca246df206fc24a0567b163d4e0bdab56ca46.png)
@@ -1247,16 +974,8 @@ There are situations where it is appropriate to convert the type of a stream of 
 - Casting both streams to visit_occurrence streams allows us to gather all visit_occurrences for which a set of conditions/procedures occurred in the same visit
 
 
-```YAML
----
-- intersect
-- - visit_occurrence
-  - - icd9
-    - '412'
-- - visit_occurrence
-  - - cpt
-    - '99214'
-
+```JSON
+["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99214"]]]
 ```
 
 ![](README/62323426e381ec21c967971a67e1f4a6d89dae92154bd937284e00b67f67fdd3.png)
@@ -1279,12 +998,8 @@ Many tables have a foreign key (FK) reference to the visit_occurrence table.  If
 If the result's table of origin has no visit_occurrence_id column, we will instead replace the result with ALL visit_occurrences for the person assigned to the result.  This allows us to convert between a person stream and visit_occurrence stream and back.  E.g. we can get all male patients, then ask for their visit_occurrences later downstream.
 
 
-```YAML
----
-- visit_occurrence
-- - gender
-  - Male
-
+```JSON
+["visit_occurrence",["gender","Male"]]
 ```
 
 ![](README/e8630103287f7c9d28eff40b3b1826e24846e776b877f7b8554257acbe621e1c.png)
@@ -1315,20 +1030,8 @@ The general rule will be that if the source type has a defined relationship with
 INSERT HANDY TABLE SHOWING CONVERSION MATRIX HERE
 
 
-```YAML
----
-- procedure_cost
-- - intersect
-  - - cpt
-    - '70012'
-  - - procedure
-    - - intersect
-      - - place_of_service_code
-        - '21'
-      - - visit_occurrence
-        - - icd9
-          - '412'
-
+```JSON
+["procedure_cost",["intersect",["cpt","70012"],["procedure",["intersect",["place_of_service_code","21"],["visit_occurrence",["icd9","412"]]]]]]
 ```
 
 ![](README/6a34c0ef589c9c976fe41f3e67e799e198499f5b9c3ebfd240fb91f73e893573.png)
@@ -1340,11 +1043,8 @@ INSERT HANDY TABLE SHOWING CONVERSION MATRIX HERE
 The casting operator doubles as a way to fetch all rows for a single type.  Provide the casting operator with an argument of ```true``` (instead of an upstream operator) to get all rows as results:
 
 
-```YAML
----
-- death
-- true
-
+```JSON
+["death",true]
 ```
 
 ![](README/e9b384fa7dec5f1a06479c4b289e06b1e60e4f23f7630aff6d03c52595f500f8.png)
@@ -1365,16 +1065,8 @@ The casting operator doubles as a way to fetch all rows for a single type.  Prov
 This comes in handy for situations like these:
 
 
-```YAML
----
-- person_filter
-- :left:
-  - gender
-  - Male
-  :right:
-  - death
-  - true
-
+```JSON
+["person_filter",{"left":["gender","Male"],"right":["death",true]}]
 ```
 
 ![](README/58113a57a37431a402d2547369eba3a481bf1dbbfd82dc384406a5c91f6df01f.png)
@@ -1399,16 +1091,8 @@ Often we want to filter out a set of results by people.  For instance, say we wa
 Unlike the ```except``` operator, the person_filter operator will use all types of all streams in the right-hand side to filter out results in all types of all streams on the left hand side.
 
 
-```YAML
----
-- person_filter
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - gender
-  - Male
-
+```JSON
+["person_filter",{"left":["icd9","412"],"right":["gender","Male"]}]
 ```
 
 ![](README/0360fc0c2b7a88fd82ffc4d13387b76766649d5d42aa8f9349bbf60a81ac6119.png)
@@ -1429,16 +1113,8 @@ Unlike the ```except``` operator, the person_filter operator will use all types 
 But we can get crazier.  The right-hand side doesn't have to be a person stream.  If a non-person stream is used in the right-hand side, the person_filter will cast all right-hand streams to person first and use the union of those streams:
 
 
-```YAML
----
-- person_filter
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - cpt
-  - '99214'
-
+```JSON
+["person_filter",{"left":["icd9","412"],"right":["cpt","99214"]}]
 ```
 
 ![](README/26fd52b5ac55438dd9f81b4a3f3913f1058c9f225c8a5e129007c1e9413d5881.png)
@@ -1457,17 +1133,8 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 | 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
 
 
-```YAML
----
-- person_filter
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - person
-  - - cpt
-    - '99214'
-
+```JSON
+["person_filter",{"left":["icd9","412"],"right":["person",["cpt","99214"]]}]
 ```
 
 ![](README/e1cb0863b21e14256d61a54200316791f6547c78ba2f0156c110f4500f9bbd49.png)
@@ -1486,19 +1153,8 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 | 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
 
 
-```YAML
----
-- person_filter
-- :left:
-  - icd9
-  - '412'
-  :right:
-  - union
-  - - cpt
-    - '99214'
-  - - gender
-    - Male
-
+```JSON
+["person_filter",{"left":["icd9","412"],"right":["union",["cpt","99214"],["gender","Male"]]}]
 ```
 
 ![](README/5d331d74c460d75814b2d3138a9b7d90b5ddb2dcd85e1f5f260d183745fc3a1e.png)
@@ -1519,19 +1175,8 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 And don't forget the left-hand side can have multiple types of streams:
 
 
-```YAML
----
-- person_filter
-- :left:
-  - union
-  - - icd9
-    - '412'
-  - - cpt
-    - '99214'
-  :right:
-  - gender
-  - Male
-
+```JSON
+["person_filter",{"left":["union",["icd9","412"],["cpt","99214"]],"right":["gender","Male"]}]
 ```
 
 ![](README/c93dd18894a245a5647f99e1867d3779e4cd34c9c8f8860600ff0c837a5ffa53.png)
@@ -1565,34 +1210,8 @@ Any ConceptQL operator can be assigned a label.  The label simply provides a way
 A stream must be `define`d before `recall` can use it.
 
 
-```YAML
----
-- first
-- - union
-  - - intersect
-    - - visit_occurrence
-      - - icd9
-        - '412'
-      - :label: Heart Attack Visit
-    - - place_of_service_code
-      - '21'
-  - - before
-    - :left:
-      - intersect
-      - - recall
-        - Heart Attack Visit
-      - - complement
-        - - place_of_service_code
-          - 21
-      - :label: Outpatient Heart Attack
-      :right:
-      - time_window
-      - - recall
-        - Outpatient Heart Attack
-      - :start: "-30d"
-        :end: '0'
-      :label: Earliest of Two Outpatient Heart Attacks
-
+```JSON
+["first",["union",["intersect",["visit_occurrence",["icd9","412"],{"label":"Heart Attack Visit"}],["place_of_service_code","21"]],["before",{"left":["intersect",["recall","Heart Attack Visit"],["complement",["place_of_service_code",21]],{"label":"Outpatient Heart Attack"}],"right":["time_window",["recall","Outpatient Heart Attack"],{"start":"-30d","end":"0"}],"label":"Earliest of Two Outpatient Heart Attacks"}]]]
 ```
 
 ![](README/4a3b47ed1c54f96ebdae693d41c36c51884c4546ef799a4108085708fb7b964e.png)
@@ -1617,16 +1236,8 @@ One of the main motivations behind keeping ConceptQL so flexible is to allow use
 Say a ConceptQL statement gathers all visit_occurrences where a patient had an MI and a Hospital encounter (CPT 99231):
 
 
-```YAML
----
-- intersect
-- - visit_occurrence
-  - - icd9
-    - '412'
-- - visit_occurrence
-  - - cpt
-    - '99231'
-
+```JSON
+["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]
 ```
 
 ![](README/5d6ff62038b75d6f240d65f35d1520a131c221f47d3801554c8c2be5d528ebb0.png)
@@ -1647,17 +1258,8 @@ Say a ConceptQL statement gathers all visit_occurrences where a patient had an M
 If we wanted to gather all costs for all procedures for those visits, we could use the "algorithm" operator to represent the algorithm defined above in a new concept:
 
 
-```YAML
----
-- procedure_cost
-- - algorithm
-  - |2-
-
-    All Visits
-    where a Patient had
-    both an MI and
-    a Hospital Encounter
-
+```JSON
+["procedure_cost",["algorithm","\nAll Visits\nwhere a Patient had\nboth an MI and\na Hospital Encounter"]]
 ```
 
 ![](README/eb8f5511f7d88bd0f8ba73420fc10f7c78405db7f4373d778a827058707f888e.png)
@@ -1667,17 +1269,8 @@ If we wanted to gather all costs for all procedures for those visits, we could u
 The color and edge coming from the algorithm operator are black to denote that we don't know what types or streams are coming from the concept.  In reality, any program that uses ConceptQL can ask the algorithm represented by the algorithm operator for the concept's types.  The result of nesting one algorithm within another is exactly the same had we taken algorithm operator and replaced it with the ConceptQL statement for the algorithm it represents.
 
 
-```YAML
----
-- procedure_cost
-- - intersect
-  - - visit_occurrence
-    - - icd9
-      - '412'
-  - - visit_occurrence
-    - - cpt
-      - '99231'
-
+```JSON
+["procedure_cost",["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]]
 ```
 
 ![](README/6b48534236697d1ccfa1f5403764782f9d228f9eb706789cfa80203882b7b13a.png)
@@ -1687,12 +1280,8 @@ The color and edge coming from the algorithm operator are black to denote that w
 In the actual implementation of the algorithm operator, each ConceptQL statement will have a unique identifier which the algorithm operator will use.  So, assuming that the ID 2031 represents the algorithm we want to gather all procedure costs for, our example should really read:
 
 
-```YAML
----
-- procedure_cost
-- - algorithm
-  - 2031
-
+```JSON
+["procedure_cost",["algorithm",2031]]
 ```
 
 ![](README/067241a3579767a802d4f8e20fd35b60adbe377c9a6512ef135f164a5accfb27.png)
@@ -1725,13 +1314,8 @@ For now we'll cover some of the general behavior of the value_as_numeric column 
 Passing streams through a `numeric` operator changes the number stored in the value column:
 
 
-```YAML
----
-- numeric
-- 2
-- - icd9
-  - '412'
-
+```JSON
+["numeric",2,["icd9","412"]]
 ```
 
 ![](README/d39452b58257c95a7cba07afed4877417b0c227f3690e2bff22c9eca89eac845.png)
@@ -1752,14 +1336,8 @@ Passing streams through a `numeric` operator changes the number stored in the va
 `numeric` can also take a column name instead of a number.  It will derive the results row's value from the value stored in the column specified.
 
 
-```YAML
----
-- numeric
-- paid_copay
-- - procedure_cost
-  - - cpt
-    - '99214'
-
+```JSON
+["numeric","paid_copay",["procedure_cost",["cpt","99214"]]]
 ```
 
 ![](README/3f46dee4d775d1a29d52b68af6552f8ea3abd8303094e749714fc77bd7958155.png)
@@ -1769,13 +1347,8 @@ Passing streams through a `numeric` operator changes the number stored in the va
 If something nonsensical happens, like the column specified isn't present in the table pointed to by a result row, value_as_numeric in the result row will be unaffected:
 
 
-```YAML
----
-- value
-- paid_copay
-- - icd9
-  - '412'
-
+```JSON
+["value","paid_copay",["icd9","412"]]
 ```
 
 ![](README/2b57886a9cba66bb696e4b399c51ad0dc95cd64b952709fafc819a79d573f09e.png)
@@ -1785,13 +1358,8 @@ If something nonsensical happens, like the column specified isn't present in the
 Or if the column specified exists, but refers to a non-numerical column, we'll set the value to 0
 
 
-```YAML
----
-- value
-- stop_reason
-- - icd9
-  - '412'
-
+```JSON
+["value","stop_reason",["icd9","412"]]
 ```
 
 ![](README/7b9db2986ab9ada45cfb9451ef87ff1a2d99c908083334b7ccdceb8a92387fa9.png)
@@ -1801,21 +1369,8 @@ Or if the column specified exists, but refers to a non-numerical column, we'll s
 With a `numeric` operator defined, we could introduce a sum operator that will sum by patient and type.  This allows us to implement the Charlson comorbidity algorithm:
 
 
-```YAML
----
-- sum
-- - union
-  - - numeric
-    - 1
-    - - person
-      - - icd9
-        - '412'
-  - - numeric
-    - 2
-    - - person
-      - - icd9
-        - '278.02'
-
+```JSON
+["sum",["union",["numeric",1,["person",["icd9","412"]]],["numeric",2,["person",["icd9","278.02"]]]]]
 ```
 
 ![](README/ba572c4f4dbade65be55f141df16cf7b3e7d09e0aec4e4e5debc4f2075277371.png)
@@ -1840,13 +1395,8 @@ It might be helpful to count the number of occurrences of a result row in a stre
 I need examples of algorithms that could benefit from this operator.  I'm concerned that we'll want to roll up occurrences by person most of the time and that would require us to first cast streams to person before passing the person stream to count.
 
 
-```YAML
----
-- count
-- - person
-  - - icd9
-    - '799.22'
-
+```JSON
+["count",["person",["icd9","799.22"]]]
 ```
 
 ![](README/ff7d5b5573d09bd7c4cdd3aeda124d18bf82ec46673a62881b399a75d69f3f53.png)
@@ -1867,15 +1417,8 @@ I need examples of algorithms that could benefit from this operator.  I'm concer
 We could do dumb things like count the number of times a row shows up in a union:
 
 
-```YAML
----
-- count
-- - union
-  - - icd9
-    - '412'
-  - - primary_diagnosis
-    - true
-
+```JSON
+["count",["union",["icd9","412"],["primary_diagnosis",true]]]
 ```
 
 ![](README/7aa76b4d29874719466c2cbafc9936e9f12e504bf31e1a09d26ca3fffa8ba1a6.png)
@@ -1898,18 +1441,8 @@ Acts like any other binary operator.  L and R streams, joined by person.  Any L 
 Numeric doesn't have to take a stream.  If it doesn't have a stream as an argument, it acts like a selection operator much like date_range
 
 
-```YAML
----
-- greater_than
-- :left:
-  - count
-  - - person
-    - - icd9
-      - '412'
-  :right:
-  - numeric
-  - 1
-
+```JSON
+["greater_than",{"left":["count",["person",["icd9","412"]]],"right":["numeric",1]}]
 ```
 
 ![](README/c1d0402862221d85aceedc7d76b3f82149b612cbd972f14d0ca9011e1e2c455c.png)
@@ -1955,34 +1488,8 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
         - V45.1, V56.0, V56.31, V56.32, V56.8
 
 
-```YAML
----
-- during
-- :left:
-  - except
-  - :left:
-    - icd9
-    - '584'
-    :right:
-    - after
-    - :left:
-      - icd9
-      - '584'
-      :right:
-      - icd9
-      - V45.1
-      - V56.0
-      - V56.31
-      - V56.32
-      - V56.8
-  :right:
-  - time_window
-  - - icd9_procedure
-    - '39.95'
-    - '54.98'
-  - :start: '0'
-    :end: 60d
-
+```JSON
+["during",{"left":["except",{"left":["icd9","584"],"right":["after",{"left":["icd9","584"],"right":["icd9","V45.1","V56.0","V56.31","V56.32","V56.8"]}]}],"right":["time_window",["icd9_procedure","39.95","54.98"],{"start":"0","end":"60d"}]}]
 ```
 
 ![](README/44ec6743d5d77d15b8a487c2058bf3e455d34adc91c46ea05767f6e0e471a75e.png)
@@ -1998,67 +1505,8 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
     - MI therapy within 60 days after 410
 
 
-```YAML
----
-- during
-- :left:
-  - before
-  - :left:
-    - icd9
-    - 410*
-    :right:
-    - death
-    - true
-  :right:
-  - union
-  - - time_window
-    - - union
-      - - cpt
-        - 0146T
-        - '75898'
-        - '82554'
-        - '92980'
-        - '93010'
-        - '93233'
-        - '93508'
-        - '93540'
-        - '93545'
-      - - icd9_procedure
-        - '00.24'
-        - '36.02'
-        - '89.53'
-        - '89.57'
-        - '89.69'
-      - - loinc
-        - 10839-9
-        - 13969-1
-        - 18843-3
-        - 2154-3
-        - 33204-9
-        - 48425-3
-        - 49259-5
-        - 6597-9
-        - 8634-8
-    - :start: "-30d"
-      :end: '0'
-  - - time_window
-    - - union
-      - - cpt
-        - 0146T
-        - '75898'
-        - '82554'
-        - '92980'
-        - '93010'
-        - '93233'
-      - - icd9_procedure
-        - '00.24'
-        - '36.02'
-        - '89.53'
-        - '89.57'
-        - '89.69'
-    - :start: ''
-      :end: 60d
-
+```JSON
+["during",{"left":["before",{"left":["icd9","410*"],"right":["death",true]}],"right":["union",["time_window",["union",["cpt","0146T","75898","82554","92980","93010","93233","93508","93540","93545"],["icd9_procedure","00.24","36.02","89.53","89.57","89.69"],["loinc","10839-9","13969-1","18843-3","2154-3","33204-9","48425-3","49259-5","6597-9","8634-8"]],{"start":"-30d","end":"0"}],["time_window",["union",["cpt","0146T","75898","82554","92980","93010","93233"],["icd9_procedure","00.24","36.02","89.53","89.57","89.69"]],{"start":"","end":"60d"}]]}]
 ```
 
 ![](README/307a8b5a7edd6e42f8be16523a4c939faf1a0533385c861d7004b6af8addd7d1.png)
@@ -2072,42 +1520,8 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
 - At least one diagnostic procedure during same hospitalization
 
 
-```YAML
----
-- union
-- - place_of_service_code
-  - '21'
-- - visit_occurrence
-  - - icd9
-    - '410'
-- - visit_occurrence
-  - - union
-    - - cpt
-      - 0008T
-      - 3142F
-      - '43205'
-      - '43236'
-      - '76975'
-      - '91110'
-      - '91111'
-    - - hcpcs
-      - B4081
-      - B4082
-    - - icd9_procedure
-      - '42.22'
-      - '42.23'
-      - '44.13'
-      - '45.13'
-      - '52.21'
-      - '97.01'
-    - - loinc
-      - 16125-7
-      - 17780-8
-      - 40820-3
-      - 50320-1
-      - 5177-1
-      - 7901-2
-
+```JSON
+["union",["place_of_service_code","21"],["visit_occurrence",["icd9","410"]],["visit_occurrence",["union",["cpt","0008T","3142F","43205","43236","76975","91110","91111"],["hcpcs","B4081","B4082"],["icd9_procedure","42.22","42.23","44.13","45.13","52.21","97.01"],["loinc","16125-7","17780-8","40820-3","50320-1","5177-1","7901-2"]]]]
 ```
 
 ![](README/99392f56dfb0e5be3f45a12a7f1ba846d094e430f526dfeaa30b606837cd34c0.png)
@@ -2175,11 +1589,8 @@ I'm considering defaulting each value_as\_\* column to some value.
     - Boy, this one is even harder to default
 
 
-```YAML
----
-- icd9
-- '412'
-
+```JSON
+["icd9","412"]
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -2202,17 +1613,8 @@ I'm considering defaulting each value_as\_\* column to some value.
 Inspired by person_filter, why not just have a "filter" operator that filters L by R.  Takes L, R, and an "as" option.  As option temporarily casts the L and R streams to the type specified by :as and then does person by person comparison, only keeping rows that occur on both sides.  Handy for keeping procedures that coincide with conditions without fully casting the streams:
 
 
-```YAML
----
-- filter
-- :left:
-  - cpt
-  - '99214'
-  :right:
-  - icd9
-  - '799.22'
-  :as: visit_occurrence
-
+```JSON
+["filter",{"left":["cpt","99214"],"right":["icd9","799.22"],"as":"visit_occurrence"}]
 ```
 
 ![](README/c5329a7f4937096a57b2e01efb9d542f84a4e2329a1e9381d08c630583ccad37.png)
@@ -2222,17 +1624,8 @@ Inspired by person_filter, why not just have a "filter" operator that filters L 
 person_filter then becomes a special case of general filter:
 
 
-```YAML
----
-- filter
-- :left:
-  - cpt
-  - '99214'
-  :right:
-  - icd9
-  - '799.22'
-  :as: person
-
+```JSON
+["filter",{"left":["cpt","99214"],"right":["icd9","799.22"],"as":"person"}]
 ```
 
 ![](README/9139440329dcb815df89bc70182c3827868402a74ff64d0253706dcaff723dca.png)
