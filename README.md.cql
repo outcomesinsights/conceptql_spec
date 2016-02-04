@@ -735,6 +735,8 @@ Our implementation of this algebra is originally going to be as strict as listed
 Ryan's Sidebar on These Definitions:
 > These strict definitions may not be particularly handy or even intuitive.  It seems like contains, starts, finishes, and coincides are all examples of overlapping ranges.  Starts/finishes seem to be examples of one range containing another.  Meets/met-by seem to be special cases of before/after.  But these definitions, if used in their strict sense, are all mutually exclusive.
 
+> Allen's Interval Algebra seems to represent more complex temporal relationships through composition of the various definitions as [discussed on this site](https://www.ics.uci.edu/~alspaugh/cls/shr/allen.html)
+
 > We may want to adopt a less strict set of definitions, though their meaning may not be as easily defined as the one provided by Allen's Interval Algebra
 
 When comparing results in L against a date range, results in L continue downstream only if they pass the comparison.
