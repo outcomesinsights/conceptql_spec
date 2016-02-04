@@ -2016,17 +2016,121 @@ It *might* be possible to specify that an option takes multiple arguments and in
 
 ### Validations
 
-- I want rails-like validations in ConceptQL
-    - e.g. has_one_upstream, has_many_upstreams
-    - must_have_upstream
-    - has_no_upstream
-- Also for arguments
-    - option: icd9, required: true, allow_many: true, associated_vocabulary: 'ICD9CM'
-    - e.g. option: :start, match: '(\d+[dmy]*)*'
-- When we call annotate on a statement, if an operator fails validation we:
-    - Return 0 rows for that statement
-    - Add "errors" to the annotation for that statement
-        - Errors will be shown on the JAM
+I want rails-like validations in ConceptQL.
+
+#### General validations
+
+- Avoid "cyclical statements"
+    - An operator's upstream can't come from anywhere downstream of it
+- There must be at least one operator
+- Any operator with an unknown name is invalid
+
+#### Upstream validations - Enforce number of upstream operators
+
+- has_one_upstream
+    - Casting operators, though see discussion on casting operators
+    - Allows 0 or 1 upstreams
+    - options
+        - required
+            - If true, there must be exactly one upstream passed to the operator
+- has_many_upstreams
+    - union, intersect, set logic operators in general
+    - Allows 0 to n upstreams
+    - options
+        - required
+            - If true, there must at least one upstream passed to the operator
+- has_no_upstream
+    - Ensures no arguments are upstreams
+
+For binary operators, we need to enforce that LHS and RHS both have upstreams
+
+#### Argument validations - Enforce number of positional arguments
+
+Arguments that are nil or empty string are stripped from positional arguments.  I can't think of a scenario where "nil" is an acceptable argument
+
+- has_one_argument
+    - Expects 0 or 1 argument
+    - options
+        - required
+            - If true, there must be exactly one argument passed to the operator
+- has_many_arguments
+    - Expects 0 or more arguments
+    - options
+        - required
+            - If true, there must at least one argument passed to the operator
+- has_no_arguments
+    - Expects 0 arguments passed to the operator
+- argument_type
+    - Check to make sure incoming arguments conform to a particular type
+        - Enforce type-checking with REGEX?  e.g. "integer" must match "^\d+$"
+    - Do we enforce a vocabulary at this point?
+        - e.g. Type "ICD-9" must match "([v\d]\d{2}(|.\d{1,2})|e\d{3}(|.\d))"
+        - We could enforce "strict" matching where the code must appear in our vocabulary files
+        - I'd like to warn people about any codes that don't appear in vocabulary files
+
+
+#### Option validations
+
+I'm not certain how I want to represent validations for options.  Each option is specified at the top of the class like so for `time_window`:
+
+```ruby
+option :start, type: :string
+option :end, type: :string
+```
+
+and like so for binary operators:
+
+```ruby
+option :left, type: :upstream
+option :right, type: :upstream
+```
+
+Do I want to embed some, or even all, of the validation into the option declaration?  E.g. for `time_window`:
+
+```ruby
+option :start, type: :string, matches: '(\d+[dmy]*)*'
+option :end, type: :string, matches: '(\d+[dmy]*)*'
+```
+
+and for binary operators:
+
+```ruby
+option :left, type: :upstream, required: true
+option :right, type: :upstream, required: true
+```
+
+Or do I want to make validations separate from the option declarations and say things like:
+
+```ruby
+validate_options :left, :right, required: true
+validate_options :start, :end, match: '(\d+[dmy]*)*'
+validate_options :hypothetical_icd9_option_here, associated_vocabulary: 'ICD9CM', strict: true
+```
+
+#### `recall`-specific validations
+
+`recall` is a unique operator and must check that the argument passed to it is:
+
+- A label that appears in the ConceptQL statement
+- A label that is NOT downstream of the Recall operator
+
+#### `algorithm`-specific validations
+
+`algorithm` is a unique operator and must check that the argument passed to it:
+
+- Matches a UUID in our database
+
+
+#### Vocabulary validations and warnings
+
+We can provide a lot of useful feedback to users about the vocabularies they are choosing.
+
+- For certain data models, we might point out that though the vocabulary is primarily for, say, conditions, there are other domains mixed into the codes they provided
+    - e.g. V76.8 yields procedure records, though ICD-9 is primarily expected to yield conditions
+- Certain codes are added/obsoleted through time
+    - It'd be cool to show people what date ranges their codes are valid for
+- Display the frequency for each code in a code set
+- Perhaps show people when a code they are looking for overlaps with other, related vocabularies?
 
 ### Other data models
 
