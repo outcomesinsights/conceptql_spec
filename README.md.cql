@@ -784,6 +784,12 @@ When comparing results in L against a set of results in R, the temporal operator
 ]
 ```
 
+#### any_overlap
+
+As a foray into defining less strict relationships, we've created the "any_overlap" operator, which passes through any results in L that overlap whatsoever with a result in R.  This diagram attempts to demonstrate all L results that would qualify as having "any_overlap" with an R result.
+
+![](additional_images/any_overlap.png)
+
 #### Edge behaviors
 
 For 11 of the 13 temporal operators, comparison of results is straight-forward.  However, the before/after operators have a slight twist.
