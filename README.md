@@ -1718,6 +1718,23 @@ Yup, that should work.  Phew!
     - If so, here's the process for doing that: https://wiki.postgresql.org/wiki/Range_aggregation
     - Just change "s <  max(le)" to "s <= max(le)"
 
+### Casting Operators
+
+Currently, these operators can act as a way to cast results to a new type, or to serve as a selection operator which pulls out all the rows from a given table.  I don't like this dual-behavior.
+
+We should split the behavior into strict selection operators for each type of data and either:
+
+- A single casting operator that takes the type as an argument
+- A set of casting operators, one per type to cast to
+
+### Drop support for positional arguments?
+
+Although lisp-syntax makes it easy to support positional arguments, it might be better to require all arguments to be keyword-based.  HOWEVER, it makes it slightly hard to support arrays of arguments passed to a given keyword argument, e.g. ["icd9", codelist: ["412", "410.00"]] would be read as icd9 with a codelist pointing to operator "412" with an argument of "410.00"
+
+Soooooooo, it would appear that keyword arguments are *only* ok if we have values that aren't arrays and if there needs to be an array of arguments, that set of arguments must be "positional".
+
+It *might* be possible to specify that an option takes multiple arguments and in those cases we won't translate an array, but let's make this happen *if* we need it.
+
 ### Validations
 
 - I want rails-like validations in ConceptQL
