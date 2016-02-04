@@ -1740,6 +1740,72 @@ Yup, that should work.  Phew!
     - OI CDM
     - Possibly AmgenCDMv4
 
+#### Mutator - in theory, these need no modification to continue working
+
+- after
+- any_overlap
+- before
+- complement
+- contains
+- count
+- during
+- equal
+- except
+- filter
+- first
+- from
+- intersect
+- last
+- numeric
+- occurrence
+- one_in_two_out
+- overlapped_by
+- overlaps
+- person_filter
+- recall
+- started_by
+- sum
+- time_window
+- trim_date_end
+- trim_date_start
+- union
+
+#### Selection - These are the operators that will need the most work and might need to be re-thought
+
+- Provenance
+    - condition_type
+- Vocab
+    - cpt
+    - drug_type_concept
+        - Can be replaced with "concept"?
+    - gender
+    - hcpcs
+    - icd10
+    - icd9
+    - icd9_procedure
+    - loinc
+    - medcode
+    - medcode_procedure
+    - ndc
+    - observation_by_enttype
+    - place_of_service_code
+    - prodcode
+    - race
+    - rxnorm
+    - snomed
+- Literal
+    - date_range
+- Type
+    - death
+    - observation_period
+    - person
+    - procedure_occurrence
+    - visit_occurrence
+- Obsolete
+    - from_seer_visits
+    - to_seer_visits
+    - visit
+
 ### Multiple sets of things with ordering
 
 - High to medium to low dose of meds and detecting switch from high/med to low or high to med/low etc
