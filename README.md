@@ -800,6 +800,14 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 | 98040 | 11029333 | condition_occurrence | 2008-10-02 | 2008-10-02 | 412 |
 | 98040 | 11029388 | condition_occurrence | 2008-08-09 | 2008-08-09 | 412 |
 
+#### Considerations
+
+Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
+- If more than one RHS row matches with an LHS row, multiple copies of the  LHS row will end up in the downstream results
+    - Should we limit the LHS to only unique rows, essentially de-duping the downstream results?
+- If the same row appears in both the LHS and RHS relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
+    - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
+
 ### Time Windows
 
 There are situations when the date columns associated with a result should have their values shifted forward or backward in time to make a comparison with another set of dates.
@@ -1565,6 +1573,8 @@ ConceptQL is not yet fully specified.  These are modifications/enhancements that
     - Turns out that, as implemented, a date_range is really a person_stream where the start and end dates represent the range (instead of the date of birth) so we're probably OK
 1. How do we want to look up standard vocab concepts?
     - I think Marc’s approach is a bit heavy-handed
+    - Turns out, at least in CDMv5 and Vocab V5, we can just list the concept_ids and determine which tables to pull them from because every concept carries a Domain
+    - That means we need a single operator, concept_id, to search ALL standard vocabularies
 
 Some statements maybe very useful and it would be handy to reuse the bulk of the statement, but perhaps vary just a few things about it.  ConceptQL supports the idea of using variables to represent sub-expressions.  The variable operator is used as a place holder to say "some criteria set belongs here".  That variable can be defined in another part of the criteria set and will be used in all places the variable operator appears.
 
@@ -1618,9 +1628,34 @@ I'm considering defaulting each value_as\_\* column to some value.
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
+- Comparison
+    - GT
+    - GTE
+    - E
+    - LTE
+    - LT
+    - NE
+    - Range?
+- Mutation
+    - Add
+    - Multiply
+    - Divide
+    - Subtract
+- Relative (for observations)
+    - Abnormally high
+    - Abnormally low
+    - etc.
+    - J&J have a good set for this
+- Aggregation
+    - Sum
+    - Average
+    - Count
+    - Min
+    - Max
+
 ### Filter Operator
 
-Inspired by person_filter, why not just have a "filter" operator that filters L by R.  Takes L, R, and an "as" option.  As option temporarily casts the L and R streams to the type specified by :as and then does person by person comparison, only keeping rows that occur on both sides.  Handy for keeping procedures that coincide with conditions without fully casting the streams:
+Inspired by person_filter, why not just have a "filter" operator that filters L by R.  Takes L, R, and an "as" option.  `as` option temporarily casts the L and R streams to the type specified by :as and then does person by person comparison, only keeping rows that occur on both sides.  Handy for keeping procedures that coincide with conditions without fully casting the streams:
 
 
 ```JSON
@@ -1657,5 +1692,66 @@ We could implement a single operator that takes a relationship as an argument (o
 The next question is: how do we actually join the two streams?  I suppose we could translate each "type" into a "domain" and then join where l.domain = domain_concept_id_1 and l.entity_id = fact_id_1 and R.domain = domain_concept_id_2 and R.entity_id = fact_id_2 where the relationship chosen = relationship_concept_id.
 
 Yup, that should work.  Phew!
+
+### Change First/Last to Earliest/Most Recent and change "Nth" to "Nth Earliest" and "Nth Most Recent"
+
+- It's a bit more clear what they do this way
+- Though people do normally say "First occurrence of" rather than "Earliest occurrence of", but I'm also not opposed to making people more explicit in their wording
+
+
+### Dates when building a cohort
+
+- Michelle is using functions like "max" and "min" to find the earliest/latest date in a group of dates
+- We have "first" and "last" but those operate on a whole row and so we find the first by start_date and last by end_date but then we carry forward BOTH dates for the matching row.
+    - This is not exactly replicating what Michelle is able to do
+- Is this something we want to emulate?
+- If so, I'm thinking we'll have "min/max_start/end_date" nodes that will group by person, then find min/max of the dates
+    - Actually, node needs to be min_max_date with two args: start: (min/max) and end: (min|max)
+        - If an aggregation function isn't used on both dates, results of the un-aggregated column will be arbitrary, or perhaps the query itself won't run
+    - The result is a person row with start/end date set
+    - Why group by person?
+        - If we feed in an END_DATA stream, a Death stream, and a Condition Occurrence stream, we can't compare them unless we compare at the person level
+
+### During optimization?
+
+- Is it safe to collapse overlapping start/end date ranges into a larger range?
+    - If so, here's the process for doing that: https://wiki.postgresql.org/wiki/Range_aggregation
+    - Just change "s <  max(le)" to "s <= max(le)"
+
+### Validations
+
+- I want rails-like validations in ConceptQL
+    - e.g. has_one_upstream, has_many_upstreams
+    - must_have_upstream
+    - has_no_upstream
+- Also for arguments
+    - option: icd9, required: true, allow_many: true, associated_vocabulary: 'ICD9CM'
+    - e.g. option: :start, match: '(\d+[dmy]*)*'
+- When we call annotate on a statement, if an operator fails validation we:
+    - Return 0 rows for that statement
+    - Add "errors" to the annotation for that statement
+        - Errors will be shown on the JAM
+
+### Other data models
+
+- We need to support
+    - CDMv4
+    - CDMv5
+    - OI CDM
+    - Possibly AmgenCDMv4
+
+### Multiple sets of things with ordering
+
+- High to medium to low dose of meds and detecting switch from high/med to low or high to med/low etc
+
+### Nth line chemo
+
+- Can do a "poor man's" by grabbing first of each set and then grabbing nth of that
+
+### concurrent with?
+
+- We sometimes need to make sure a patient had x and y at around the same time
+- Asymmetrical
+    - Options would be start, end like time_window
 
 [^AIA]: J. Allen. Maintaining knowledge about temporal intervals. Communications of the ACM (1983) vol. 26 (11) pp. 832-843
