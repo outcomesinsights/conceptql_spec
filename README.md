@@ -1827,12 +1827,19 @@ It *might* be possible to specify that an option takes multiple arguments and in
 
 I want rails-like validations in ConceptQL.
 
+Metadata reported to the JAM will also include validations for each operator
+
 #### General validations
 
 - Avoid "cyclical statements"
     - An operator's upstream can't come from anywhere downstream of it
+    - This is only possible in Ruby and YAML representations
+        - Probably should drop support for all but JSON representation
+    - Really just a reminder for any UI designers to watch out for and disallow this situation
 - There must be at least one operator
+- There can only be one root-operator
 - Any operator with an unknown name is invalid
+    - Or rather, returns the "InvalidOperator" which always carries an error with it and yet can be rendered
 
 #### Upstream validations - Enforce number of upstream operators
 
@@ -1903,8 +1910,8 @@ option :end, type: :string, matches: '(\d+[dmy]*)*'
 and for binary operators:
 
 ```ruby
-option :left, type: :upstream, required: true
-option :right, type: :upstream, required: true
+option :left, type: :operator, required: true
+option :right, type: :operator, required: true
 ```
 
 Or do I want to make validations separate from the option declarations and say things like:
@@ -1929,6 +1936,10 @@ validate_options :hypothetical_icd9_option_here, associated_vocabulary: 'ICD9CM'
 - Matches a UUID in our database
 
 #### Vocabulary validations and warnings
+
+Vocabulary validations will start by running each code through a regexp, just to see if the code is even in the right format for that kind vocabulary.  We can have a "strict" option which will also then check to make sure the code exists in the vocabulary database.
+
+Vocabularies might vary between supported data models, so how we enforce "strict" vocabulary validation might need to change between data models.
 
 We can provide a lot of useful feedback to users about the vocabularies they are choosing.
 
