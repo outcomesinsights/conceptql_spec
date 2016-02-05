@@ -734,9 +734,7 @@ Our implementation of this algebra is originally going to be as strict as listed
 
 Ryan's Sidebar on These Definitions:
 > These strict definitions may not be particularly handy or even intuitive.  It seems like contains, starts, finishes, and coincides are all examples of overlapping ranges.  Starts/finishes seem to be examples of one range containing another.  Meets/met-by seem to be special cases of before/after.  But these definitions, if used in their strict sense, are all mutually exclusive.
-
 > Allen's Interval Algebra seems to represent more complex temporal relationships through composition of the various definitions as [discussed on this site](https://www.ics.uci.edu/~alspaugh/cls/shr/allen.html)
-
 > We may want to adopt a less strict set of definitions, though their meaning may not be as easily defined as the one provided by Allen's Interval Algebra
 
 When comparing results in L against a date range, results in L continue downstream only if they pass the comparison.
@@ -843,6 +841,7 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 #### Considerations
 
 Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
+
 - If more than one RHS row matches with an LHS row, multiple copies of the  LHS row will end up in the downstream results
     - Should we limit the LHS to only unique rows, essentially de-duping the downstream results?
 - If the same row appears in both the LHS and RHS relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
@@ -1977,7 +1976,6 @@ Yup, that should work.  Phew!
 - It's a bit more clear what they do this way
 - Though people do normally say "First occurrence of" rather than "Earliest occurrence of", but I'm also not opposed to making people more explicit in their wording
 
-
 ### Dates when building a cohort
 
 - Michelle is using functions like "max" and "min" to find the earliest/latest date in a group of dates
@@ -1994,7 +1992,7 @@ Yup, that should work.  Phew!
 ### During optimization?
 
 - Is it safe to collapse overlapping start/end date ranges into a larger range?
-    - If so, here's the process for doing that: https://wiki.postgresql.org/wiki/Range_aggregation
+    - If so, [here's the process for doing that](https://wiki.postgresql.org/wiki/Range_aggregation)
     - Just change "s <  max(le)" to "s <= max(le)"
 
 ### Casting Operators
@@ -2008,9 +2006,9 @@ We should split the behavior into strict selection operators for each type of da
 
 ### Drop support for positional arguments?
 
-Although lisp-syntax makes it easy to support positional arguments, it might be better to require all arguments to be keyword-based.  HOWEVER, it makes it slightly hard to support arrays of arguments passed to a given keyword argument, e.g. ["icd9", codelist: ["412", "410.00"]] would be read as icd9 with a codelist pointing to operator "412" with an argument of "410.00"
+Although lisp-syntax makes it easy to support positional arguments, it might be better to require all arguments to be keyword-based.  HOWEVER, it makes it slightly hard to support arrays of arguments passed to a given keyword argument, e.g. \["icd9", codelist: \["412", "410.00"]] would be read as icd9 with a codelist pointing to operator "412" with an argument of "410.00"
 
-Soooooooo, it would appear that keyword arguments are *only* ok if we have values that aren't arrays and if there needs to be an array of arguments, that set of arguments must be "positional".
+Soooooooo, it would appear that keyword arguments are *only* OK if we have values that aren't arrays and if there needs to be an array of arguments, that set of arguments must be "positional".
 
 It *might* be possible to specify that an option takes multiple arguments and in those cases we won't translate an array, but let's make this happen *if* we need it.
 
@@ -2064,10 +2062,9 @@ Arguments that are nil or empty string are stripped from positional arguments.  
     - Check to make sure incoming arguments conform to a particular type
         - Enforce type-checking with REGEX?  e.g. "integer" must match "^\d+$"
     - Do we enforce a vocabulary at this point?
-        - e.g. Type "ICD-9" must match "([v\d]\d{2}(|.\d{1,2})|e\d{3}(|.\d))"
+        - e.g. Type "ICD-9" must match "(\[v\d]\d{2}(|.\d{1,2})|e\d{3}(|.\d))"
         - We could enforce "strict" matching where the code must appear in our vocabulary files
         - I'd like to warn people about any codes that don't appear in vocabulary files
-
 
 #### Option validations
 
@@ -2119,7 +2116,6 @@ validate_options :hypothetical_icd9_option_here, associated_vocabulary: 'ICD9CM'
 `algorithm` is a unique operator and must check that the argument passed to it:
 
 - Matches a UUID in our database
-
 
 #### Vocabulary validations and warnings
 
