@@ -1325,16 +1325,16 @@ A stream must be `define`d before `recall` can use it.
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 17 | 757 | visit_occurrence | 2008-08-25 | 2008-08-25 | Outpatient |
 | 59 | 2705 | visit_occurrence | 2009-07-19 | 2009-07-22 | Inpatient |
 | 79 | 3847 | visit_occurrence | 2009-01-28 | 2009-01-30 | Inpatient |
 | 86 | 4378 | visit_occurrence | 2009-01-03 | 2009-01-09 | Inpatient |
 | 128 | 6640 | visit_occurrence | 2008-03-22 | 2008-03-23 | Inpatient |
+| 149 | 7810 | visit_occurrence | 2008-08-16 | 2008-08-16 | Office |
 | 158 | 8108 | visit_occurrence | 2009-10-25 | 2009-10-29 | Inpatient |
 | 173 | 8806 | visit_occurrence | 2009-06-13 | 2009-06-16 | Inpatient |
-| 222 | 11783 | visit_occurrence | 2008-03-14 | 2008-03-21 | Inpatient |
-| 260 | 13972 | visit_occurrence | 2010-05-29 | 2010-06-21 | Inpatient |
-| 352 | 18458 | visit_occurrence | 2008-07-02 | 2008-07-09 | Inpatient |
-| 407 | 20925 | visit_occurrence | 2008-08-25 | 2008-08-27 | Inpatient |
+| 183 | 9544 | visit_occurrence | 2009-01-31 | 2009-01-31 | Office |
+| 206 | 10786 | visit_occurrence | 2009-06-07 | 2009-06-07 | Office |
 
 ## Algorithms within Algorithms
 
