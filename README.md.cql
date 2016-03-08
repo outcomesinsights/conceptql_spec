@@ -1122,6 +1122,65 @@ This comes in handy for situations like these:
 ]
 ```
 
+## Finding a Single Inpatient or Two Outpatient Records as Confirmation of a Diagnosis
+
+A very common pattern in algorithms is to consider a condition to be valid if it is seen in the inpatient file once, in the outpatient file at least twice, with a minimum separation between the two occurrences.
+
+We have created an operator that handles this pattern: `OneInTwoOut`
+
+```ConceptQL
+# First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses
+["one_in_two_out", ["icd9", "250.00"], { "outpatient_minimum_gap": "30d"}]
+```
+
+The `one_in_two_out` operator yields a single row per patient.  The row is the earliest confirmed event from the operator's upstream set of events.
+
+The `one_in_two_out` operator uses the file from which a row came from to determine if the row represents an "inpatient" record or an "outpatient" record.  The place of service associated with a record is not taken into account.  Nothing about the associated visit is considered either.
+
+`condition_occurrence` rows with an xxx_type_concept_id of "inpatient *" are considered inpatient records.  All other xxx_type_concept_ids are considered outpatient.
+
+For non-`condition_occurrence` rows, e.g. `procedure_occurrence`, `drug_exposure`, or `observation`, they are treated as inpatient records as in most cases it makes sense that a single procedure, prescription, or lab record represents an actual event not subject to the skepticism with which we treat outpatient diagnoses.
+
+In order to simplify how sets of inpatient and outpatient records are compared to each other temporally, we collapse each incoming row's date range to a single date.  Users can choose which date to use for both inpatient and outpatient records.
+
+- Inpatient Length of Stay
+    - Enforces a minimum length of stay for inpatient records
+    - If given a whole number greater than 0, requires that the patient had been hospitalized for at least that many days
+    - Optional
+    - Default: empty
+    - If left empty, length of stay is ignored
+    - Length of Stay (LOS) is calculated as:
+        - If (end_date - start_date) < 2, then LOS is 1
+        - else LOS is (end_date - start_date) + 1
+- Inpatient Return Date
+    - Determines which date from an inpatient record should be used as the date in which the associated condition "occurred"
+    - Options
+        - Admit Date
+        - Discharge Date
+    - Optional
+    - Defaults to discharge date (end_date of the given condition_occurrence)
+        - The discharge date is preferred over the admit date because only at discharge can we say for certain a patient was diagnosed with a given condition.  We cannot be certain a patient had the condition at the time of admission
+- Outpatient Minimum Gap
+    - Requires that the second, confirming outpatient diagnosis must occur at least this many days after the initial diagnosis
+    - Uses same time adjustment syntax as `time_window`, e.g. 1d3m10y
+    - Required
+    - Default: 30d
+- Outpatient Maximum Gap
+    - Requires that the second, confirming outpatient diagnosis must occur at within this many days after the initial diagnosis
+    - Uses same time adjustment syntax as `time_window`, e.g. 1d3m10y
+    - Optional
+    - Default: empty
+    - When empty, the confirming diagnosis may occur at any time after the minimum_gap to be considered valid
+    - This option is useful when attempting to limit confirming diagnoses for acute diseases, e.g. if attempting to find confirmation of the flu, it would be advisable to set this option in order to limit confirmation to distinct periods when a patient had the flu
+- Outpatient Return Date
+    - Determines which date from an outpatient record should be used as the date in which the associated condition "occurred"
+    - Options
+        - Start Date
+        - End Date
+    - Optional
+    - Defaults to start date
+        - The start date is preferred over the end date because the majority of outpatient events are limited to a single and those that are billed over many days represent cases where all conditions are known at the time of the first day of the outpatient visit
+
 ## Filtering by People
 
 Often we want to filter out a set of results by people.  For instance, say we wanted to find all MIs for all males.  We'd use the person_filter operator for that.  Like the Except operator, it takes a left-hand stream and a right-hand stream.
