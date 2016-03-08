@@ -256,8 +256,8 @@ Because streams represent sets of results, its makes sense to include a operator
     "412"
   ],
   [
-    "primary_diagnosis",
-    true
+    "condition_type",
+    "primary"
   ]
 ]
 ```
@@ -286,8 +286,8 @@ Because streams represent sets of results, its makes sense to include a operator
     "412"
   ],
   [
-    "primary_diagnosis",
-    true
+    "condition_type",
+    "primary"
   ],
   [
     "gender",
@@ -328,8 +328,8 @@ If you're familiar with set operations, the complement of a union is the interse
       "412"
     ],
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   ]
 ]
@@ -349,8 +349,8 @@ If you're familiar with set operations, the complement of a union is the interse
   [
     "complement",
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   ]
 ]
@@ -369,8 +369,8 @@ But please be aware that this behavior of complement only affects streams of the
       "412"
     ],
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ],
     [
       "cpt",
@@ -394,8 +394,8 @@ But please be aware that this behavior of complement only affects streams of the
   [
     "complement",
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   ],
   [
@@ -424,8 +424,8 @@ But please be aware that this behavior of complement only affects streams of the
     [
       "complement",
       [
-        "primary_diagnosis",
-        true
+        "condition_type",
+        "primary"
       ]
     ]
   ],
@@ -453,8 +453,8 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
       "412"
     ],
     "right": [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   }
 ]
@@ -471,8 +471,8 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
   [
     "complement",
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   ]
 ]
@@ -522,8 +522,8 @@ And just to show how multiple streams behave:
     "right": [
       "union",
       [
-        "primary_diagnosis",
-        true
+        "condition_type",
+        "primary"
       ],
       [
         "race",
@@ -1172,14 +1172,15 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Default: empty
     - When empty, the confirming diagnosis may occur at any time after the minimum_gap to be considered valid
     - This option is useful when attempting to limit confirming diagnoses for acute diseases, e.g. if attempting to find confirmation of the flu, it would be advisable to set this option in order to limit confirmation to distinct periods when a patient had the flu
-- Outpatient Return Date
-    - Determines which date from an outpatient record should be used as the date in which the associated condition "occurred"
+- Outpatient Event to Return
+    - Determines which event return should two outpatient records meet all criteria
+        - In most situations, using the initial outpatient event is desired, particularly when the algorithm is used to record an exposure of interest or outcome
+        - However, returning the initial outpatient event when the algorithm is used to determine an index event can introduce immortal time bias.  In these cases, using the confirming event will avoid immortal time bias
     - Options
-        - Start Date
-        - End Date
+        - Initial Event
+        - Confirming Event
     - Optional
-    - Defaults to start date
-        - The start date is preferred over the end date because the majority of outpatient events are limited to a single and those that are billed over many days represent cases where all conditions are known at the time of the first day of the outpatient visit
+    - Defaults to Initial Event
 
 ## Filtering by People
 
@@ -1595,8 +1596,8 @@ We could do dumb things like count the number of times a row shows up in a union
       "412"
     ],
     [
-      "primary_diagnosis",
-      true
+      "condition_type",
+      "primary"
     ]
   ]
 ]

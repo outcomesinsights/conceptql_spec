@@ -399,13 +399,24 @@ Because streams represent sets of results, its makes sense to include a operator
 
 ```JSON
 
-["intersect",["icd9","412"],["primary_diagnosis",true]]
+["intersect",["icd9","412"],["condition_type","primary"]]
 
 ```
 
-![](README/af5ae3787e80bf0771f18f1a04fe4c5d9291e1e0f963ac408a7bc198d2f1ee28.png)
+![](README/89e10eccc298314d00ce9c98722726956a34576ded52c7c4d320723361cedf26.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 168 | 19736 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
+| 183 | 21619 | condition_occurrence | 2010-12-26 | 2010-12-26 | 412 |
+| 160 | 18555 | condition_occurrence | 2008-12-24 | 2008-12-25 | 412 |
+| 207 | 24721 | condition_occurrence | 2008-02-17 | 2008-02-17 | 412 |
+| 37 | 4359 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
+| 71 | 7865 | condition_occurrence | 2008-11-16 | 2008-11-16 | 412 |
+| 104 | 13016 | condition_occurrence | 2009-02-27 | 2009-02-27 | 412 |
+| 255 | 31542 | condition_occurrence | 2010-11-21 | 2010-11-21 | 412 |
+| 191 | 22933 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 183 | 21627 | condition_occurrence | 2009-01-31 | 2009-01-31 | 412 |
 
 ```JSON
 
@@ -430,13 +441,24 @@ Because streams represent sets of results, its makes sense to include a operator
 
 ```JSON
 
-["intersect",["icd9","412"],["primary_diagnosis",true],["gender","Male"],["race","White"]]
+["intersect",["icd9","412"],["condition_type","primary"],["gender","Male"],["race","White"]]
 
 ```
 
-![](README/11f57941951bad5a75f9a16f38a31a3c6bf3046a475aac6e398e780892fab4ad.png)
+![](README/12b67f7eab72803f5a9f234917a004a3bdc769cca3754e82f29bcd82926034ca.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 168 | 19736 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
+| 183 | 21619 | condition_occurrence | 2010-12-26 | 2010-12-26 | 412 |
+| 160 | 18555 | condition_occurrence | 2008-12-24 | 2008-12-25 | 412 |
+| 207 | 24721 | condition_occurrence | 2008-02-17 | 2008-02-17 | 412 |
+| 37 | 4359 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
+| 71 | 7865 | condition_occurrence | 2008-11-16 | 2008-11-16 | 412 |
+| 104 | 13016 | condition_occurrence | 2009-02-27 | 2009-02-27 | 412 |
+| 255 | 31542 | condition_occurrence | 2010-11-21 | 2010-11-21 | 412 |
+| 191 | 22933 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 183 | 21627 | condition_occurrence | 2009-01-31 | 2009-01-31 | 412 |
 
 ### Complement
 
@@ -467,55 +489,110 @@ If you're familiar with set operations, the complement of a union is the interse
 
 ```JSON
 
-["complement",["union",["icd9","412"],["primary_diagnosis",true]]]
+["complement",["union",["icd9","412"],["condition_type","primary"]]]
 
 ```
 
-![](README/02f44ad35d266ddd0a4df1691d26bf4a297b30604fc3f44b0391d6d852d23a9f.png)
+![](README/08476ced52eefad558bbd740ff59a9b8a09476f97e588944700a868269013634.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 1 | 1 | condition_occurrence | 2010-03-12 | 2010-03-13 | 780.2 |
+| 1 | 2 | condition_occurrence | 2010-03-12 | 2010-03-13 | 788.20 |
+| 1 | 3 | condition_occurrence | 2010-03-12 | 2010-03-13 | V45.01 |
+| 1 | 4 | condition_occurrence | 2010-03-12 | 2010-03-13 | 428.0 |
+| 1 | 5 | condition_occurrence | 2010-03-12 | 2010-03-13 | 272.0 |
+| 1 | 6 | condition_occurrence | 2010-03-12 | 2010-03-13 | 401.9 |
+| 1 | 7 | condition_occurrence | 2010-03-12 | 2010-03-13 | V45.02 |
+| 1 | 8 | condition_occurrence | 2010-03-12 | 2010-03-13 | 733.00 |
+| 1 | 9 | condition_occurrence | 2010-03-12 | 2010-03-13 | E933.0 |
+| 1 | 12 | condition_occurrence | 2009-10-14 | 2009-10-14 | 275.41 |
 
 ```JSON
 
-["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]]
+["intersect",["complement",["icd9","412"]],["complement",["condition_type","primary"]]]
 
 ```
 
-![](README/a4450e8c0fe0e2fde92fe9bd61952f907b1976c1aa3ba963b809bed079d42b09.png)
+![](README/23b2a6c73bf657bdd7664e2d2460cfab7fb0aec93d3382b0827aa908e51efd33.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 13 | 1027 | condition_occurrence | 2010-03-01 | 2010-03-01 | 401.9 |
+| 132 | 15615 | condition_occurrence | 2009-10-15 | 2009-10-15 | 582.9 |
+| 30 | 3779 | condition_occurrence | 2008-02-26 | 2008-02-26 | 715.96 |
+| 96 | 12041 | condition_occurrence | 2009-08-20 | 2009-08-20 | 716.89 |
+| 88 | 10399 | condition_occurrence | 2009-11-12 | 2009-11-12 | 728.9 |
+| 220 | 26671 | condition_occurrence | 2009-06-26 | 2009-06-26 | 780.4 |
+| 175 | 20446 | condition_occurrence | 2010-05-10 | 2010-05-10 | 272.4 |
+| 251 | 30959 | condition_occurrence | 2009-08-19 | 2009-08-19 | 362.56 |
+| 164 | 19011 | condition_occurrence | 2009-02-18 | 2009-02-18 | V17.3 |
+| 43 | 4995 | condition_occurrence | 2010-04-06 | 2010-04-08 | 596.54 |
 
 But please be aware that this behavior of complement only affects streams of the same type.  If more than one stream is involved, you need to evaluate the effects of complement on a stream-by-stream basis:
 
 ```JSON
 
-["complement",["union",["icd9","412"],["primary_diagnosis",true],["cpt","99214"]]]
+["complement",["union",["icd9","412"],["condition_type","primary"],["cpt","99214"]]]
 
 ```
 
-![](README/dbc66b3ae6bd7123d77dd04b64f8a24498d048725a55c5340b15f5ae0a1ff307.png)
+![](README/a37a84dbaff85d1d47a240796acda2cb7ff2ad001133b134f82f7f8c6c057dc7.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 1 | 1 | condition_occurrence | 2010-03-12 | 2010-03-13 | 780.2 |
+| 1 | 2 | condition_occurrence | 2010-03-12 | 2010-03-13 | 788.20 |
+| 1 | 3 | condition_occurrence | 2010-03-12 | 2010-03-13 | V45.01 |
+| 1 | 4 | condition_occurrence | 2010-03-12 | 2010-03-13 | 428.0 |
+| 1 | 5 | condition_occurrence | 2010-03-12 | 2010-03-13 | 272.0 |
+| 1 | 6 | condition_occurrence | 2010-03-12 | 2010-03-13 | 401.9 |
+| 1 | 7 | condition_occurrence | 2010-03-12 | 2010-03-13 | V45.02 |
+| 1 | 8 | condition_occurrence | 2010-03-12 | 2010-03-13 | 733.00 |
+| 1 | 9 | condition_occurrence | 2010-03-12 | 2010-03-13 | E933.0 |
+| 1 | 12 | condition_occurrence | 2009-10-14 | 2009-10-14 | 275.41 |
 
 ```JSON
 
-["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]],["complement",["cpt","99214"]]]
+["intersect",["complement",["icd9","412"]],["complement",["condition_type","primary"]],["complement",["cpt","99214"]]]
 
 ```
 
-![](README/a9b4528726adec2a90f3f00139d8d0492f13c51f03c2f9ed6a5134b1b26b44a9.png)
+![](README/60f4b38bb990e1b27dae9a180b79a8aa8d2303ecffc1d423ffa272b4018ec1df.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 13 | 1027 | condition_occurrence | 2010-03-01 | 2010-03-01 | 401.9 |
+| 132 | 15615 | condition_occurrence | 2009-10-15 | 2009-10-15 | 582.9 |
+| 30 | 3779 | condition_occurrence | 2008-02-26 | 2008-02-26 | 715.96 |
+| 96 | 12041 | condition_occurrence | 2009-08-20 | 2009-08-20 | 716.89 |
+| 88 | 10399 | condition_occurrence | 2009-11-12 | 2009-11-12 | 728.9 |
+| 220 | 26671 | condition_occurrence | 2009-06-26 | 2009-06-26 | 780.4 |
+| 175 | 20446 | condition_occurrence | 2010-05-10 | 2010-05-10 | 272.4 |
+| 251 | 30959 | condition_occurrence | 2009-08-19 | 2009-08-19 | 362.56 |
+| 164 | 19011 | condition_occurrence | 2009-02-18 | 2009-02-18 | V17.3 |
+| 43 | 4995 | condition_occurrence | 2010-04-06 | 2010-04-08 | 596.54 |
 
 ```JSON
 
-["union",["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]],["complement",["cpt","99214"]]]
+["union",["intersect",["complement",["icd9","412"]],["complement",["condition_type","primary"]]],["complement",["cpt","99214"]]]
 
 ```
 
-![](README/a4bc7382a1154ea9856544fd48418f3dd9ce474ca94b8859fc323749c6cc1f55.png)
+![](README/736b3ad7c6745908d39958661638852a4976135489a494cb4b5a86a3280eacca.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 13 | 1027 | condition_occurrence | 2010-03-01 | 2010-03-01 | 401.9 |
+| 132 | 15615 | condition_occurrence | 2009-10-15 | 2009-10-15 | 582.9 |
+| 30 | 3779 | condition_occurrence | 2008-02-26 | 2008-02-26 | 715.96 |
+| 96 | 12041 | condition_occurrence | 2009-08-20 | 2009-08-20 | 716.89 |
+| 88 | 10399 | condition_occurrence | 2009-11-12 | 2009-11-12 | 728.9 |
+| 220 | 26671 | condition_occurrence | 2009-06-26 | 2009-06-26 | 780.4 |
+| 175 | 20446 | condition_occurrence | 2010-05-10 | 2010-05-10 | 272.4 |
+| 251 | 30959 | condition_occurrence | 2009-08-19 | 2009-08-19 | 362.56 |
+| 164 | 19011 | condition_occurrence | 2009-02-18 | 2009-02-18 | V17.3 |
+| 43 | 4995 | condition_occurrence | 2010-04-06 | 2010-04-08 | 596.54 |
 
 ### Except
 
@@ -523,23 +600,45 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 
 ```JSON
 
-["except",{"left":["icd9","412"],"right":["primary_diagnosis",true]}]
+["except",{"left":["icd9","412"],"right":["condition_type","primary"]}]
 
 ```
 
-![](README/462153be527b28dc2cb5259c0aec62e1f529e8b60dc6e9c23fd1e06e8be933c9.png)
+![](README/d83427fd29649f6101e6dafdaa1e16373f9c3363743f6ab147fafe7b690caf1a.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 173 | 20037 | condition_occurrence | 2008-09-23 | 2008-09-23 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 180 | 21006 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 212 | 25417 | condition_occurrence | 2008-11-16 | 2008-11-20 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 91 | 10865 | condition_occurrence | 2009-11-08 | 2009-11-08 | 412 |
+| 212 | 25309 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
+| 108 | 13741 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 231 | 28188 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
+| 17 | 1712 | condition_occurrence | 2008-08-25 | 2008-08-25 | 412 |
 
 ```JSON
 
-["intersect",["icd9","412"],["complement",["primary_diagnosis",true]]]
+["intersect",["icd9","412"],["complement",["condition_type","primary"]]]
 
 ```
 
-![](README/da450cdd0c94a1301bd98560339a45caa8041e09974352a56ecfb144e9a5e4d4.png)
+![](README/e206a00cfef9430890a4cd5370c6b761f7b75fce4716ca786e0cc7d365ec9733.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 173 | 20037 | condition_occurrence | 2008-09-23 | 2008-09-23 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 180 | 21006 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 212 | 25417 | condition_occurrence | 2008-11-16 | 2008-11-20 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 91 | 10865 | condition_occurrence | 2009-11-08 | 2009-11-08 | 412 |
+| 212 | 25309 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
+| 108 | 13741 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 231 | 28188 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
+| 17 | 1712 | condition_occurrence | 2008-08-25 | 2008-08-25 | 412 |
 
 If the left-hand stream has no types that match the right-hand stream, the left-hand stream passes through unaffected:
 
@@ -568,13 +667,24 @@ And just to show how multiple streams behave:
 
 ```JSON
 
-["except",{"left":["union",["icd9","412"],["gender","Male"],["cpt","99214"]],"right":["union",["primary_diagnosis",true],["race","White"]]}]
+["except",{"left":["union",["icd9","412"],["gender","Male"],["cpt","99214"]],"right":["union",["condition_type","primary"],["race","White"]]}]
 
 ```
 
-![](README/f0c734b099841a754ae0366afb00e992ad4814479b65e4a7de23c6e3dd85c09a.png)
+![](README/761cf9921b7096fba35935d979257a6645adb4e1b4143e3ac20306e28f127193.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 164 | 19469 | procedure_occurrence | 2008-12-19 | 2008-12-19 | 99214 |
+| 243 | 30214 | procedure_occurrence | 2010-06-14 | 2010-06-14 | 99214 |
+| 86 | 10445 | procedure_occurrence | 2009-01-12 | 2009-01-12 | 99214 |
+| 50 | 5581 | procedure_occurrence | 2009-05-01 | 2009-05-01 | 99214 |
+| 62 | 6773 | procedure_occurrence | 2009-06-12 | 2009-06-12 | 99214 |
+| 163 | 19208 | procedure_occurrence | 2009-11-24 | 2009-11-24 | 99214 |
+| 184 | 21798 | procedure_occurrence | 2008-02-17 | 2008-02-17 | 99214 |
+| 183 | 21747 | procedure_occurrence | 2009-05-11 | 2009-05-11 | 99214 |
+| 135 | 16566 | procedure_occurrence | 2008-07-27 | 2008-07-27 | 99214 |
+| 266 | 33534 | procedure_occurrence | 2010-02-25 | 2010-02-25 | 99214 |
 
 ### Discussion about Set Operators
 
@@ -1223,14 +1333,15 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Default: empty
     - When empty, the confirming diagnosis may occur at any time after the minimum_gap to be considered valid
     - This option is useful when attempting to limit confirming diagnoses for acute diseases, e.g. if attempting to find confirmation of the flu, it would be advisable to set this option in order to limit confirmation to distinct periods when a patient had the flu
-- Outpatient Return Date
-    - Determines which date from an outpatient record should be used as the date in which the associated condition "occurred"
+- Outpatient Event to Return
+    - Determines which event return should two outpatient records meet all criteria
+        - In most situations, using the initial outpatient event is desired, particularly when the algorithm is used to record an exposure of interest or outcome
+        - However, returning the initial outpatient event when the algorithm is used to determine an index event can introduce immortal time bias.  In these cases, using the confirming event will avoid immortal time bias
     - Options
-        - Start Date
-        - End Date
+        - Initial Event
+        - Confirming Event
     - Optional
-    - Defaults to start date
-        - The start date is preferred over the end date because the majority of outpatient events are limited to a single and those that are billed over many days represent cases where all conditions are known at the time of the first day of the outpatient visit
+    - Defaults to Initial Event
 
 ## Filtering by People
 
@@ -1560,13 +1671,24 @@ We could do dumb things like count the number of times a row shows up in a union
 
 ```JSON
 
-["count",["union",["icd9","412"],["primary_diagnosis",true]]]
+["count",["union",["icd9","412"],["condition_type","primary"]]]
 
 ```
 
-![](README/7aa76b4d29874719466c2cbafc9936e9f12e504bf31e1a09d26ca3fffa8ba1a6.png)
+![](README/62d09dd47cde6e9c11c834719b924cb752a9922112295fc31a6a08946e567107.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 14 | 1420 | condition_occurrence | 2008-02-02 | 2008-02-02 | 162.5 |
+| 147 | 17456 | condition_occurrence | 2009-01-07 | 2009-01-07 | 597.89 |
+| 145 | 16841 | condition_occurrence | 2010-07-02 | 2010-07-02 | 720.2 |
+| 249 | 30449 | condition_occurrence | 2009-05-17 | 2009-06-06 | V56.1 |
+| 163 | 18681 | condition_occurrence | 2009-07-12 | 2009-07-12 | 786.50 |
+| 135 | 16104 | condition_occurrence | 2009-06-05 | 2009-06-05 | 401.1 |
+| 156 | 18273 | condition_occurrence | 2010-10-30 | 2010-10-30 | 401.9 |
+| 72 | 8013 | condition_occurrence | 2009-07-07 | 2009-07-07 | 715.92 |
+| 179 | 20937 | condition_occurrence | 2009-05-29 | 2009-05-29 | 585.6 |
+| 275 | 33558 | condition_occurrence | 2008-01-19 | 2008-01-19 | 491.21 |
 
 #### Numeric Value Comparison
 
