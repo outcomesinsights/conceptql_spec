@@ -4,5 +4,5 @@ if [[ $1 == "--clean" ]]; then
 fi
 bundle exec sequelizer config
 bundle exec conceptql knit README.md.cql
-doctoc --notitle README.md
+doctoc --bitbucket --notitle README.md
 mdl README.md

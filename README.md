@@ -2,89 +2,90 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [ConceptQL Specification](#conceptql-specification)
-  - [Motivation for ConceptQL](#motivation-for-conceptql)
-  - [ConceptQL Overview](#conceptql-overview)
-    - [What ConceptQL Looks Like](#what-conceptql-looks-like)
-    - [ConceptQL Diagrams](#conceptql-diagrams)
-    - [Think of Results as a Stream](#think-of-results-as-a-stream)
-    - [Streams have Types](#streams-have-types)
-    - [What *are* Streams Really?](#what-are-streams-really)
-  - [Selection Operators](#selection-operators)
-  - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
-  - [Set Operators](#set-operators)
-    - [Union](#union)
-    - [Intersect](#intersect)
-    - [Complement](#complement)
-    - [Except](#except)
-    - [Discussion about Set Operators](#discussion-about-set-operators)
-      - [Union Operators](#union-operators)
-        - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
-        - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#q-why-arent-all-streams-passed-forward-unaltered--why-union-like-typed-streams)
-  - [Time-oriented Operators](#time-oriented-operators)
-    - [Relative Temporal Operators](#relative-temporal-operators)
-      - [occurrence](#occurrence)
-      - [first](#first)
-      - [last](#last)
-    - [Date Literals](#date-literals)
-      - [date_range](#date_range)
-      - [day](#day)
-      - [What is <date-format\>?](#what-is-date-format%5C)
-    - [Temporal Comparison Operators](#temporal-comparison-operators)
-      - [any_overlap](#any_overlap)
-      - [Edge behaviors](#edge-behaviors)
-      - [Considerations](#considerations)
-    - [Time Windows](#time-windows)
-      - [time_window](#time_window)
-      - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
-  - [Type Conversion](#type-conversion)
-    - [Casting to person](#casting-to-person)
-    - [Casting to a visit_occurrence](#casting-to-a-visit_occurrence)
-    - [Casting Loses All Original Information](#casting-loses-all-original-information)
-    - [Cast all the Things!](#cast-all-the-things)
-    - [Casting as a way to fetch all rows](#casting-as-a-way-to-fetch-all-rows)
-  - [Filtering by People](#filtering-by-people)
-  - [Sub-algorithms within a Larger Algorithm](#sub-algorithms-within-a-larger-algorithm)
-    - [`label` option](#label-option)
-    - [`recall` operator](#recall-operator)
-  - [Algorithms within Algorithms](#algorithms-within-algorithms)
-  - [Values](#values)
-    - [numeric](#numeric)
-    - [Counting](#counting)
-      - [Numeric Value Comparison](#numeric-value-comparison)
-    - [numeric as selection operator](#numeric-as-selection-operator)
-      - [sum](#sum)
-  - [Appendix A - Selection Operators](#appendix-a---selection-operators)
-  - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
-    - [Acute Kidney Injury - Narrow Definition and diagnositc procedure](#acute-kidney-injury---narrow-definition-and-diagnositc-procedure)
-    - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
-    - [GI Ulcer Hospitalization 2 (5000001002)](#gi-ulcer-hospitalization-2-5000001002)
-  - [Appendix C - Under Development](#appendix-c---under-development)
-    - [Todo List](#todo-list)
-    - [Future Work for Define and Recall](#future-work-for-define-and-recall)
-    - [Considerations for Values](#considerations-for-values)
-    - [Filter Operator](#filter-operator)
-    - [AS option for Except](#as-option-for-except)
-    - [How to Handle fact_relationship Table from CDMv5](#how-to-handle-fact_relationship-table-from-cdmv5)
-    - [Change First/Last to Earliest/Most Recent and change "Nth" to "Nth Earliest" and "Nth Most Recent"](#change-firstlast-to-earliestmost-recent-and-change-nth-to-nth-earliest-and-nth-most-recent)
-    - [Dates when building a cohort](#dates-when-building-a-cohort)
-    - [During optimization?](#during-optimization)
-    - [Casting Operators](#casting-operators)
-    - [Drop support for positional arguments?](#drop-support-for-positional-arguments)
-    - [Validations](#validations)
-      - [General validations](#general-validations)
-      - [Upstream validations - Enforce number of upstream operators](#upstream-validations---enforce-number-of-upstream-operators)
-      - [Argument validations - Enforce number of positional arguments](#argument-validations---enforce-number-of-positional-arguments)
-      - [Option validations](#option-validations)
-      - [`recall`-specific validations](#recall-specific-validations)
-      - [`algorithm`-specific validations](#algorithm-specific-validations)
-      - [Vocabulary validations and warnings](#vocabulary-validations-and-warnings)
-    - [Other data models](#other-data-models)
-      - [Mutator - in theory, these need no modification to continue working](#mutator---in-theory-these-need-no-modification-to-continue-working)
-      - [Selection - These are the operators that will need the most work and might need to be re-thought](#selection---these-are-the-operators-that-will-need-the-most-work-and-might-need-to-be-re-thought)
-    - [Multiple sets of things with ordering](#multiple-sets-of-things-with-ordering)
-    - [Nth line chemo](#nth-line-chemo)
-    - [concurrent with?](#concurrent-with)
+- [ConceptQL Specification](#markdown-header-conceptql-specification)
+    - [Motivation for ConceptQL](#markdown-header-motivation-for-conceptql)
+    - [ConceptQL Overview](#markdown-header-conceptql-overview)
+        - [What ConceptQL Looks Like](#markdown-header-what-conceptql-looks-like)
+        - [ConceptQL Diagrams](#markdown-header-conceptql-diagrams)
+        - [Think of Results as a Stream](#markdown-header-think-of-results-as-a-stream)
+        - [Streams have Types](#markdown-header-streams-have-types)
+        - [What *are* Streams Really?](#markdown-header-what-are-streams-really)
+    - [Selection Operators](#markdown-header-selection-operators)
+    - [All Other Operators i.e. Mutation Operators](#markdown-header-all-other-operators-ie-mutation-operators)
+    - [Set Operators](#markdown-header-set-operators)
+        - [Union](#markdown-header-union)
+        - [Intersect](#markdown-header-intersect)
+        - [Complement](#markdown-header-complement)
+        - [Except](#markdown-header-except)
+        - [Discussion about Set Operators](#markdown-header-discussion-about-set-operators)
+            - [Union Operators](#markdown-header-union-operators)
+                - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#markdown-header-q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
+                - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#markdown-header-q-why-arent-all-streams-passed-forward-unaltered-why-union-like-typed-streams)
+    - [Time-oriented Operators](#markdown-header-time-oriented-operators)
+        - [Relative Temporal Operators](#markdown-header-relative-temporal-operators)
+            - [occurrence](#markdown-header-occurrence)
+            - [first](#markdown-header-first)
+            - [last](#markdown-header-last)
+        - [Date Literals](#markdown-header-date-literals)
+            - [date_range](#markdown-header-date_range)
+            - [day](#markdown-header-day)
+            - [What is <date-format\>?](#markdown-header-what-is-date-format%5C)
+        - [Temporal Comparison Operators](#markdown-header-temporal-comparison-operators)
+            - [any_overlap](#markdown-header-any_overlap)
+            - [Edge behaviors](#markdown-header-edge-behaviors)
+            - [Considerations](#markdown-header-considerations)
+        - [Time Windows](#markdown-header-time-windows)
+            - [time_window](#markdown-header-time_window)
+            - [Temporal Operators and Person Streams](#markdown-header-temporal-operators-and-person-streams)
+    - [Type Conversion](#markdown-header-type-conversion)
+        - [Casting to person](#markdown-header-casting-to-person)
+        - [Casting to a visit_occurrence](#markdown-header-casting-to-a-visit_occurrence)
+        - [Casting Loses All Original Information](#markdown-header-casting-loses-all-original-information)
+        - [Cast all the Things!](#markdown-header-cast-all-the-things)
+        - [Casting as a way to fetch all rows](#markdown-header-casting-as-a-way-to-fetch-all-rows)
+    - [Finding a Single Inpatient or Two Outpatient Records as Confirmation of a Diagnosis](#markdown-header-finding-a-single-inpatient-or-two-outpatient-records-as-confirmation-of-a-diagnosis)
+    - [Filtering by People](#markdown-header-filtering-by-people)
+    - [Sub-algorithms within a Larger Algorithm](#markdown-header-sub-algorithms-within-a-larger-algorithm)
+        - [`label` option](#markdown-header-label-option)
+        - [`recall` operator](#markdown-header-recall-operator)
+    - [Algorithms within Algorithms](#markdown-header-algorithms-within-algorithms)
+    - [Values](#markdown-header-values)
+        - [numeric](#markdown-header-numeric)
+        - [Counting](#markdown-header-counting)
+            - [Numeric Value Comparison](#markdown-header-numeric-value-comparison)
+        - [numeric as selection operator](#markdown-header-numeric-as-selection-operator)
+            - [sum](#markdown-header-sum)
+    - [Appendix A - Selection Operators](#markdown-header-appendix-a-selection-operators)
+    - [Appendix B - Algorithm Showcase](#markdown-header-appendix-b-algorithm-showcase)
+        - [Acute Kidney Injury - Narrow Definition and diagnositc procedure](#markdown-header-acute-kidney-injury-narrow-definition-and-diagnositc-procedure)
+        - [Mortality after Myocardial Infarction #3](#markdown-header-mortality-after-myocardial-infarction-3)
+        - [GI Ulcer Hospitalization 2 (5000001002)](#markdown-header-gi-ulcer-hospitalization-2-5000001002)
+    - [Appendix C - Under Development](#markdown-header-appendix-c-under-development)
+        - [Todo List](#markdown-header-todo-list)
+        - [Future Work for Define and Recall](#markdown-header-future-work-for-define-and-recall)
+        - [Considerations for Values](#markdown-header-considerations-for-values)
+        - [Filter Operator](#markdown-header-filter-operator)
+        - [AS option for Except](#markdown-header-as-option-for-except)
+        - [How to Handle fact_relationship Table from CDMv5](#markdown-header-how-to-handle-fact_relationship-table-from-cdmv5)
+        - [Change First/Last to Earliest/Most Recent and change "Nth" to "Nth Earliest" and "Nth Most Recent"](#markdown-header-change-firstlast-to-earliestmost-recent-and-change-nth-to-nth-earliest-and-nth-most-recent)
+        - [Dates when building a cohort](#markdown-header-dates-when-building-a-cohort)
+        - [During optimization?](#markdown-header-during-optimization)
+        - [Casting Operators](#markdown-header-casting-operators)
+        - [Drop support for positional arguments?](#markdown-header-drop-support-for-positional-arguments)
+        - [Validations](#markdown-header-validations)
+            - [General validations](#markdown-header-general-validations)
+            - [Upstream validations - Enforce number of upstream operators](#markdown-header-upstream-validations-enforce-number-of-upstream-operators)
+            - [Argument validations - Enforce number of positional arguments](#markdown-header-argument-validations-enforce-number-of-positional-arguments)
+            - [Option validations](#markdown-header-option-validations)
+            - [`recall`-specific validations](#markdown-header-recall-specific-validations)
+            - [`algorithm`-specific validations](#markdown-header-algorithm-specific-validations)
+            - [Vocabulary validations and warnings](#markdown-header-vocabulary-validations-and-warnings)
+        - [Other data models](#markdown-header-other-data-models)
+            - [Mutator - in theory, these need no modification to continue working](#markdown-header-mutator-in-theory-these-need-no-modification-to-continue-working)
+            - [Selection - These are the operators that will need the most work and might need to be re-thought](#markdown-header-selection-these-are-the-operators-that-will-need-the-most-work-and-might-need-to-be-re-thought)
+        - [Multiple sets of things with ordering](#markdown-header-multiple-sets-of-things-with-ordering)
+        - [Nth line chemo](#markdown-header-nth-line-chemo)
+        - [concurrent with?](#markdown-header-concurrent-with)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -115,9 +116,10 @@ For instance, using ConceptQL we can take a statement that looks like this:
 
 And generate a diagram that looks like this:
 
-
 ```JSON
+
 ["icd9","412"]
+
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -166,9 +168,10 @@ I find seeing examples to be the quickest way to get a sense of a language.  Her
 
 Reading ConceptQL in YAML or JSON seems hard to me.  I prefer to explore ConceptQL using directed graphs.  For instance, the diagram for the simple example listed in YAML above is:
 
-
 ```JSON
+
 ["icd9","412"]
+
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -188,9 +191,10 @@ Reading ConceptQL in YAML or JSON seems hard to me.  I prefer to explore Concept
 
 Each oval depicts a "operator", or rather, a ConceptQL expression.  An arrow between a pair of operators indicates that the results from the operator on the tail of the arrow pass on to the operator at the head of the arrow.  A simple example should help here:
 
-
 ```JSON
+
 ["first",["cpt","99214"]]
+
 ```
 
 ![](README/39d6a8eb71cae51b1d6937c97134e51f04fd47c54535ff0915fe6a8b4f197fb2.png)
@@ -255,9 +259,10 @@ Every table in the CDM structure has a surrogate key column (an ID column).  Whe
 
 So when we execute this ConceptQL statement, the resulting "stream" is all the person IDs for all male patients in the database:
 
-
 ```JSON
+
 ["gender","Male"]
+
 ```
 
 ![](README/c82077b9455d0f9abc2c45ee1a298e38b99c9ce9cd685f65d87b376d7718d7ad.png)
@@ -273,29 +278,19 @@ So when we execute this ConceptQL statement, the resulting "stream" is all the p
 | 8 | 8 | person | 1935-09-01 | 1935-09-01 | 000308435E3E5B76 |
 | 12 | 12 | person | 1929-06-01 | 1929-06-01 | 00048EF1F4791C68 |
 | 14 | 14 | person | 1934-05-01 | 1934-05-01 | 00052705243EA128 |
-| 16 | 16 | person | 1934-01-01 | 1934-01-01 | 0007E57CC13CE880 |
+| 20 | 20 | person | 1938-04-01 | 1938-04-01 | 000B97BA2314E971 |
 
 When we execute this ConceptQL statement, the resulting "stream" is all condition_occurrence IDs that match ICD-9 799.22:
 
-
 ```JSON
+
 ["icd9","799.22"]
+
 ```
 
 ![](README/05f9b844571ffceeed2def3025fb60c68552817b8b73d3c8a76939dbc08b7c65.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 273 | 33363 | condition_occurrence | 2010-06-17 | 2010-06-17 | 799.22 |
-| 440 | 51450 | condition_occurrence | 2009-01-12 | 2009-01-12 | 799.22 |
-| 1783 | 206904 | condition_occurrence | 2008-03-08 | 2008-03-08 | 799.22 |
-| 1830 | 211909 | condition_occurrence | 2010-06-24 | 2010-06-24 | 799.22 |
-| 2086 | 238625 | condition_occurrence | 2008-05-24 | 2008-05-24 | 799.22 |
-| 2272 | 260093 | condition_occurrence | 2009-09-19 | 2009-09-19 | 799.22 |
-| 2525 | 288414 | condition_occurrence | 2009-04-17 | 2009-04-17 | 799.22 |
-| 2772 | 317847 | condition_occurrence | 2009-09-08 | 2009-09-08 | 799.22 |
-| 2924 | 334949 | condition_occurrence | 2009-01-24 | 2009-01-24 | 799.22 |
-| 4072 | 473603 | condition_occurrence | 2008-05-15 | 2008-05-15 | 799.22 |
+```No Results found.```
 
 Generally, I find it helpful to just think of those queries generating a "stream of people" or a "stream of conditions" and not worry about the table of origin or the fact that they are just IDs.
 
@@ -331,9 +326,10 @@ Because streams represent sets of results, its makes sense to include a operator
     - Streams with the different types flow along together concurrently without interacting
         - It does not make sense to union, say, condition_occurrence_ids with visit_occurrence_ids, so streams with different types won't mingle together, but will continue to flow downstream in parallel
 
-
 ```JSON
+
 ["union",["icd9","412"],["icd9","799.22"]]
+
 ```
 
 ![](README/ea935ac31f3b57ff373646780a1fba34a38c9e086dc771eb7fc16c65a7e20cfc.png)
@@ -351,9 +347,10 @@ Because streams represent sets of results, its makes sense to include a operator
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
-
 ```JSON
+
 ["union",["union",["icd9","412"],["icd9","799.22"]],["place_of_service_code","21"]]
+
 ```
 
 ![](README/f766f2e3aa13420e3ba0f823ac7956b311ed7c6c20be26b72324fadd87f36712.png)
@@ -371,9 +368,10 @@ Because streams represent sets of results, its makes sense to include a operator
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
-
 ```JSON
+
 ["union",["icd9","412"],["icd9","799.22"],["place_of_service_code","21"]]
+
 ```
 
 ![](README/a79274742cf6fac6f6c9f4a0eb651aeb452f9c43b537c8e6ccaefecd05b7105c.png)
@@ -399,18 +397,20 @@ Because streams represent sets of results, its makes sense to include a operator
 1. A single stream for each incoming type is sent downstream
      a. If only a single stream of a type is upstream, that stream is essentially unaltered as it is passed downstream
 
-
 ```JSON
+
 ["intersect",["icd9","412"],["primary_diagnosis",true]]
+
 ```
 
 ![](README/af5ae3787e80bf0771f18f1a04fe4c5d9291e1e0f963ac408a7bc198d2f1ee28.png)
 
 ```No Results.  Statement is experimental.```
 
-
 ```JSON
+
 ["intersect",["icd9","412"],["gender","Male"]]
+
 ```
 
 ![](README/514f263e976d07c0d9e0a86c79bcbdcddc7d444d7b72135294ad78758effd28f.png)
@@ -428,9 +428,10 @@ Because streams represent sets of results, its makes sense to include a operator
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
-
 ```JSON
+
 ["intersect",["icd9","412"],["primary_diagnosis",true],["gender","Male"],["race","White"]]
+
 ```
 
 ![](README/11f57941951bad5a75f9a16f38a31a3c6bf3046a475aac6e398e780892fab4ad.png)
@@ -441,9 +442,10 @@ Because streams represent sets of results, its makes sense to include a operator
 
 This operator will take the complement of each set of IDs in the incoming streams.
 
-
 ```JSON
+
 ["complement",["icd9","412"]]
+
 ```
 
 ![](README/c2157d8a6b73abe4f22ba5042159f32502c74bf6d762be28d2df6831586822c7.png)
@@ -463,18 +465,20 @@ This operator will take the complement of each set of IDs in the incoming stream
 
 If you're familiar with set operations, the complement of a union is the intersect of the complements of the items unioned.  So in our world, these next two examples are identical:
 
-
 ```JSON
+
 ["complement",["union",["icd9","412"],["primary_diagnosis",true]]]
+
 ```
 
 ![](README/02f44ad35d266ddd0a4df1691d26bf4a297b30604fc3f44b0391d6d852d23a9f.png)
 
 ```No Results.  Statement is experimental.```
 
-
 ```JSON
+
 ["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]]
+
 ```
 
 ![](README/a4450e8c0fe0e2fde92fe9bd61952f907b1976c1aa3ba963b809bed079d42b09.png)
@@ -483,27 +487,30 @@ If you're familiar with set operations, the complement of a union is the interse
 
 But please be aware that this behavior of complement only affects streams of the same type.  If more than one stream is involved, you need to evaluate the effects of complement on a stream-by-stream basis:
 
-
 ```JSON
+
 ["complement",["union",["icd9","412"],["primary_diagnosis",true],["cpt","99214"]]]
+
 ```
 
 ![](README/dbc66b3ae6bd7123d77dd04b64f8a24498d048725a55c5340b15f5ae0a1ff307.png)
 
 ```No Results.  Statement is experimental.```
 
-
 ```JSON
+
 ["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]],["complement",["cpt","99214"]]]
+
 ```
 
 ![](README/a9b4528726adec2a90f3f00139d8d0492f13c51f03c2f9ed6a5134b1b26b44a9.png)
 
 ```No Results.  Statement is experimental.```
 
-
 ```JSON
+
 ["union",["intersect",["complement",["icd9","412"]],["complement",["primary_diagnosis",true]]],["complement",["cpt","99214"]]]
+
 ```
 
 ![](README/a4bc7382a1154ea9856544fd48418f3dd9ce474ca94b8859fc323749c6cc1f55.png)
@@ -514,18 +521,20 @@ But please be aware that this behavior of complement only affects streams of the
 
 This operator takes two sets of incoming streams, a left-hand stream and a right-hand stream.  The operator matches like-type streams between the left-hand and right-hand streams. The operator removes any results in the left-hand stream if they appear in the right-hand stream.  The operator passes only results for the left-hand stream downstream.  The operator discards all results in the right-hand stream. For example:
 
-
 ```JSON
+
 ["except",{"left":["icd9","412"],"right":["primary_diagnosis",true]}]
+
 ```
 
 ![](README/462153be527b28dc2cb5259c0aec62e1f529e8b60dc6e9c23fd1e06e8be933c9.png)
 
 ```No Results.  Statement is experimental.```
 
-
 ```JSON
+
 ["intersect",["icd9","412"],["complement",["primary_diagnosis",true]]]
+
 ```
 
 ![](README/da450cdd0c94a1301bd98560339a45caa8041e09974352a56ecfb144e9a5e4d4.png)
@@ -534,31 +543,33 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 
 If the left-hand stream has no types that match the right-hand stream, the left-hand stream passes through unaffected:
 
-
 ```JSON
+
 ["except",{"left":["icd9","412"],"right":["cpt","99214"]}]
+
 ```
 
 ![](README/253845fe6162621af407ebd110296ff4f6d8a3f23ec75dfb4ea8cda30be71262.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 6354 | 730080 | condition_occurrence | 2009-05-22 | 2009-05-22 | 412 |
-| 405 | 47310 | condition_occurrence | 2010-04-21 | 2010-04-21 | 412 |
-| 37067 | 4195911 | condition_occurrence | 2009-02-26 | 2009-02-26 | 412 |
-| 31965 | 3622631 | condition_occurrence | 2008-05-09 | 2008-05-09 | 412 |
-| 62025 | 6984372 | condition_occurrence | 2009-08-24 | 2009-08-24 | 412 |
-| 7548 | 861875 | condition_occurrence | 2010-08-19 | 2010-09-08 | 412 |
-| 72056 | 8102530 | condition_occurrence | 2008-02-14 | 2008-02-17 | 412 |
-| 29548 | 3346625 | condition_occurrence | 2008-02-12 | 2008-02-19 | 412 |
-| 51224 | 5768620 | condition_occurrence | 2010-04-21 | 2010-04-21 | 412 |
-| 62051 | 6987562 | condition_occurrence | 2009-06-16 | 2009-06-16 | 412 |
+| 173 | 20037 | condition_occurrence | 2008-09-23 | 2008-09-23 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 180 | 21006 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 168 | 19736 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
+| 183 | 21619 | condition_occurrence | 2010-12-26 | 2010-12-26 | 412 |
+| 212 | 25417 | condition_occurrence | 2008-11-16 | 2008-11-20 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 160 | 18555 | condition_occurrence | 2008-12-24 | 2008-12-25 | 412 |
+| 91 | 10865 | condition_occurrence | 2009-11-08 | 2009-11-08 | 412 |
+| 207 | 24721 | condition_occurrence | 2008-02-17 | 2008-02-17 | 412 |
 
 And just to show how multiple streams behave:
 
-
 ```JSON
+
 ["except",{"left":["union",["icd9","412"],["gender","Male"],["cpt","99214"]],"right":["union",["primary_diagnosis",true],["race","White"]]}]
+
 ```
 
 ![](README/f0c734b099841a754ae0366afb00e992ad4814479b65e4a7de23c6e3dd85c09a.png)
@@ -574,16 +585,16 @@ And just to show how multiple streams behave:
 - This feature lets us do interesting things, like find the first occurrence of either an MI or Death as in the example below
     - Throw in a few more criteria and you could find the first occurrence of all censor events for each patient
 
-
 ```JSON
+
 ["first",["union",["icd9","412"],["death",true]]]
+
 ```
 
 ![](README/1102fa717b1c2df67af5220bf3ae219afafd79be7bba0c117e301983385ada52.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 16 | 16 | death | 2010-12-01 | 2010-12-01 |  |
 | 17 | 1712 | condition_occurrence | 2008-08-25 | 2008-08-25 | 412 |
 | 37 | 4359 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
 | 53 | 5751 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
@@ -593,15 +604,17 @@ And just to show how multiple streams behave:
 | 75 | 8397 | condition_occurrence | 2010-10-06 | 2010-10-06 | 412 |
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
+| 88 | 10443 | condition_occurrence | 2010-05-26 | 2010-05-26 | 412 |
 
 ##### Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?
 
 - The way Intersect works, if we passed like-typed streams forward without unioning them, Intersect would end up intersecting the two un-unioned like-type streams and that's not what we intended
 - Essentially, these two diagrams would be identical:
 
-
 ```JSON
+
 ["intersect",["union",["icd9","412"],["icd9","799.22"]],["cpt","99214"]]
+
 ```
 
 ![](README/d64993258ffbef9406d9ab9136de7af530626b3a69e9eeb75835e11f11dabf62.png)
@@ -619,9 +632,10 @@ And just to show how multiple streams behave:
 | 79 | 8618 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
 
-
 ```JSON
+
 ["intersect",["intersect",["icd9","412"],["icd9","799.22"]],["cpt","99214"]]
+
 ```
 
 ![](README/defbd0b853d895802663f507761ad297d82e167f516c6082686a2a19b76012c5.png)
@@ -665,33 +679,24 @@ When looking at a set of results for a person, perhaps we want to select just th
         - e.g. -4 => fourth from last
     - 0 is undefined?
 
-
 ```JSON
+
 ["occurrence",3,["icd9","412"]]
+
 ```
 
 ![](README/328467a6a419c7c05e299b8097e5e000686068ded8dc6d5f2e2de6f51976c315.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 487 | 56319 | condition_occurrence | 2009-01-15 | 2009-01-19 | 412 |
-| 506 | 59000 | condition_occurrence | 2010-07-19 | 2010-07-19 | 412 |
-| 629 | 73033 | condition_occurrence | 2010-09-20 | 2010-09-20 | 412 |
-| 985 | 114982 | condition_occurrence | 2009-09-29 | 2009-09-29 | 412 |
-| 1336 | 156290 | condition_occurrence | 2009-10-03 | 2009-10-03 | 412 |
-| 1779 | 206548 | condition_occurrence | 2010-02-09 | 2010-02-09 | 412 |
-| 2475 | 282601 | condition_occurrence | 2009-02-28 | 2009-02-28 | 412 |
-| 2529 | 289044 | condition_occurrence | 2010-07-18 | 2010-07-19 | 412 |
-| 2942 | 337181 | condition_occurrence | 2010-01-22 | 2010-01-22 | 412 |
-| 3206 | 365939 | condition_occurrence | 2009-03-25 | 2009-03-25 | 412 |
+```No Results found.```
 
 #### first
 
 - Operator that is shorthand for writing "occurrence: 1"
 
-
 ```JSON
+
 ["first",["icd9","412"]]
+
 ```
 
 ![](README/04491942fcbd741982514f9eb12aeecf3d54b5b69a2b50c8331f7700169d5521.png)
@@ -713,9 +718,10 @@ When looking at a set of results for a person, perhaps we want to select just th
 
 - Operator that is just shorthand for writing "occurrence: -1"
 
-
 ```JSON
+
 ["last",["icd9","412"]]
+
 ```
 
 ![](README/ebacbd092e3d1a3c7b745a381e51e8ff9d63a21db23a16940193e18e57bc866f.png)
@@ -794,9 +800,10 @@ Ryan's Sidebar on These Definitions:
 
 When comparing results in L against a date range, results in L continue downstream only if they pass the comparison.
 
-
 ```JSON
+
 ["during",{"left":["icd9","412"],"right":["date_range",{"start":"2010-01-01","end":"2010-12-31"}]}]
+
 ```
 
 ![](README/ba90ef705f7be91c53c5eb4a81a439fa0f7c48532214bd3db3cc5c069160543e.png)
@@ -820,9 +827,10 @@ When comparing results in L against a set of results in R, the temporal operator
 - On a per person basis, the temporal operator joins all results in the L stream to all results in the R stream
     - Any results in the L stream that meet the temporal comparison against any results in the R stream continue downstream
 
-
 ```JSON
+
 ["during",{"left":["icd9","412"],"right":["payer","Part A"]}]
+
 ```
 
 ![](README/ed039f82867241393b1a6a7153d3690461103934c72c1f3eaa3d99a12bb40885.png)
@@ -846,47 +854,27 @@ Imagine events 1-1-2-1-2-1.  In my mind, three 1's come before a 2 and two 1's c
 
 If we're looking for events in L that occur before events in R, then any event in L that occurs before the last event in R technically meet the comparison of "before".  The reverse is true for after: all events in L that occur after the first event in R technically occur after R.
 
-
 ```JSON
+
 ["before",{"left":["icd9","412"],"right":["icd9","799.22"]}]
+
 ```
 
 ![](README/ee283d6a4b69cf10da2df703be3a16830be9cd8cd4f68c5f7afdf558ea28fa76.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 53785 | 6053034 | condition_occurrence | 2008-07-18 | 2008-07-18 | 412 |
-| 4289 | 496274 | condition_occurrence | 2008-07-19 | 2008-07-19 | 412 |
-| 103062 | 11580605 | condition_occurrence | 2008-08-28 | 2008-08-28 | 412 |
-| 12524 | 1422629 | condition_occurrence | 2009-08-25 | 2009-08-25 | 412 |
-| 20306 | 2302248 | condition_occurrence | 2010-01-04 | 2010-01-04 | 412 |
-| 81188 | 9131971 | condition_occurrence | 2010-02-15 | 2010-02-15 | 412 |
-| 81188 | 9132070 | condition_occurrence | 2009-11-07 | 2009-11-07 | 412 |
-| 97169 | 10930462 | condition_occurrence | 2008-02-05 | 2008-02-05 | 412 |
-| 98040 | 11029333 | condition_occurrence | 2008-10-02 | 2008-10-02 | 412 |
-| 98040 | 11029388 | condition_occurrence | 2008-08-09 | 2008-08-09 | 412 |
+```No Results found.```
 
 If this is not the behavior you desire, use one of the sequence operators to select which event in R should be the one used to do comparison
 
-
 ```JSON
+
 ["before",{"left":["icd9","412"],"right":["first",["icd9","799.22"]]}]
+
 ```
 
 ![](README/de589af36fa854e006a1563c93e644e2210f2a5616babb779f7f38aadb6c1ed7.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 53785 | 6053034 | condition_occurrence | 2008-07-18 | 2008-07-18 | 412 |
-| 4289 | 496274 | condition_occurrence | 2008-07-19 | 2008-07-19 | 412 |
-| 103062 | 11580605 | condition_occurrence | 2008-08-28 | 2008-08-28 | 412 |
-| 12524 | 1422629 | condition_occurrence | 2009-08-25 | 2009-08-25 | 412 |
-| 20306 | 2302248 | condition_occurrence | 2010-01-04 | 2010-01-04 | 412 |
-| 81188 | 9131971 | condition_occurrence | 2010-02-15 | 2010-02-15 | 412 |
-| 81188 | 9132070 | condition_occurrence | 2009-11-07 | 2009-11-07 | 412 |
-| 97169 | 10930462 | condition_occurrence | 2008-02-05 | 2008-02-05 | 412 |
-| 98040 | 11029333 | condition_occurrence | 2008-10-02 | 2008-10-02 | 412 |
-| 98040 | 11029388 | condition_occurrence | 2008-08-09 | 2008-08-09 | 412 |
+```No Results found.```
 
 #### Considerations
 
@@ -922,26 +910,20 @@ There are situations when the date columns associated with a result should have 
         - 'end' represents the end_date for each result
         - See the example below
 
-
 ```JSON
+
 ["during",{"left":["icd9","799.22"],"right":["time_window",["icd9","412"],{"start":"-30d","end":"30d"}]}]
+
 ```
 
 ![](README/8101d9b89d9ba8070d585432707b43a8acdb4c2a3e9d37c3f7114b5e3ea9e800.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 2086 | 238625 | condition_occurrence | 2008-05-24 | 2008-05-24 | 799.22 |
-| 5121 | 590274 | condition_occurrence | 2009-03-26 | 2009-04-04 | 799.22 |
-| 11427 | 1298251 | condition_occurrence | 2008-09-06 | 2008-09-06 | 799.22 |
-| 16432 | 1870381 | condition_occurrence | 2009-02-16 | 2009-02-16 | 799.22 |
-| 37733 | 4272148 | condition_occurrence | 2010-03-09 | 2010-03-09 | 799.22 |
-| 54141 | 6093274 | condition_occurrence | 2010-06-13 | 2010-06-13 | 799.22 |
-| 110498 | 12420479 | condition_occurrence | 2009-04-30 | 2009-04-30 | 799.22 |
-
+```No Results found.```
 
 ```JSON
+
 ["time_window",["icd9","412"],{"start":"-2y","end":"-2y"}]
+
 ```
 
 ![](README/15268bc45993d3f57ccf915877f91e48bdee684f24faa614249915833cac4af9.png)
@@ -959,9 +941,10 @@ There are situations when the date columns associated with a result should have 
 | 79 | 8618 | condition_occurrence | 2007-01-28 | 2007-01-30 | 412 |
 | 86 | 9882 | condition_occurrence | 2007-01-03 | 2007-01-09 | 412 |
 
-
 ```JSON
+
 ["time_window",["icd9","412"],{"start":"-2m-2d","end":"3d1y"}]
+
 ```
 
 ![](README/cc960a268d51ccf2ebde657d36848f780213834844900018bce3d111843f7b0f.png)
@@ -979,9 +962,10 @@ There are situations when the date columns associated with a result should have 
 | 79 | 8618 | condition_occurrence | 2008-11-26 | 2010-02-02 | 412 |
 | 86 | 9882 | condition_occurrence | 2008-11-01 | 2010-01-12 | 412 |
 
-
 ```JSON
+
 ["time_window",["place_of_service_code","21"],{"start":"","end":"start"}]
+
 ```
 
 ![](README/886bf85249a704668a55c5161bceaac10be4a41a94b91606f49851dfa017526c.png)
@@ -999,9 +983,10 @@ There are situations when the date columns associated with a result should have 
 | 17 | 731 | visit_occurrence | 2010-06-02 | 2010-06-02 | Inpatient |
 | 17 | 732 | visit_occurrence | 2010-06-16 | 2010-06-16 | Inpatient |
 
-
 ```JSON
+
 ["time_window",["icd9","412"],{"start":"end","end":"start"}]
+
 ```
 
 ![](README/6705af65d728c0d5c50d6c4d46253017a91eb459dbb1f40f92449f05d5562f4a.png)
@@ -1023,25 +1008,26 @@ There are situations when the date columns associated with a result should have 
 
 Person streams carry a patient's date of birth in their date columns.  This makes them almost useless when they are part of the L stream of a temporal operator.  But person streams are useful as the R stream.  By ```time_window```ing the patient's date of birth, we can filter based on the patient's age like so:
 
-
 ```JSON
+
 ["after",{"left":["icd9","412"],"right":["time_window",["gender","Male"],{"start":"50y","end":"50y"}]}]
+
 ```
 
 ![](README/68fac940a32c7e40caacf8e560c61da552d57633d015ba98f2e98ec040a00c5b.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 92077 | 10363643 | condition_occurrence | 2010-03-08 | 2010-03-08 | 412 |
-| 66609 | 7497031 | condition_occurrence | 2009-05-25 | 2009-05-28 | 412 |
-| 13729 | 1563187 | condition_occurrence | 2008-06-13 | 2008-06-13 | 412 |
-| 10876 | 1237925 | condition_occurrence | 2008-09-13 | 2008-09-13 | 412 |
-| 10876 | 1237830 | condition_occurrence | 2008-02-02 | 2008-02-03 | 412 |
-| 54683 | 6153652 | condition_occurrence | 2008-10-24 | 2008-10-28 | 412 |
-| 16106 | 1833669 | condition_occurrence | 2009-07-06 | 2009-07-13 | 412 |
-| 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
-| 52736 | 5937885 | condition_occurrence | 2008-05-07 | 2008-05-07 | 412 |
-| 62215 | 7004785 | condition_occurrence | 2008-06-10 | 2008-06-10 | 412 |
+| 251 | 30831 | condition_occurrence | 2009-05-13 | 2009-05-13 | 412 |
+| 191 | 22933 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 270 | 32981 | condition_occurrence | 2009-03-31 | 2009-03-31 | 412 |
+| 53 | 5751 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 108 | 13741 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 215 | 25888 | condition_occurrence | 2008-10-31 | 2008-10-31 | 412 |
+| 215 | 25875 | condition_occurrence | 2008-07-28 | 2008-07-28 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 146 | 17041 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
 
 ## Type Conversion
 
@@ -1052,25 +1038,26 @@ There are situations where it is appropriate to convert the type of a stream of 
 - Useful if we're just checking for the presence of a condition for a person
 - E.g. We want to know *if* a person has an old MI, not when an MI or how many MIs occurred
 
-
 ```JSON
+
 ["person",["icd9","412"]]
+
 ```
 
 ![](README/8ed478d8c81a58a202d0c51348fca246df206fc24a0567b163d4e0bdab56ca46.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 251 | 251 | person | 1928-10-01 | 1928-10-01 | 008645209D3E025E |
-| 66532 | 66532 | person | 1943-04-01 | 1943-04-01 | 96AB8ADC5FA7AD8C |
-| 64221 | 64221 | person | 1934-04-01 | 1934-04-01 | 916F76F7FDF6B6CF |
-| 111839 | 111839 | person | 1938-12-01 | 1938-12-01 | FDE56ED4546D17F6 |
-| 25643 | 25643 | person | 1916-06-01 | 1916-06-01 | 39BA7D25EC6D1B14 |
-| 79317 | 79317 | person | 1943-02-01 | 1943-02-01 | B441BDCB76C7C267 |
-| 108128 | 108128 | person | 1935-02-01 | 1935-02-01 | F58409ED69652B4A |
-| 77900 | 77900 | person | 1934-05-01 | 1934-05-01 | B0E710725FE3FE97 |
-| 61145 | 61145 | person | 1942-07-01 | 1942-07-01 | 8A595528CF5E2859 |
-| 18149 | 18149 | person | 1946-09-01 | 1946-09-01 | 28AFD67E63039098 |
+| 17 | 17 | person | 1919-09-01 | 1919-09-01 | 0007F12A492FD25D |
+| 37 | 37 | person | 1922-12-01 | 1922-12-01 | 001731EB127233DA |
+| 53 | 53 | person | 1931-02-01 | 1931-02-01 | 001CAFF084B21E14 |
+| 59 | 59 | person | 1925-07-01 | 1925-07-01 | 001EA2F4DB30F105 |
+| 64 | 64 | person | 1920-04-01 | 1920-04-01 | 0021B3C854C968C8 |
+| 71 | 71 | person | 1925-09-01 | 1925-09-01 | 00237322613CFC3C |
+| 75 | 75 | person | 1929-03-01 | 1929-03-01 | 00244B6D9AB50F9B |
+| 79 | 79 | person | 1940-06-01 | 1940-06-01 | 0024E5A7B7272E75 |
+| 86 | 86 | person | 1922-05-01 | 1922-05-01 | 00291F39917544B1 |
+| 88 | 88 | person | 1925-10-01 | 1925-10-01 | 00292D3DBB23CE44 |
 
 ### Casting to a visit_occurrence
 
@@ -1080,49 +1067,43 @@ There are situations where it is appropriate to convert the type of a stream of 
     - It is possible to compare the streams temporally, but CDM provides a visit_occurrence table to explicitly tie a set of conditions to a set of procedures
 - Casting both streams to visit_occurrence streams allows us to gather all visit_occurrences for which a set of conditions/procedures occurred in the same visit
 
-
 ```JSON
+
 ["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99214"]]]
+
 ```
 
 ![](README/62323426e381ec21c967971a67e1f4a6d89dae92154bd937284e00b67f67fdd3.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 59633 | 2958903 | visit_occurrence | 2010-07-08 | 2010-07-08 | Office |
-| 8462 | 423786 | visit_occurrence | 2008-08-24 | 2008-08-24 | Office |
-| 48614 | 2410554 | visit_occurrence | 2009-06-05 | 2009-06-05 | Office |
-| 92639 | 4587768 | visit_occurrence | 2009-04-25 | 2009-04-25 | Office |
-| 46156 | 2292353 | visit_occurrence | 2008-06-18 | 2008-06-18 | Office |
-| 105614 | 5223564 | visit_occurrence | 2008-02-03 | 2008-02-03 | Office |
-| 21343 | 1061266 | visit_occurrence | 2008-04-25 | 2008-04-25 | Office |
-| 62315 | 3086112 | visit_occurrence | 2008-05-27 | 2008-05-27 | Office |
-| 18286 | 914814 | visit_occurrence | 2010-02-10 | 2010-02-10 | Office |
-| 27340 | 1365178 | visit_occurrence | 2009-06-17 | 2009-06-17 | Office |
+| 149 | 7812 | visit_occurrence | 2010-11-22 | 2010-11-22 | Office |
+| 260 | 14055 | visit_occurrence | 2008-08-17 | 2008-08-17 | Office |
 
 Many tables have a foreign key (FK) reference to the visit_occurrence table.  If we cast a result to a visit_occurrence, and its table of origin has a visit_occurrence_id FK column, the result becomes a visit_occurrence result corresponding to the row pointed to by visit_occurrence_id.  If the row's visit_occurrence_id is NULL, the result is discarded from the stream.
 
 If the result's table of origin has no visit_occurrence_id column, we will instead replace the result with ALL visit_occurrences for the person assigned to the result.  This allows us to convert between a person stream and visit_occurrence stream and back.  E.g. we can get all male patients, then ask for their visit_occurrences later downstream.
 
-
 ```JSON
+
 ["visit_occurrence",["gender","Male"]]
+
 ```
 
 ![](README/e8630103287f7c9d28eff40b3b1826e24846e776b877f7b8554257acbe621e1c.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 10295 | 516092 | visit_occurrence | 2008-04-08 | 2008-04-08 | Outpatient |
-| 10295 | 516093 | visit_occurrence | 2008-07-28 | 2008-07-28 | Outpatient |
-| 10295 | 516094 | visit_occurrence | 2009-05-27 | 2009-05-27 | Outpatient |
-| 10295 | 516095 | visit_occurrence | 2008-09-03 | 2008-09-03 | Outpatient |
-| 10295 | 516096 | visit_occurrence | 2008-05-31 | 2008-05-31 | Outpatient |
-| 10295 | 516097 | visit_occurrence | 2008-09-13 | 2008-09-13 | Outpatient |
-| 10295 | 516098 | visit_occurrence | 2008-08-23 | 2008-08-23 | Outpatient |
-| 10295 | 516099 | visit_occurrence | 2008-04-28 | 2008-04-28 | Office |
-| 10295 | 516100 | visit_occurrence | 2009-03-26 | 2009-03-26 | Office |
-| 10295 | 516101 | visit_occurrence | 2009-09-22 | 2009-09-22 | Office |
+| 129 | 6718 | visit_occurrence | 2008-10-28 | 2008-10-28 | Outpatient |
+| 129 | 6719 | visit_occurrence | 2008-11-26 | 2008-12-16 | Outpatient |
+| 129 | 6720 | visit_occurrence | 2008-08-09 | 2008-08-10 | Outpatient |
+| 129 | 6721 | visit_occurrence | 2009-07-30 | 2009-07-30 | Outpatient |
+| 129 | 6722 | visit_occurrence | 2008-04-22 | 2008-04-22 | Outpatient |
+| 129 | 6723 | visit_occurrence | 2009-11-24 | 2009-11-24 | Outpatient |
+| 129 | 6724 | visit_occurrence | 2008-05-05 | 2008-05-05 | Outpatient |
+| 129 | 6725 | visit_occurrence | 2008-04-22 | 2008-04-22 | Outpatient |
+| 129 | 6726 | visit_occurrence | 2009-02-13 | 2009-02-13 | Outpatient |
+| 129 | 6727 | visit_occurrence | 2009-02-28 | 2009-02-28 | Outpatient |
 
 ### Casting Loses All Original Information
 
@@ -1136,9 +1117,10 @@ The general rule will be that if the source type has a defined relationship with
 
 INSERT HANDY TABLE SHOWING CONVERSION MATRIX HERE
 
-
 ```JSON
+
 ["procedure_cost",["intersect",["cpt","70012"],["procedure",["intersect",["place_of_service_code","21"],["visit_occurrence",["icd9","412"]]]]]]
+
 ```
 
 ![](README/6a34c0ef589c9c976fe41f3e67e799e198499f5b9c3ebfd240fb91f73e893573.png)
@@ -1149,47 +1131,106 @@ INSERT HANDY TABLE SHOWING CONVERSION MATRIX HERE
 
 The casting operator doubles as a way to fetch all rows for a single type.  Provide the casting operator with an argument of ```true``` (instead of an upstream operator) to get all rows as results:
 
-
 ```JSON
+
 ["death",true]
+
 ```
 
 ![](README/e9b384fa7dec5f1a06479c4b289e06b1e60e4f23f7630aff6d03c52595f500f8.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 16 | 16 | death | 2010-12-01 | 2010-12-01 |  |
 | 177 | 177 | death | 2010-07-01 | 2010-07-01 |  |
-| 293 | 293 | death | 2010-01-01 | 2010-01-01 |  |
-| 306 | 306 | death | 2010-05-01 | 2010-05-01 |  |
-| 375 | 375 | death | 2010-03-01 | 2010-03-01 |  |
-| 429 | 429 | death | 2010-03-01 | 2010-03-01 |  |
-| 450 | 450 | death | 2010-11-01 | 2010-11-01 |  |
-| 555 | 555 | death | 2010-11-01 | 2010-11-01 |  |
-| 565 | 565 | death | 2010-06-01 | 2010-06-01 |  |
-| 603 | 603 | death | 2010-06-01 | 2010-06-01 |  |
 
 This comes in handy for situations like these:
 
-
 ```JSON
+
 ["person_filter",{"left":["gender","Male"],"right":["death",true]}]
+
 ```
 
 ![](README/58113a57a37431a402d2547369eba3a481bf1dbbfd82dc384406a5c91f6df01f.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 55510 | 55510 | person | 1930-08-01 | 1930-08-01 | 7D34060FA1EF58C6 |
-| 74808 | 74808 | person | 1927-02-01 | 1927-02-01 | A9BE60D395FEE13D |
-| 32780 | 32780 | person | 1961-09-01 | 1961-09-01 | 49BF11D11CEF2328 |
-| 87909 | 87909 | person | 1934-04-01 | 1934-04-01 | C7727009E7DDF6B8 |
-| 43890 | 43890 | person | 1920-03-01 | 1920-03-01 | 6309F87AE1E03227 |
-| 46052 | 46052 | person | 1941-09-01 | 1941-09-01 | 67D8035124FE474E |
-| 88540 | 88540 | person | 1952-08-01 | 1952-08-01 | C8E882134C354ADF |
-| 10616 | 10616 | person | 1946-07-01 | 1946-07-01 | 179C0EDEB061D6E3 |
-| 74892 | 74892 | person | 1927-02-01 | 1927-02-01 | A9F0108311BE3424 |
-| 84318 | 84318 | person | 1938-06-01 | 1938-06-01 | BF7387DC991F39A9 |
+| 177 | 177 | person | 1939-11-01 | 1939-11-01 | 005E0AB5172E715F |
+
+## Finding a Single Inpatient or Two Outpatient Records as Confirmation of a Diagnosis
+
+A very common pattern in algorithms is to consider a condition to be valid if it is seen in the inpatient file once, in the outpatient file at least twice, with a minimum separation between the two occurrences.
+
+We have created an operator that handles this pattern: `OneInTwoOut`
+
+```JSON
+
+["one_in_two_out",["icd9","250.00"],{"outpatient_minimum_gap":"30d"}]
+
+```
+
+![](README/dcaa563941e6398b6a1d753caa9caadbc1034f26ad0417b0f1e1d9d7edb03f58.png)
+
+| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
+| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
+| 2 | 50 | visit_occurrence | 2009-05-11 | 2009-05-11 | Office |
+| 8 | 298 | visit_occurrence | 2008-10-17 | 2008-10-17 | Office |
+| 9 | 299 | visit_occurrence | 2010-08-01 | 2010-08-01 | Outpatient |
+| 11 | 346 | visit_occurrence | 2008-06-17 | 2008-06-17 | Office |
+| 13 | 407 | visit_occurrence | 2008-03-05 | 2008-03-05 | Outpatient |
+| 14 | 641 | visit_occurrence | 2009-06-05 | 2009-06-05 | Office |
+| 15 | 694 | visit_occurrence | 2008-09-24 | 2008-09-24 | Office |
+| 17 | 896 | visit_occurrence | 2008-04-14 | 2008-04-14 | Office |
+| 19 | 1115 | visit_occurrence | 2008-01-30 | 2008-02-01 | Office |
+| 21 | 1155 | visit_occurrence | 2008-10-15 | 2008-10-21 | Inpatient |
+
+The `one_in_two_out` operator yields a single row per patient.  The row is the earliest confirmed event from the operator's upstream set of events.
+
+The `one_in_two_out` operator uses the file from which a row came from to determine if the row represents an "inpatient" record or an "outpatient" record.  The place of service associated with a record is not taken into account.  Nothing about the associated visit is considered either.
+
+`condition_occurrence` rows with an xxx_type_concept_id of "inpatient *" are considered inpatient records.  All other xxx_type_concept_ids are considered outpatient.
+
+For non-`condition_occurrence` rows, e.g. `procedure_occurrence`, `drug_exposure`, or `observation`, they are treated as inpatient records as in most cases it makes sense that a single procedure, prescription, or lab record represents an actual event not subject to the skepticism with which we treat outpatient diagnoses.
+
+In order to simplify how sets of inpatient and outpatient records are compared to each other temporally, we collapse each incoming row's date range to a single date.  Users can choose which date to use for both inpatient and outpatient records.
+
+- Inpatient Length of Stay
+    - Enforces a minimum length of stay for inpatient records
+    - If given a whole number greater than 0, requires that the patient had been hospitalized for at least that many days
+    - Optional
+    - Default: empty
+    - If left empty, length of stay is ignored
+    - Length of Stay (LOS) is calculated as:
+        - If (end_date - start_date) < 2, then LOS is 1
+        - else LOS is (end_date - start_date) + 1
+- Inpatient Return Date
+    - Determines which date from an inpatient record should be used as the date in which the associated condition "occurred"
+    - Options
+        - Admit Date
+        - Discharge Date
+    - Optional
+    - Defaults to discharge date (end_date of the given condition_occurrence)
+        - The discharge date is preferred over the admit date because only at discharge can we say for certain a patient was diagnosed with a given condition.  We cannot be certain a patient had the condition at the time of admission
+- Outpatient Minimum Gap
+    - Requires that the second, confirming outpatient diagnosis must occur at least this many days after the initial diagnosis
+    - Uses same time adjustment syntax as `time_window`, e.g. 1d3m10y
+    - Required
+    - Default: 30d
+- Outpatient Maximum Gap
+    - Requires that the second, confirming outpatient diagnosis must occur at within this many days after the initial diagnosis
+    - Uses same time adjustment syntax as `time_window`, e.g. 1d3m10y
+    - Optional
+    - Default: empty
+    - When empty, the confirming diagnosis may occur at any time after the minimum_gap to be considered valid
+    - This option is useful when attempting to limit confirming diagnoses for acute diseases, e.g. if attempting to find confirmation of the flu, it would be advisable to set this option in order to limit confirmation to distinct periods when a patient had the flu
+- Outpatient Return Date
+    - Determines which date from an outpatient record should be used as the date in which the associated condition "occurred"
+    - Options
+        - Start Date
+        - End Date
+    - Optional
+    - Defaults to start date
+        - The start date is preferred over the end date because the majority of outpatient events are limited to a single and those that are billed over many days represent cases where all conditions are known at the time of the first day of the outpatient visit
 
 ## Filtering by People
 
@@ -1197,71 +1238,75 @@ Often we want to filter out a set of results by people.  For instance, say we wa
 
 Unlike the ```except``` operator, the person_filter operator will use all types of all streams in the right-hand side to filter out results in all types of all streams on the left hand side.
 
-
 ```JSON
+
 ["person_filter",{"left":["icd9","412"],"right":["gender","Male"]}]
+
 ```
 
 ![](README/0360fc0c2b7a88fd82ffc4d13387b76766649d5d42aa8f9349bbf60a81ac6119.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 92077 | 10363643 | condition_occurrence | 2010-03-08 | 2010-03-08 | 412 |
-| 66609 | 7497031 | condition_occurrence | 2009-05-25 | 2009-05-28 | 412 |
-| 13729 | 1563187 | condition_occurrence | 2008-06-13 | 2008-06-13 | 412 |
-| 10876 | 1237925 | condition_occurrence | 2008-09-13 | 2008-09-13 | 412 |
-| 10876 | 1237830 | condition_occurrence | 2008-02-02 | 2008-02-03 | 412 |
-| 54683 | 6153652 | condition_occurrence | 2008-10-24 | 2008-10-28 | 412 |
-| 16106 | 1833669 | condition_occurrence | 2009-07-06 | 2009-07-13 | 412 |
-| 33793 | 3829115 | condition_occurrence | 2008-01-17 | 2008-01-21 | 412 |
-| 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
-| 52736 | 5937885 | condition_occurrence | 2008-05-07 | 2008-05-07 | 412 |
+| 251 | 30831 | condition_occurrence | 2009-05-13 | 2009-05-13 | 412 |
+| 191 | 22933 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 270 | 32981 | condition_occurrence | 2009-03-31 | 2009-03-31 | 412 |
+| 53 | 5751 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 108 | 13741 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 215 | 25888 | condition_occurrence | 2008-10-31 | 2008-10-31 | 412 |
+| 215 | 25875 | condition_occurrence | 2008-07-28 | 2008-07-28 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 146 | 17041 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
 
 But we can get crazier.  The right-hand side doesn't have to be a person stream.  If a non-person stream is used in the right-hand side, the person_filter will cast all right-hand streams to person first and use the union of those streams:
 
-
 ```JSON
+
 ["person_filter",{"left":["icd9","412"],"right":["cpt","99214"]}]
+
 ```
 
 ![](README/26fd52b5ac55438dd9f81b4a3f3913f1058c9f225c8a5e129007c1e9413d5881.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 92077 | 10363643 | condition_occurrence | 2010-03-08 | 2010-03-08 | 412 |
-| 108031 | 12142323 | condition_occurrence | 2009-11-25 | 2009-11-25 | 412 |
-| 56414 | 6351863 | condition_occurrence | 2008-11-15 | 2008-11-15 | 412 |
-| 66609 | 7497031 | condition_occurrence | 2009-05-25 | 2009-05-28 | 412 |
-| 10876 | 1237830 | condition_occurrence | 2008-02-02 | 2008-02-03 | 412 |
-| 10876 | 1237925 | condition_occurrence | 2008-09-13 | 2008-09-13 | 412 |
-| 33463 | 3787772 | condition_occurrence | 2009-08-08 | 2009-08-08 | 412 |
-| 48678 | 5484541 | condition_occurrence | 2009-09-09 | 2009-09-09 | 412 |
-| 54683 | 6153652 | condition_occurrence | 2008-10-24 | 2008-10-28 | 412 |
-| 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
-
+| 251 | 30831 | condition_occurrence | 2009-05-13 | 2009-05-13 | 412 |
+| 190 | 22875 | condition_occurrence | 2008-12-23 | 2008-12-23 | 412 |
+| 209 | 24989 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
+| 270 | 32981 | condition_occurrence | 2009-03-31 | 2009-03-31 | 412 |
+| 53 | 5751 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 180 | 21006 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 146 | 17041 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
+| 168 | 19736 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
 
 ```JSON
+
 ["person_filter",{"left":["icd9","412"],"right":["person",["cpt","99214"]]}]
+
 ```
 
 ![](README/e1cb0863b21e14256d61a54200316791f6547c78ba2f0156c110f4500f9bbd49.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 92077 | 10363643 | condition_occurrence | 2010-03-08 | 2010-03-08 | 412 |
-| 108031 | 12142323 | condition_occurrence | 2009-11-25 | 2009-11-25 | 412 |
-| 56414 | 6351863 | condition_occurrence | 2008-11-15 | 2008-11-15 | 412 |
-| 66609 | 7497031 | condition_occurrence | 2009-05-25 | 2009-05-28 | 412 |
-| 10876 | 1237830 | condition_occurrence | 2008-02-02 | 2008-02-03 | 412 |
-| 10876 | 1237925 | condition_occurrence | 2008-09-13 | 2008-09-13 | 412 |
-| 33463 | 3787772 | condition_occurrence | 2009-08-08 | 2009-08-08 | 412 |
-| 48678 | 5484541 | condition_occurrence | 2009-09-09 | 2009-09-09 | 412 |
-| 54683 | 6153652 | condition_occurrence | 2008-10-24 | 2008-10-28 | 412 |
-| 68518 | 7706073 | condition_occurrence | 2009-02-22 | 2009-02-22 | 412 |
-
+| 251 | 30831 | condition_occurrence | 2009-05-13 | 2009-05-13 | 412 |
+| 190 | 22875 | condition_occurrence | 2008-12-23 | 2008-12-23 | 412 |
+| 209 | 24989 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
+| 270 | 32981 | condition_occurrence | 2009-03-31 | 2009-03-31 | 412 |
+| 53 | 5751 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 222 | 26766 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 180 | 21006 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 59 | 6083 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 146 | 17041 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
+| 168 | 19736 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
 
 ```JSON
+
 ["person_filter",{"left":["icd9","412"],"right":["union",["cpt","99214"],["gender","Male"]]}]
+
 ```
 
 ![](README/5d331d74c460d75814b2d3138a9b7d90b5ddb2dcd85e1f5f260d183745fc3a1e.png)
@@ -1281,9 +1326,10 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 And don't forget the left-hand side can have multiple types of streams:
 
-
 ```JSON
+
 ["person_filter",{"left":["union",["icd9","412"],["cpt","99214"]],"right":["gender","Male"]}]
+
 ```
 
 ![](README/c93dd18894a245a5647f99e1867d3779e4cd34c9c8f8860600ff0c837a5ffa53.png)
@@ -1316,9 +1362,10 @@ Any ConceptQL operator can be assigned a label.  The label simply provides a way
 
 A stream must be `define`d before `recall` can use it.
 
-
 ```JSON
+
 ["first",["union",["intersect",["visit_occurrence",["icd9","412"],{"label":"Heart Attack Visit"}],["place_of_service_code","21"]],["before",{"left":["intersect",["recall","Heart Attack Visit"],["complement",["place_of_service_code",21]],{"label":"Outpatient Heart Attack"}],"right":["time_window",["recall","Outpatient Heart Attack"],{"start":"-30d","end":"0"}],"label":"Earliest of Two Outpatient Heart Attacks"}]]]
+
 ```
 
 ![](README/4a3b47ed1c54f96ebdae693d41c36c51884c4546ef799a4108085708fb7b964e.png)
@@ -1342,31 +1389,22 @@ One of the main motivations behind keeping ConceptQL so flexible is to allow use
 
 Say a ConceptQL statement gathers all visit_occurrences where a patient had an MI and a Hospital encounter (CPT 99231):
 
-
 ```JSON
+
 ["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]
+
 ```
 
 ![](README/5d6ff62038b75d6f240d65f35d1520a131c221f47d3801554c8c2be5d528ebb0.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 108335 | 5357904 | visit_occurrence | 2009-12-07 | 2009-12-07 | Office |
-| 23251 | 1158016 | visit_occurrence | 2009-07-24 | 2009-07-24 | Office |
-| 13270 | 662308 | visit_occurrence | 2010-07-23 | 2010-07-25 | Office |
-| 24119 | 1199980 | visit_occurrence | 2008-11-30 | 2008-12-05 | Office |
-| 91102 | 4511328 | visit_occurrence | 2008-09-01 | 2008-09-01 | Office |
-| 3646 | 184096 | visit_occurrence | 2009-01-09 | 2009-01-09 | Office |
-| 21338 | 1061186 | visit_occurrence | 2008-07-11 | 2008-07-11 | Office |
-| 86004 | 4256504 | visit_occurrence | 2008-04-18 | 2008-04-18 | Office |
-| 112447 | 5561049 | visit_occurrence | 2008-12-22 | 2008-12-25 | Office |
-| 20229 | 1009400 | visit_occurrence | 2008-09-06 | 2008-09-06 | Office |
+```No Results found.```
 
 If we wanted to gather all costs for all procedures for those visits, we could use the "algorithm" operator to represent the algorithm defined above in a new concept:
 
-
 ```JSON
+
 ["procedure_cost",["algorithm","\nAll Visits\nwhere a Patient had\nboth an MI and\na Hospital Encounter"]]
+
 ```
 
 ![](README/eb8f5511f7d88bd0f8ba73420fc10f7c78405db7f4373d778a827058707f888e.png)
@@ -1375,9 +1413,10 @@ If we wanted to gather all costs for all procedures for those visits, we could u
 
 The color and edge coming from the algorithm operator are black to denote that we don't know what types or streams are coming from the concept.  In reality, any program that uses ConceptQL can ask the algorithm represented by the algorithm operator for the concept's types.  The result of nesting one algorithm within another is exactly the same had we taken algorithm operator and replaced it with the ConceptQL statement for the algorithm it represents.
 
-
 ```JSON
+
 ["procedure_cost",["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]]
+
 ```
 
 ![](README/6b48534236697d1ccfa1f5403764782f9d228f9eb706789cfa80203882b7b13a.png)
@@ -1386,9 +1425,10 @@ The color and edge coming from the algorithm operator are black to denote that w
 
 In the actual implementation of the algorithm operator, each ConceptQL statement will have a unique identifier which the algorithm operator will use.  So, assuming that the ID 2031 represents the algorithm we want to gather all procedure costs for, our example should really read:
 
-
 ```JSON
+
 ["procedure_cost",["algorithm",2031]]
+
 ```
 
 ![](README/067241a3579767a802d4f8e20fd35b60adbe377c9a6512ef135f164a5accfb27.png)
@@ -1420,9 +1460,10 @@ For now we'll cover some of the general behavior of the value_as_numeric column 
 
 Passing streams through a `numeric` operator changes the number stored in the value column:
 
-
 ```JSON
+
 ["numeric",2,["icd9","412"]]
+
 ```
 
 ![](README/d39452b58257c95a7cba07afed4877417b0c227f3690e2bff22c9eca89eac845.png)
@@ -1442,9 +1483,10 @@ Passing streams through a `numeric` operator changes the number stored in the va
 
 `numeric` can also take a column name instead of a number.  It will derive the results row's value from the value stored in the column specified.
 
-
 ```JSON
+
 ["numeric","paid_copay",["procedure_cost",["cpt","99214"]]]
+
 ```
 
 ![](README/3f46dee4d775d1a29d52b68af6552f8ea3abd8303094e749714fc77bd7958155.png)
@@ -1453,9 +1495,10 @@ Passing streams through a `numeric` operator changes the number stored in the va
 
 If something nonsensical happens, like the column specified isn't present in the table pointed to by a result row, value_as_numeric in the result row will be unaffected:
 
-
 ```JSON
+
 ["value","paid_copay",["icd9","412"]]
+
 ```
 
 ![](README/2b57886a9cba66bb696e4b399c51ad0dc95cd64b952709fafc819a79d573f09e.png)
@@ -1464,9 +1507,10 @@ If something nonsensical happens, like the column specified isn't present in the
 
 Or if the column specified exists, but refers to a non-numerical column, we'll set the value to 0
 
-
 ```JSON
+
 ["value","stop_reason",["icd9","412"]]
+
 ```
 
 ![](README/7b9db2986ab9ada45cfb9451ef87ff1a2d99c908083334b7ccdceb8a92387fa9.png)
@@ -1475,25 +1519,26 @@ Or if the column specified exists, but refers to a non-numerical column, we'll s
 
 With a `numeric` operator defined, we could introduce a sum operator that will sum by patient and type.  This allows us to implement the Charlson comorbidity algorithm:
 
-
 ```JSON
+
 ["sum",["union",["numeric",1,["person",["icd9","412"]]],["numeric",2,["person",["icd9","278.02"]]]]]
+
 ```
 
 ![](README/ba572c4f4dbade65be55f141df16cf7b3e7d09e0aec4e4e5debc4f2075277371.png)
 
 | person_id | criterion_id | criterion_type | start_date | end_date | source_value |
 | --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 20485 | 0 | person | 1939-04-01 | 1939-04-01 | 2DDD007275DD21E0 |
-| 79028 | 0 | person | 1959-02-01 | 1959-02-01 | B392FC430DF921CD |
-| 100859 | 0 | person | 1956-05-01 | 1956-05-01 | E52898242C537BA0 |
-| 14065 | 0 | person | 1946-11-01 | 1946-11-01 | 1F60AFE3D4FBB0F8 |
-| 19728 | 0 | person | 1929-03-01 | 1929-03-01 | 2C18DC0853458E88 |
-| 6249 | 0 | person | 1941-03-01 | 1941-03-01 | 0DD88DF606E34410 |
-| 81868 | 0 | person | 1942-09-01 | 1942-09-01 | BA17E53F3EB2C999 |
-| 111550 | 0 | person | 1943-06-01 | 1943-06-01 | FD35C56E74BFB4AB |
-| 93771 | 0 | person | 1941-01-01 | 1941-01-01 | D4BF3A123E98674C |
-| 92853 | 0 | person | 1932-06-01 | 1932-06-01 | D2945588C9CE4481 |
+| 255 | 0 | person | 1962-03-01 | 1962-03-01 | 008A0B40A2E86E4C |
+| 215 | 0 | person | 1926-05-01 | 1926-05-01 | 0071E2E641B73233 |
+| 270 | 0 | person | 1952-07-01 | 1952-07-01 | 0094AF69581046B7 |
+| 108 | 0 | person | 1928-03-01 | 1928-03-01 | 0031E4B9F2F11B24 |
+| 226 | 0 | person | 1945-10-01 | 1945-10-01 | 007928DE5B0C4AA5 |
+| 88 | 0 | person | 1925-10-01 | 1925-10-01 | 00292D3DBB23CE44 |
+| 54 | 0 | person | 1924-12-01 | 1924-12-01 | 001D0E59C94130D3 |
+| 59 | 0 | person | 1925-07-01 | 1925-07-01 | 001EA2F4DB30F105 |
+| 183 | 0 | person | 1936-01-01 | 1936-01-01 | 006084B3FA2A151C |
+| 64 | 0 | person | 1920-04-01 | 1920-04-01 | 0021B3C854C968C8 |
 
 ### Counting
 
@@ -1501,31 +1546,22 @@ It might be helpful to count the number of occurrences of a result row in a stre
 
 I need examples of algorithms that could benefit from this operator.  I'm concerned that we'll want to roll up occurrences by person most of the time and that would require us to first cast streams to person before passing the person stream to count.
 
-
 ```JSON
+
 ["count",["person",["icd9","799.22"]]]
+
 ```
 
 ![](README/ff7d5b5573d09bd7c4cdd3aeda124d18bf82ec46673a62881b399a75d69f3f53.png)
 
-| person_id | criterion_id | criterion_type | start_date | end_date | source_value |
-| --------- | ------------ | -------------- | ---------- | -------- | ------------ |
-| 84506 | 84506 | person | 1946-11-01 | 1946-11-01 | BFD9934105A902C5 |
-| 8511 | 8511 | person | 1934-02-01 | 1934-02-01 | 12F9E8CFD305414D |
-| 58597 | 58597 | person | 1922-11-01 | 1922-11-01 | 84841824E5D1516F |
-| 17481 | 17481 | person | 1952-04-01 | 1952-04-01 | 272C688CA4CFC78F |
-| 79930 | 79930 | person | 1940-04-01 | 1940-04-01 | B5AA192186CEFC33 |
-| 83321 | 83321 | person | 1928-06-01 | 1928-06-01 | BD49BED9C6228FA1 |
-| 111134 | 111134 | person | 1960-05-01 | 1960-05-01 | FC4C2599EA86941A |
-| 112745 | 112745 | person | 1959-07-01 | 1959-07-01 | FFFA950301FCA748 |
-| 11368 | 11368 | person | 1955-08-01 | 1955-08-01 | 19546CD71F65766E |
-| 24243 | 24243 | person | 1930-01-01 | 1930-01-01 | 3695943370154829 |
+```No Results found.```
 
 We could do dumb things like count the number of times a row shows up in a union:
 
-
 ```JSON
+
 ["count",["union",["icd9","412"],["primary_diagnosis",true]]]
+
 ```
 
 ![](README/7aa76b4d29874719466c2cbafc9936e9f12e504bf31e1a09d26ca3fffa8ba1a6.png)
@@ -1547,9 +1583,10 @@ Acts like any other binary operator.  L and R streams, joined by person.  Any L 
 
 Numeric doesn't have to take a stream.  If it doesn't have a stream as an argument, it acts like a selection operator much like date_range
 
-
 ```JSON
+
 ["greater_than",{"left":["count",["person",["icd9","412"]]],"right":["numeric",1]}]
+
 ```
 
 ![](README/c1d0402862221d85aceedc7d76b3f82149b612cbd972f14d0ca9011e1e2c455c.png)
@@ -1594,9 +1631,10 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
     - A diagnostic code of chronic dialysis any time before initial diagnosis
         - V45.1, V56.0, V56.31, V56.32, V56.8
 
-
 ```JSON
+
 ["during",{"left":["except",{"left":["icd9","584"],"right":["after",{"left":["icd9","584"],"right":["icd9","V45.1","V56.0","V56.31","V56.32","V56.8"]}]}],"right":["time_window",["icd9_procedure","39.95","54.98"],{"start":"0","end":"60d"}]}]
+
 ```
 
 ![](README/44ec6743d5d77d15b8a487c2058bf3e455d34adc91c46ea05767f6e0e471a75e.png)
@@ -1611,9 +1649,10 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
     - MI diagnosis within 30 days prior to 410
     - MI therapy within 60 days after 410
 
-
 ```JSON
+
 ["during",{"left":["before",{"left":["icd9","410*"],"right":["death",true]}],"right":["union",["time_window",["union",["cpt","0146T","75898","82554","92980","93010","93233","93508","93540","93545"],["icd9_procedure","00.24","36.02","89.53","89.57","89.69"],["loinc","10839-9","13969-1","18843-3","2154-3","33204-9","48425-3","49259-5","6597-9","8634-8"]],{"start":"-30d","end":"0"}],["time_window",["union",["cpt","0146T","75898","82554","92980","93010","93233"],["icd9_procedure","00.24","36.02","89.53","89.57","89.69"]],{"start":"","end":"60d"}]]}]
+
 ```
 
 ![](README/307a8b5a7edd6e42f8be16523a4c939faf1a0533385c861d7004b6af8addd7d1.png)
@@ -1626,9 +1665,10 @@ Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omo
 - Hospitalization at time of diagnostic code
 - At least one diagnostic procedure during same hospitalization
 
-
 ```JSON
+
 ["union",["place_of_service_code","21"],["visit_occurrence",["icd9","410"]],["visit_occurrence",["union",["cpt","0008T","3142F","43205","43236","76975","91110","91111"],["hcpcs","B4081","B4082"],["icd9_procedure","42.22","42.23","44.13","45.13","52.21","97.01"],["loinc","16125-7","17780-8","40820-3","50320-1","5177-1","7901-2"]]]]
+
 ```
 
 ![](README/99392f56dfb0e5be3f45a12a7f1ba846d094e430f526dfeaa30b606837cd34c0.png)
@@ -1697,9 +1737,10 @@ I'm considering defaulting each value_as\_\* column to some value.
     - source_value?
     - Boy, this one is even harder to default
 
-
 ```JSON
+
 ["icd9","412"]
+
 ```
 
 ![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
@@ -1746,9 +1787,10 @@ I'm considering defaulting each value_as\_\* column to some value.
 
 Inspired by person_filter, why not just have a "filter" operator that filters L by R.  Takes L, R, and an "as" option.  `as` option temporarily casts the L and R streams to the type specified by :as and then does person by person comparison, only keeping rows that occur on both sides.  Handy for keeping procedures that coincide with conditions without fully casting the streams:
 
-
 ```JSON
+
 ["filter",{"left":["cpt","99214"],"right":["icd9","799.22"],"as":"visit_occurrence"}]
+
 ```
 
 ![](README/c5329a7f4937096a57b2e01efb9d542f84a4e2329a1e9381d08c630583ccad37.png)
@@ -1757,9 +1799,10 @@ Inspired by person_filter, why not just have a "filter" operator that filters L 
 
 person_filter then becomes a special case of general filter:
 
-
 ```JSON
+
 ["filter",{"left":["cpt","99214"],"right":["icd9","799.22"],"as":"person"}]
+
 ```
 
 ![](README/9139440329dcb815df89bc70182c3827868402a74ff64d0253706dcaff723dca.png)
