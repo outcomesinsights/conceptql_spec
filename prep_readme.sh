@@ -7,5 +7,5 @@ fi
 
 bundle exec sequelizer config
 bundle exec conceptql knit README.md.cql
-doctoc --bitbucket --notitle README.md
+doctoc --github --notitle README.md
 mdl README.md
