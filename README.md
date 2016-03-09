@@ -33,6 +33,8 @@
         - [Temporal Comparison Operators](#markdown-header-temporal-comparison-operators)
             - [any_overlap](#markdown-header-any_overlap)
             - [Edge behaviors](#markdown-header-edge-behaviors)
+        - [Temporal Comparison Improvements](#markdown-header-temporal-comparison-improvements)
+            - [New Parameters](#markdown-header-new-parameters)
             - [Considerations](#markdown-header-considerations)
         - [Time Windows](#markdown-header-time-windows)
             - [time_window](#markdown-header-time_window)
@@ -985,6 +987,85 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 ![](README/de589af36fa854e006a1563c93e644e2210f2a5616babb779f7f38aadb6c1ed7.png)
 
 ```No Results found.```
+
+### Temporal Comparison Improvements
+
+After spending an intense week attempting to sort out how to best use `time_window` and the temporal comparison operators, it is clear that it is difficult to reason through many basic temporal algorithms.
+
+It would be nice if a more intuitive language could be used to describe some common temporal relationships.
+
+We've added a few new parameters for the `before` and `after` operators.  These options are also available in the other temporal comparison operators, though how they will function is yet to be determined.
+
+#### New Parameters
+
+- `within`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHS are adjusted out in each direction by the amount specified and the event must pass the original temporal comparison and then fall within the window created by the adjustment
+- `at_least`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+- `occurrences`
+    - Takes an whole number
+
+Let's see them in action:
+
+**Antibiotics After a Office Visit** - Find all antibiotic prescriptions occurring within three days after an office visit
+
+```JSON
+
+["after",{"left":["ndc","12345678901",{"label":"Antibiotics"}],"right":["cpt","99214",{"label":"Office Visit"}],"within":"3d"}]
+
+```
+
+![](README/11c32a8cafe37b6b8829f589fc481e16ec293ac9789d73eea430ff5d343769bb.png)
+
+```No Results found.```
+
+Walk through of example above:
+
+- Pull some antibiotics into LHS
+- Pull some office visits into RHS
+- Compare LHS against RHS, enforcing that the LHS' start_date falls after the RHS' end_date
+- Enforce that any remaining LHS' start_date falls within an RHS's (start_date - 3 days) and (end_date + 3 days)
+
+**Find all Hospitalizations Probably Resulting in Death** -- Seems like if someone dies within a week of being in the hospital, maybe the hospitalization got them.
+
+```JSON
+
+["before",{"left":["place_of_service_code",21],"right":["death","true"],"within":"1w"}]
+
+```
+
+![](README/13787ea8aea45ec8e606befcfa542c85b309e40edb9c58d2253c01b0e0514920.png)
+
+```No Results found.```
+
+Walk through of example above:
+
+- Pull hospitalizations into LHS
+- Pull death records into RHS
+- Compare LHS against RHS, enforcing that the LHS' end_date falls before the RHS' start_date
+- Enforce that any remaining LHS row's end_date falls within an RHS row's (start_date - 1 week) and (end_date + 1 week)
+
+Multiple Myeloma algorithm -- Select all MM diagnoses that are preceded by at least 3 other MM diagnoses within 90 days of each other.
+
+```JSON
+
+["after",{"left":["icd9","203.x",{"label":"MM Dx"}],"right":["recall","MM Dx"],"occurrences":3,"within":"90d"}]
+
+```
+
+![](README/045919c177d6fbc9eba778720d1f847fd0132246fd9e06bb8a7a972e021ada87.png)
+
+```No Results found.```
+
+Walk through of example above:
+
+- Pull myeloma diagnoses into LHS
+- Pull same set of diagnoses into RHS
+- Keep all LHS rows where LHS' start_date falls between RHS' end_date and (end_date + 90 days)
+- Use a window function to group LHS by matching RHS row and sort group by date, then number each LHS row
+- Keep only LHS rows that have a number greater than 3
+- Dedupe LHS rows on output
 
 #### Considerations
 
@@ -2054,37 +2135,47 @@ Arguments that are nil or empty string are stripped from positional arguments.  
 I'm not certain how I want to represent validations for options.  Each option is specified at the top of the class like so for `time_window`:
 
 ```ruby
+
 option :start, type: :string
 option :end, type: :string
+
 ```
 
 and like so for binary operators:
 
 ```ruby
+
 option :left, type: :upstream
 option :right, type: :upstream
+
 ```
 
 Do I want to embed some, or even all, of the validation into the option declaration?  E.g. for `time_window`:
 
 ```ruby
+
 option :start, type: :string, matches: '(\d+[dmy]*)*'
 option :end, type: :string, matches: '(\d+[dmy]*)*'
+
 ```
 
 and for binary operators:
 
 ```ruby
+
 option :left, type: :operator, required: true
 option :right, type: :operator, required: true
+
 ```
 
 Or do I want to make validations separate from the option declarations and say things like:
 
 ```ruby
+
 validate_options :left, :right, required: true
 validate_options :start, :end, match: '(\d+[dmy]*)*'
 validate_options :hypothetical_icd9_option_here, associated_vocabulary: 'ICD9CM', strict: true
+
 ```
 
 #### `recall`-specific validations

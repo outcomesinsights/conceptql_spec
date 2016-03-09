@@ -838,6 +838,101 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 ]
 ```
 
+### Temporal Comparison Improvements
+
+After spending an intense week attempting to sort out how to best use `time_window` and the temporal comparison operators, it is clear that it is difficult to reason through many basic temporal algorithms.
+
+It would be nice if a more intuitive language could be used to describe some common temporal relationships.
+
+We've added a few new parameters for the `before` and `after` operators.  These options are also available in the other temporal comparison operators, though how they will function is yet to be determined.
+
+#### New Parameters
+
+- `within`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHS are adjusted out in each direction by the amount specified and the event must pass the original temporal comparison and then fall within the window created by the adjustment
+- `at_least`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+- `occurrences`
+    - Takes an whole number
+
+Let's see them in action:
+
+**Antibiotics After a Office Visit** - Find all antibiotic prescriptions occurring within three days after an office visit
+
+```ConceptQL
+[
+    "after", {
+        "left": [
+            "ndc", "12345678901", { "label": "Antibiotics" }
+        ],
+        "right": [
+            "cpt", "99214", { "label": "Office Visit" }
+        ],
+        "within": "3d"
+    }
+]
+```
+
+Walk through of example above:
+
+- Pull some antibiotics into LHS
+- Pull some office visits into RHS
+- Compare LHS against RHS, enforcing that the LHS' start_date falls after the RHS' end_date
+- Enforce that any remaining LHS' start_date falls within an RHS's (start_date - 3 days) and (end_date + 3 days)
+
+**Find all Hospitalizations Probably Resulting in Death** -- Seems like if someone dies within a week of being in the hospital, maybe the hospitalization got them.
+
+```ConceptQL
+[
+    "before", {
+        "left": [
+            "place_of_service_code", 21
+        ],
+        "right": [
+            "death", "true"
+        ],
+        "within": "1w"
+    }
+]
+```
+
+Walk through of example above:
+
+- Pull hospitalizations into LHS
+- Pull death records into RHS
+- Compare LHS against RHS, enforcing that the LHS' end_date falls before the RHS' start_date
+- Enforce that any remaining LHS row's end_date falls within an RHS row's (start_date - 1 week) and (end_date + 1 week)
+
+Multiple Myeloma algorithm -- Select all MM diagnoses that are preceded by at least 3 other MM diagnoses within 90 days of each other.
+
+```ConceptQL
+[
+    "after", {
+        "left": [
+            "icd9",
+            "203.x",
+            { "label": "MM Dx" }
+        ],
+        "right": [
+            "recall",
+            "MM Dx"
+        ],
+        "occurrences": 3,
+        "within": "90d"
+    }
+]
+```
+
+Walk through of example above:
+
+- Pull myeloma diagnoses into LHS
+- Pull same set of diagnoses into RHS
+- Keep all LHS rows where LHS' start_date falls between RHS' end_date and (end_date + 90 days)
+- Use a window function to group LHS by matching RHS row and sort group by date, then number each LHS row
+- Keep only LHS rows that have a number greater than 3
+- Dedupe LHS rows on output
+
 #### Considerations
 
 Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
@@ -2138,37 +2233,47 @@ Arguments that are nil or empty string are stripped from positional arguments.  
 I'm not certain how I want to represent validations for options.  Each option is specified at the top of the class like so for `time_window`:
 
 ```ruby
+
 option :start, type: :string
 option :end, type: :string
+
 ```
 
 and like so for binary operators:
 
 ```ruby
+
 option :left, type: :upstream
 option :right, type: :upstream
+
 ```
 
 Do I want to embed some, or even all, of the validation into the option declaration?  E.g. for `time_window`:
 
 ```ruby
+
 option :start, type: :string, matches: '(\d+[dmy]*)*'
 option :end, type: :string, matches: '(\d+[dmy]*)*'
+
 ```
 
 and for binary operators:
 
 ```ruby
+
 option :left, type: :operator, required: true
 option :right, type: :operator, required: true
+
 ```
 
 Or do I want to make validations separate from the option declarations and say things like:
 
 ```ruby
+
 validate_options :left, :right, required: true
 validate_options :start, :end, match: '(\d+[dmy]*)*'
 validate_options :hypothetical_icd9_option_here, associated_vocabulary: 'ICD9CM', strict: true
+
 ```
 
 #### `recall`-specific validations
