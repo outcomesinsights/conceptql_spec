@@ -941,6 +941,26 @@ Walk through of example above:
 - Keep only LHS rows that have a number greater than 3
 - Dedupe LHS rows on output
 
+Find all diagnosis of heart attack at least 30 days after a diagnosis of irritability
+
+```ConceptQL
+[
+    "after", {
+        "left": [
+            "icd9",
+            "410.10",
+            { "label": "Heart Attack Dx" }
+        ],
+        "right": [
+            "icd9", "799.22", { "label": "Irritability Dx"}
+        ],
+        "at_least": "30d"
+    }
+]
+```
+
+This example illustrates how `at_least` works
+
 #### Considerations
 
 Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:

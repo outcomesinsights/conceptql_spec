@@ -999,6 +999,20 @@ Walk through of example above:
 - Keep only LHS rows that have a number greater than 3
 - Dedupe LHS rows on output
 
+Find all diagnosis of heart attack at least 30 days after a diagnosis of irritability
+
+```JSON
+
+["after",{"left":["icd9","410.10",{"label":"Heart Attack Dx"}],"right":["icd9","799.22",{"label":"Irritability Dx"}],"at_least":"30d"}]
+
+```
+
+![](README/b1f8a2511c442b0243de29b5c3909e6679912f75f5cc6058fb989691d6ef8d87.png)
+
+```No Results found.```
+
+This example illustrates how `at_least` works
+
 #### Considerations
 
 Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
