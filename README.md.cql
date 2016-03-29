@@ -635,6 +635,8 @@ When looking at a set of results for a person, perhaps we want to select just th
         - e.g. -1 => last
         - e.g. -4 => fourth from last
     - 0 is undefined?
+- Has an optional parameter: `unique`
+    - Setting the `unique` parameter to `true` will de-duplicate all upstream records by `patient_id`, `domain`, and `source_code`, creating a set of unique codes per patient.  Then it will find the Nth occurrence from that set of unique codes.
 
 ```ConceptQL
 # For each patient, select the Condition that represents the third occurrence of an MI
@@ -646,6 +648,12 @@ When looking at a set of results for a person, perhaps we want to select just th
     "412"
   ]
 ]
+```
+
+In the example shown below, the `unique` parameter under the `Nth Occurrence` operator in the algorithm will de-duplicate all upstream records and create a new set of records limited to the first `410.00`, the first `410.01`, the first `250.00`, and the first `250.01` ICD-9 codes for a patient.  The `occurrence` parameter will find the nth of those unique codes.  In the example below, the algorithm will find the second of three unique codes for each patient.  This algorithm ensures that this patient has at least two of the ICD-9 codes listed in the ICD-9 operator.  As a reminder, the `First`, `Last`, and `Nth Occurrence` operators return only one record per patient.  If there are multiple records with the same date that meet the requirements of the `First`, `Last`, and `Nth Occurrence`, an arbitrary row is returned.
+
+```ConceptQL
+["occurrence", 2, ["icd9", "410.00", "410.01", "250.00", "250.01"], {"unique": true}]
 ```
 
 #### first

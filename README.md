@@ -1,96 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [ConceptQL Specification](#conceptql-specification)
-  - [Motivation for ConceptQL](#motivation-for-conceptql)
-  - [ConceptQL Overview](#conceptql-overview)
-    - [What ConceptQL Looks Like](#what-conceptql-looks-like)
-    - [ConceptQL Diagrams](#conceptql-diagrams)
-    - [Think of Results as a Stream](#think-of-results-as-a-stream)
-    - [Streams have Types](#streams-have-types)
-    - [What *are* Streams Really?](#what-are-streams-really)
-  - [Selection Operators](#selection-operators)
-  - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
-  - [Set Operators](#set-operators)
-    - [Union](#union)
-    - [Intersect](#intersect)
-    - [Complement](#complement)
-    - [Except](#except)
-    - [Discussion about Set Operators](#discussion-about-set-operators)
-      - [Union Operators](#union-operators)
-        - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
-        - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#q-why-arent-all-streams-passed-forward-unaltered--why-union-like-typed-streams)
-  - [Time-oriented Operators](#time-oriented-operators)
-    - [Relative Temporal Operators](#relative-temporal-operators)
-      - [occurrence](#occurrence)
-      - [first](#first)
-      - [last](#last)
-    - [Date Literals](#date-literals)
-      - [date_range](#date_range)
-      - [day](#day)
-      - [What is <date-format\>?](#what-is-date-format%5C)
-    - [Temporal Comparison Operators](#temporal-comparison-operators)
-      - [any_overlap](#any_overlap)
-      - [Edge behaviors](#edge-behaviors)
-    - [Temporal Comparison Improvements](#temporal-comparison-improvements)
-      - [New Parameters](#new-parameters)
-      - [Considerations](#considerations)
-    - [Time Windows](#time-windows)
-      - [time_window](#time_window)
-      - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
-  - [Type Conversion](#type-conversion)
-    - [Casting to person](#casting-to-person)
-    - [Casting to a visit_occurrence](#casting-to-a-visit_occurrence)
-    - [Casting Loses All Original Information](#casting-loses-all-original-information)
-    - [Cast all the Things!](#cast-all-the-things)
-    - [Casting as a way to fetch all rows](#casting-as-a-way-to-fetch-all-rows)
-  - [Finding a Single Inpatient or Two Outpatient Records as Confirmation of a Diagnosis](#finding-a-single-inpatient-or-two-outpatient-records-as-confirmation-of-a-diagnosis)
-  - [Filtering by People](#filtering-by-people)
-  - [Sub-algorithms within a Larger Algorithm](#sub-algorithms-within-a-larger-algorithm)
-    - [`label` option](#label-option)
-    - [`recall` operator](#recall-operator)
-  - [Algorithms within Algorithms](#algorithms-within-algorithms)
-  - [Values](#values)
-    - [numeric](#numeric)
-    - [Counting](#counting)
-      - [Numeric Value Comparison](#numeric-value-comparison)
-    - [numeric as selection operator](#numeric-as-selection-operator)
-      - [sum](#sum)
-  - [Appendix A - Selection Operators](#appendix-a---selection-operators)
-  - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
-    - [Acute Kidney Injury - Narrow Definition and diagnositc procedure](#acute-kidney-injury---narrow-definition-and-diagnositc-procedure)
-    - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
-    - [GI Ulcer Hospitalization 2 (5000001002)](#gi-ulcer-hospitalization-2-5000001002)
-  - [Appendix C - Under Development](#appendix-c---under-development)
-    - [Todo List](#todo-list)
-    - [Future Work for Define and Recall](#future-work-for-define-and-recall)
-    - [Considerations for Values](#considerations-for-values)
-    - [Filter Operator](#filter-operator)
-    - [AS option for Except](#as-option-for-except)
-    - [How to Handle fact_relationship Table from CDMv5](#how-to-handle-fact_relationship-table-from-cdmv5)
-    - [Change First/Last to Earliest/Most Recent and change "Nth" to "Nth Earliest" and "Nth Most Recent"](#change-firstlast-to-earliestmost-recent-and-change-nth-to-nth-earliest-and-nth-most-recent)
-    - [Dates when building a cohort](#dates-when-building-a-cohort)
-    - [During optimization?](#during-optimization)
-    - [Casting Operators](#casting-operators)
-    - [Drop support for positional arguments?](#drop-support-for-positional-arguments)
-    - [Validations](#validations)
-      - [General validations](#general-validations)
-      - [Upstream validations - Enforce number of upstream operators](#upstream-validations---enforce-number-of-upstream-operators)
-      - [Argument validations - Enforce number of positional arguments](#argument-validations---enforce-number-of-positional-arguments)
-      - [Option validations](#option-validations)
-      - [`recall`-specific validations](#recall-specific-validations)
-      - [`algorithm`-specific validations](#algorithm-specific-validations)
-      - [Vocabulary validations and warnings](#vocabulary-validations-and-warnings)
-    - [Other data models](#other-data-models)
-      - [Mutator - in theory, these need no modification to continue working](#mutator---in-theory-these-need-no-modification-to-continue-working)
-      - [Selection - These are the operators that will need the most work and might need to be re-thought](#selection---these-are-the-operators-that-will-need-the-most-work-and-might-need-to-be-re-thought)
-    - [Multiple sets of things with ordering](#multiple-sets-of-things-with-ordering)
-    - [Nth line chemo](#nth-line-chemo)
-    - [concurrent with?](#concurrent-with)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # ConceptQL Specification
 
 [ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that allows researchers to unambiguously define their research algorithms.
@@ -790,6 +697,8 @@ When looking at a set of results for a person, perhaps we want to select just th
         - e.g. -1 => last
         - e.g. -4 => fourth from last
     - 0 is undefined?
+- Has an optional parameter: `unique`
+    - Setting the `unique` parameter to `true` will de-duplicate all upstream records by `patient_id`, `domain`, and `source_code`, creating a set of unique codes per patient.  Then it will find the Nth occurrence from that set of unique codes.
 
 ```JSON
 
@@ -800,6 +709,29 @@ When looking at a set of results for a person, perhaps we want to select just th
 ![](README/328467a6a419c7c05e299b8097e5e000686068ded8dc6d5f2e2de6f51976c315.png)
 
 ```No Results found.```
+
+In the example shown below, the `unique` parameter under the `Nth Occurrence` operator in the algorithm will de-duplicate all upstream records and create a new set of records limited to the first `410.00`, the first `410.01`, the first `250.00`, and the first `250.01` ICD-9 codes for a patient.  The `occurrence` parameter will find the nth of those unique codes.  In the example below, the algorithm will find the second of three unique codes for each patient.  This algorithm ensures that this patient has at least two of the ICD-9 codes listed in the ICD-9 operator.  As a reminder, the `First`, `Last`, and `Nth Occurrence` operators return only one record per patient.  If there are multiple records with the same date that meet the requirements of the `First`, `Last`, and `Nth Occurrence`, an arbitrary row is returned.
+
+```JSON
+
+["occurrence",2,["icd9","410.00","410.01","250.00","250.01"],{"unique":true}]
+
+```
+
+![](README/d5ab4877aa7234a8962f48b8cd7bcd04cce728e3446259ffce27fb78165c6173.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 2 | 85 | condition_occurrence | 2010-02-19 | 2010-02-19 | 250.01 |
+| 14 | 1236 | condition_occurrence | 2009-06-27 | 2009-06-27 | 250.01 |
+| 17 | 1902 | condition_occurrence | 2009-11-25 | 2009-11-25 | 250.01 |
+| 23 | 2880 | condition_occurrence | 2010-01-30 | 2010-01-30 | 250.01 |
+| 25 | 3062 | condition_occurrence | 2009-12-31 | 2009-12-31 | 250.01 |
+| 45 | 5286 | condition_occurrence | 2010-12-26 | 2010-12-26 | 250.01 |
+| 57 | 5996 | condition_occurrence | 2009-01-25 | 2009-01-25 | 250.01 |
+| 64 | 6974 | condition_occurrence | 2010-02-15 | 2010-02-15 | 250.01 |
+| 79 | 8668 | condition_occurrence | 2010-02-06 | 2010-02-06 | 250.00 |
+| 80 | 8706 | condition_occurrence | 2008-06-20 | 2008-06-20 | 250.00 |
 
 #### first
 
