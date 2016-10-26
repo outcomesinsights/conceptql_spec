@@ -1345,7 +1345,18 @@ Although casting to visit_occurrence and person are the most common types of cas
 
 The general rule will be that if the source type has a defined relationship with the target type, we'll cast using that relationship, e.g. casting visit_occurrences to procedures will turn all visit_occurrence results into the set of procedure results that point at those original visit_occurrences.  But if there is no direct relationship, we'll do a generous casting, e.g. casting observations to procedures will return all procedures for all persons in the observation stream.
 
-INSERT HANDY TABLE SHOWING CONVERSION MATRIX HERE
+| from/to | condition_occurrence | death | drug_cost | drug_exposure | observation | payer_plan_period | person | procedure_cost | procedure_occurrence | visit_occurrence |
+| ------- | -------------------- | ----- | --------- | ------------- | ----------- | ----------------- | ------ | -------------- | -------------------- | ---------------- |
+| **condition_occurrence** | X | all | all | all | all | all | thru Foreign Key | all | all | thru Foreign Key |
+| **death** | all | X | all | all | all | all | thru Foreign Key | all | all | all |
+| **drug_cost** | all | all | X | thru Foreign Key | all | all | thru drug_exposure | all | all | thru drug_exposure |
+| **drug_exposure** | all | all | thru Foreign Key | X | all | all | thru Foreign Key | all | all | thru Foreign Key |
+| **observation** | all | all | all | all | X | all | thru Foreign Key | all | all | thru Foreign Key |
+| **payer_plan_period** | all | all | all | all | all | X | thru Foreign Key | all | all | all |
+| **person** | all | all | all | all | all | all | X | all | all | all |
+| **procedure_cost** | all | all | all | all | all | all | thru procedure_occurrence | X | thru Foreign Key | thru procedure_occurrence |
+| **procedure_occurrence** | all | all | all | all | all | all | thru Foreign Key | thru Foreign Key | X | thru Foreign Key |
+| **visit_occurrence** | thru Foreign Key | all | thru drug_exposure | thru Foreign Key | thru Foreign Key | all | thru Foreign Key | thru procedure_occurrence | thru Foreign Key | X |
 
 ```JSON
 
