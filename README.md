@@ -60,7 +60,7 @@
   - [Appendix A - Selection Operators](#appendix-a---selection-operators)
     - [A Quick Note about the Read Operator](#a-quick-note-about-the-read-operator)
   - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
-    - [Acute Kidney Injury - Narrow Definition and diagnositc procedure](#acute-kidney-injury---narrow-definition-and-diagnositc-procedure)
+    - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
     - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
     - [GI Ulcer Hospitalization 2 (5000001002)](#gi-ulcer-hospitalization-2-5000001002)
   - [Appendix C - Under Development](#appendix-c---under-development)
@@ -1889,7 +1889,7 @@ In the future, we might provide a "fallback" set of vocabulary tables that Conce
 
 Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omop.org/HOI) and turn them into ConceptQL statements to give more examples.  I truncated some of the sets of codes to help ensure the diagrams didn't get too large.
 
-### Acute Kidney Injury - Narrow Definition and diagnositc procedure
+### Acute Kidney Injury - Narrow Definition and diagnostic procedure
 
 - ICD-9 of 584
 - AND

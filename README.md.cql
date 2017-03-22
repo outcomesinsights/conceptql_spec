@@ -1817,7 +1817,7 @@ In the future, we might provide a "fallback" set of vocabulary tables that Conce
 
 Here I take some algorithms from [OMOP's Health Outcomes of Interest](http://omop.org/HOI) and turn them into ConceptQL statements to give more examples.  I truncated some of the sets of codes to help ensure the diagrams didn't get too large.
 
-### Acute Kidney Injury - Narrow Definition and diagnositc procedure
+### Acute Kidney Injury - Narrow Definition and diagnostic procedure
 
 - ICD-9 of 584
 - AND
