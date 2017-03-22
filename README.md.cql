@@ -1797,8 +1797,21 @@ Numeric doesn't have to take a stream.  If it doesn't have a stream as an argume
 | loinc | observation | 1 or more LOINC codes | All results whose source_value match any of the LOINC codes |
 | place_of_service_code | visit_occurrence | 1 or more place of service codes | All results whose place of service matches any of the codes|
 | race | person | 1 or more race concept_ids | All results whose race_concept_id match any of the concept_ids|
+| read | condition_occurrence | 1 or more read codes | All results whose codes match any of the codes  that match the Read codes entered.  See note below on the Read operator |
 | rxnorm | drug_exposure | 1 or more RxNorm IDs | All results whose drug_concept_id match any of the RxNorm IDs|
 | snomed | condition_occurrence | 1 or more SNOMED codes | All results whose source_value match any of the SNOMED codes |
+
+### A Quick Note about the Read Operator
+
+The Read operator is the first, of what will become many, selection operator that searches multiple CDM tables based on the codes it is supposed to look for.
+
+The Read vocabulary has codes that represent conditions, procedures, drugs, and observations.  Accordingly, these codes are stored in each of the respective CDM tables.
+
+ConceptQL is able to search the `source_to_concept_map` table for each code and find the associated `mapping_type`.  It groups codes by `mapping_type` and then searches for those codes in each corresponding table.  If more than one table is involved, it will union the results from each table together to generate its output.
+
+Because the `mapping_type` for each code is likely to be unique per data source, ConceptQL must query that data source's specific vocabulary tables so as to guarantee it searches for the right codes in the right tables.  That means that until a ConceptQL statement is translated into a SQL query against a specific data source, we cannot show which tables are going to be searched.  This means when we view the SQL for a ConceptQL statement on its own, without knowing the data source, ConceptQL will default to searching the `observation` table for all codes.
+
+In the future, we might provide a "fallback" set of vocabulary tables that ConceptQL can search in the absence of a data source and we'll be able to provide a better approximation of the SQL it would generate.
 
 ## Appendix B - Algorithm Showcase
 
