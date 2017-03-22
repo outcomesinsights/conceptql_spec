@@ -1273,7 +1273,7 @@ The `one_in_two_out` operator uses the file from which a row came from to determ
 
 `condition_occurrence` rows with an xxx_type_concept_id of "inpatient *" are considered inpatient records.  All other xxx_type_concept_ids are considered outpatient.
 
-For non-`condition_occurrence` rows, e.g. `procedure_occurrence`, `drug_exposure`, or `observation`, they are treated as inpatient records as in most cases it makes sense that a single procedure, prescription, or lab record represents an actual event not subject to the skepticism with which we treat outpatient diagnoses.
+Non-`condition_occurrence` rows are removed from the stream.
 
 In order to simplify how sets of inpatient and outpatient records are compared to each other temporally, we collapse each incoming row's date range to a single date.  Users can choose which date to use for both inpatient and outpatient records.
 
