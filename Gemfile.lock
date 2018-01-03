@@ -1,18 +1,19 @@
-PATH
-  remote: ../gems4jigsaw/conceptql
+GIT
+  remote: git://github.com/outcomesinsights/conceptql.git
+  revision: 3eda8fb97a971d14f5b0c43d79926fa2f32e1d9e
+  branch: master
   specs:
-    conceptql (0.2.0)
-      csv2xlsx (~> 0)
-      facets (~> 3.0)
-      ruby-graphviz (~> 1.2)
-      sequelizer (~> 0.0)
+    conceptql (0.3.0)
+      sequelizer (~> 0.1)
       thor (~> 0.19)
 
-PATH
-  remote: ../gems4jigsaw/sequelizer
+GIT
+  remote: git://github.com/outcomesinsights/sequelizer.git
+  revision: 4aef64f4bd3ebe73f67cb7702d3a127150ed947a
+  branch: master
   specs:
-    sequelizer (0.0.6)
-      dotenv (~> 2.1.1)
+    sequelizer (0.1.0)
+      dotenv (~> 2.1)
       hashie (~> 3.2)
       sequel (~> 4.12)
       thor (~> 0.19)
@@ -20,26 +21,11 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    axlsx (2.0.1)
-      htmlentities (~> 4.3.1)
-      nokogiri (>= 1.4.1)
-      rubyzip (~> 1.0.0)
-    csv2xlsx (0.0.1)
-      axlsx
-    dotenv (2.1.1)
-    facets (3.1.0)
-    hashie (3.4.4)
-    htmlentities (4.3.4)
-    mini_portile2 (2.1.0)
-    nokogiri (1.6.8)
-      mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
+    dotenv (2.2.1)
+    hashie (3.5.7)
     pg (0.18.4)
-    pkg-config (1.1.7)
-    ruby-graphviz (1.2.2)
-    rubyzip (1.0.0)
-    sequel (4.39.0)
-    thor (0.19.1)
+    sequel (4.49.0)
+    thor (0.20.0)
 
 PLATFORMS
   ruby
@@ -50,4 +36,4 @@ DEPENDENCIES
   sequelizer!
 
 BUNDLED WITH
-   1.12.5
+   1.14.5
