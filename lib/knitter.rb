@@ -60,6 +60,7 @@ class Knitter
       @lines = lines.to_a
       @number = number
       @knitter = knitter
+      @options_line = lines.first.dup
     end
 
     def output
@@ -84,6 +85,10 @@ class Knitter
       end
       @statement = eval(statement.join)
       @title = titleize(title)
+    end
+
+    def options
+      @options ||= eval(@options_line.gsub(CONCEPTQL_CHUNK_START, '')) || {}
     end
 
     def statement
@@ -149,10 +154,13 @@ class Knitter
 
     def resultify(results)
       rows = []
-      rows << rowify(RESULT_KEYS)
-      rows << rowify(RESULT_KEYS.map { |c| c.to_s.gsub(/./, '-')})
+      keys = RESULT_KEYS
+      keys = results.first.keys if options[:all_keys]
+        
+      rows << rowify(keys)
+      rows << rowify(keys.map { |c| c.to_s.gsub(/./, '-')})
       results.each do |result|
-        rows << rowify(result.values_at(*RESULT_KEYS))
+        rows << rowify(result.values_at(*keys))
       end
       rows.join("\n")
     end
