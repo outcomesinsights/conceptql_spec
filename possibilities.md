@@ -1,3 +1,42 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Possibilities](#possibilities)
+    - [Algorithms within Algorithms](#algorithms-within-algorithms)
+    - [Values](#values)
+      - [numeric](#numeric)
+      - [Counting](#counting)
+      - [Numeric Value Comparison](#numeric-value-comparison)
+    - [numeric as selection operator](#numeric-as-selection-operator)
+      - [sum](#sum)
+    - [Todo List](#todo-list)
+    - [Future Work for Define and Recall](#future-work-for-define-and-recall)
+    - [Considerations for Values](#considerations-for-values)
+    - [Filter Operator](#filter-operator)
+    - [AS option for Except](#as-option-for-except)
+    - [How to Handle fact_relationship Table from CDMv5](#how-to-handle-fact_relationship-table-from-cdmv5)
+    - [Change First/Last to Earliest/Most Recent and change "Nth" to "Nth Earliest" and "Nth Most Recent"](#change-firstlast-to-earliestmost-recent-and-change-nth-to-nth-earliest-and-nth-most-recent)
+    - [Dates when building a cohort](#dates-when-building-a-cohort)
+    - [During optimization?](#during-optimization)
+    - [Casting Operators](#casting-operators)
+    - [Drop support for positional arguments?](#drop-support-for-positional-arguments)
+    - [Validations](#validations)
+      - [General validations](#general-validations)
+      - [Upstream validations - Enforce number of upstream operators](#upstream-validations---enforce-number-of-upstream-operators)
+      - [Argument validations - Enforce number of positional arguments](#argument-validations---enforce-number-of-positional-arguments)
+      - [Option validations](#option-validations)
+      - [`recall`-specific validations](#recall-specific-validations)
+      - [`algorithm`-specific validations](#algorithm-specific-validations)
+      - [Vocabulary validations and warnings](#vocabulary-validations-and-warnings)
+    - [Other data models](#other-data-models)
+      - [Mutator - in theory, these need no modification to continue working](#mutator---in-theory-these-need-no-modification-to-continue-working)
+      - [Selection - These are the operators that will need the most work and might need to be re-thought](#selection---these-are-the-operators-that-will-need-the-most-work-and-might-need-to-be-re-thought)
+    - [Multiple sets of things with ordering](#multiple-sets-of-things-with-ordering)
+    - [Nth line chemo](#nth-line-chemo)
+    - [concurrent with?](#concurrent-with)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Possibilities
 
 This document contains potential features or changes that could be made for ConceptQL.
@@ -8,77 +47,75 @@ One of the main motivations behind keeping ConceptQL so flexible is to allow use
 
 Say a ConceptQL statement gathers all visit_occurrences where a patient had an MI and a Hospital encounter (CPT 99231):
 
-```ConceptQL
-# All Visits where a Patient had both an MI and a Hospital Encounter
-[
-  "intersect",
-  [
-    "visit_occurrence",
-    [
-      "icd9",
-      "412"
-    ]
-  ],
-  [
-    "visit_occurrence",
-    [
-      "cpt",
-      "99231"
-    ]
-  ]
-]
+---
+
+**Example 1 - All Visits where a Patient had both an MI and a Hospital Encounter**
+
+```JSON
+
+["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]
+
 ```
+
+![All Visits where a Patient had both an MI and a Hospital Encounter](possibilities/5d6ff62038b75d6f240d65f35d1520a131c221f47d3801554c8c2be5d528ebb0.png)
+
+```No Results found.```
+
+---
 
 If we wanted to gather all costs for all procedures for those visits, we could use the "algorithm" operator to represent the algorithm defined above in a new concept:
 
-```ConceptQL
-# All Procedure Costs for All Visits as defined above
-[
-  "procedure_cost",
-  [
-    "algorithm",
-    "\nAll Visits\nwhere a Patient had\nboth an MI and\na Hospital Encounter"
-  ]
-]
+---
+
+**Example 2 - All Procedure Costs for All Visits as defined above**
+
+```JSON
+
+["procedure_cost",["algorithm","\nAll Visits\nwhere a Patient had\nboth an MI and\na Hospital Encounter"]]
+
 ```
+
+![All Procedure Costs for All Visits as defined above](possibilities/eb8f5511f7d88bd0f8ba73420fc10f7c78405db7f4373d778a827058707f888e.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 The color and edge coming from the algorithm operator are black to denote that we don't know what types or streams are coming from the concept.  In reality, any program that uses ConceptQL can ask the algorithm represented by the algorithm operator for the concept's types.  The result of nesting one algorithm within another is exactly the same had we taken algorithm operator and replaced it with the ConceptQL statement for the algorithm it represents.
 
-```ConceptQL
-# Procedure Costs for All Visits where a Patient had both an MI and a Hospital Encounter (same as above)
-[
-  "procedure_cost",
-  [
-    "intersect",
-    [
-      "visit_occurrence",
-      [
-        "icd9",
-        "412"
-      ]
-    ],
-    [
-      "visit_occurrence",
-      [
-        "cpt",
-        "99231"
-      ]
-    ]
-  ]
-]
+---
+
+**Example 3 - Procedure Costs for All Visits where a Patient had both an MI and a Hospital Encounter (same as above)**
+
+```JSON
+
+["procedure_cost",["intersect",["visit_occurrence",["icd9","412"]],["visit_occurrence",["cpt","99231"]]]]
+
 ```
+
+![Procedure Costs for All Visits where a Patient had both an MI and a Hospital Encounter (same as above)](possibilities/6b48534236697d1ccfa1f5403764782f9d228f9eb706789cfa80203882b7b13a.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 In the actual implementation of the algorithm operator, each ConceptQL statement will have a unique identifier which the algorithm operator will use.  So, assuming that the ID 2031 represents the algorithm we want to gather all procedure costs for, our example should really read:
 
-```ConceptQL
-[
-  "procedure_cost",
-  [
-    "algorithm",
-    2031
-  ]
-]
+---
+
+**Example 4**
+
+```JSON
+
+["procedure_cost",["algorithm",2031]]
+
 ```
+
+![](possibilities/067241a3579767a802d4f8e20fd35b60adbe377c9a6512ef135f164a5accfb27.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 ### Values
 
@@ -105,135 +142,177 @@ For now we'll cover some of the general behavior of the value_as_numeric column 
 
 Passing streams through a `numeric` operator changes the number stored in the value column:
 
-```ConceptQL{all_keys: true}
-# All MIs, setting value_as_numeric to 2
-[
-  "numeric",
-  2,
-  [
-    "icd9",
-    "412"
-  ]
-]
+---
+
+**Example 5 - All MIs, setting value_as_numeric to 2**
+
+```JSON
+
+["numeric",2,["icd9","412"]]
+
 ```
+
+![All MIs, setting value_as_numeric to 2](possibilities/d39452b58257c95a7cba07afed4877417b0c227f3690e2bff22c9eca89eac845.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | value_as_number |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | --------------- |
+| 131 | 172 | clinical_codes | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 | ICD9CM | 2.0 |
+| 177 | 507 | clinical_codes | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 | ICD9CM | 2.0 |
+| 230 | 523 | clinical_codes | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 | ICD9CM | 2.0 |
+| 161 | 963 | clinical_codes | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 | ICD9CM | 2.0 |
+| 60 | 986 | clinical_codes | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 | ICD9CM | 2.0 |
+| 81 | 1405 | clinical_codes | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 | ICD9CM | 2.0 |
+| 88 | 1572 | clinical_codes | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 | ICD9CM | 2.0 |
+| 213 | 15005 | clinical_codes | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 | ICD9CM | 2.0 |
+| 66 | 16171 | clinical_codes | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 | ICD9CM | 2.0 |
+| 220 | 20660 | clinical_codes | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 | ICD9CM | 2.0 |
+
+---
 
 `numeric` can also take a column name instead of a number.  It will derive the results row's value from the value stored in the column specified.
 
-```ConceptQL
-# All copays for 99214s
-[
-  "numeric",
-  "paid_copay",
-  [
-    "procedure_cost",
-    [
-      "cpt",
-      "99214"
-    ]
-  ]
-]
+---
+
+**Example 6 - All copays for 99214s**
+
+```JSON
+
+["numeric","paid_copay",["procedure_cost",["cpt","99214"]]]
+
 ```
+
+![All copays for 99214s](possibilities/3f46dee4d775d1a29d52b68af6552f8ea3abd8303094e749714fc77bd7958155.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 If something nonsensical happens, like the column specified isn't present in the table pointed to by a result row, value_as_numeric in the result row will be unaffected:
 
-```ConceptQL
-# Still all MIs with value_as_numeric defaulted to NULL.  condition_occurrence table doesn't have a "paid_copay" column
-[
-  "value",
-  "paid_copay",
-  [
-    "icd9",
-    "412"
-  ]
-]
+---
+
+**Example 7 - Still all MIs with value_as_numeric defaulted to NULL.  condition_occurrence table doesn't have a "paid_copay" column**
+
+```JSON
+
+["value","paid_copay",["icd9","412"]]
+
 ```
+
+![Still all MIs with value_as_numeric defaulted to NULL.  condition_occurrence table doesn't have a "paid_copay" column](possibilities/2b57886a9cba66bb696e4b399c51ad0dc95cd64b952709fafc819a79d573f09e.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 Or if the column specified exists, but refers to a non-numerical column, we'll set the value to 0
 
-```ConceptQL
-# All MIs, with value set to 0 since the column specified by value operator is a non-numerical column
-[
-  "value",
-  "stop_reason",
-  [
-    "icd9",
-    "412"
-  ]
-]
+---
+
+**Example 8 - All MIs, with value set to 0 since the column specified by value operator is a non-numerical column**
+
+```JSON
+
+["value","stop_reason",["icd9","412"]]
+
 ```
+
+![All MIs, with value set to 0 since the column specified by value operator is a non-numerical column](possibilities/7b9db2986ab9ada45cfb9451ef87ff1a2d99c908083334b7ccdceb8a92387fa9.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 With a `numeric` operator defined, we could introduce a sum operator that will sum by patient and type.  This allows us to implement the Charlson comorbidity algorithm:
 
-```ConceptQL{all_keys: true}
-[
-  "sum",
-  [
-    "union",
-    [
-      "numeric",
-      1,
-      [
-        "person",
-        [
-          "icd9",
-          "412"
-        ]
-      ]
-    ],
-    [
-      "numeric",
-      2,
-      [
-        "person",
-        [
-          "icd9",
-          "278.02"
-        ]
-      ]
-    ]
-  ]
-]
+---
+
+**Example 9**
+
+```JSON
+
+["sum",["union",["numeric",1,["person",["icd9","412"]]],["numeric",2,["person",["icd9","278.02"]]]]]
+
 ```
+
+![](possibilities/ba572c4f4dbade65be55f141df16cf7b3e7d09e0aec4e4e5debc4f2075277371.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | value_as_number |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | --------------- |
+| 11 | 0 | patients | person | 1934-02-01 | 1934-02-01 | 000489E7EAAD463F |  | 1.0 |
+| 17 | 0 | patients | person | 1919-09-01 | 1919-09-01 | 0007F12A492FD25D |  | 3.0 |
+| 34 | 0 | patients | person | 1919-10-01 | 1919-10-01 | 00151A878F9A2C0D |  | 2.0 |
+| 38 | 0 | patients | person | 1922-12-01 | 1922-12-01 | 001731EB127233DA |  | 1.0 |
+| 54 | 0 | patients | person | 1931-02-01 | 1931-02-01 | 001CAFF084B21E14 |  | 1.0 |
+| 55 | 0 | patients | person | 1924-12-01 | 1924-12-01 | 001D0E59C94130D3 |  | 2.0 |
+| 60 | 0 | patients | person | 1925-07-01 | 1925-07-01 | 001EA2F4DB30F105 |  | 1.0 |
+| 66 | 0 | patients | person | 1920-04-01 | 1920-04-01 | 0021B3C854C968C8 |  | 1.0 |
+| 73 | 0 | patients | person | 1925-09-01 | 1925-09-01 | 00237322613CFC3C |  | 1.0 |
+| 77 | 0 | patients | person | 1929-03-01 | 1929-03-01 | 00244B6D9AB50F9B |  | 1.0 |
+
+---
 
 #### Counting
 
 It might be helpful to count the number of occurrences of a result row in a stream.  A simple "count" operator could group identical rows and store the number of occurrences in the value_as_numeric column.
 
-I need examples of algorithms that could benefit from this operator.  I'm concerned that we'll want to roll up occurrences by person most of the time and that would require us to first cast streams to person before passing the person stream to count.  But casting to person only returns one unique row per person, so the below example doesn't even work the way I'd like.
+I need examples of algorithms that could benefit from this operator.  I'm concerned that we'll want to roll up occurrences by person most of the time and that would require us to first cast streams to person before passing the person stream to count.
 
-```ConceptQL{all_keys: true}
-# Count the number of times each person had diabetes
-[
-  "count",
-  [
-    "person",
-    [
-      "icd9",
-      "250.01"
-    ]
-  ]
-]
+---
+
+**Example 10 - Count the number of times each person had diabetes**
+
+```JSON
+
+["count",["person",["icd9","250.01"]]]
+
 ```
+
+![Count the number of times each person had diabetes](possibilities/cd0accd27071cd8734f169c6efceeb37ed8f1854b4346b4e5e11446ed79e047a.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | value_as_number |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | --------------- |
+| 2 | 2 | patients | person | 1943-01-01 | 1943-01-01 | 00016F745862898F |  | 1 |
+| 13 | 13 | patients | person | 1936-07-01 | 1936-07-01 | 0004F0ABD505251D |  | 1 |
+| 14 | 14 | patients | person | 1934-05-01 | 1934-05-01 | 00052705243EA128 |  | 1 |
+| 17 | 17 | patients | person | 1919-09-01 | 1919-09-01 | 0007F12A492FD25D |  | 1 |
+| 23 | 23 | patients | person | 1932-07-01 | 1932-07-01 | 000DDD364C46E2C6 |  | 1 |
+| 25 | 25 | patients | person | 1965-04-01 | 1965-04-01 | 00108066CA1FACCE |  | 1 |
+| 46 | 46 | patients | person | 1931-01-01 | 1931-01-01 | 001A6B93EEA3062E |  | 1 |
+| 56 | 56 | patients | person | 1943-10-01 | 1943-10-01 | 001DCB150EB10825 |  | 1 |
+| 58 | 58 | patients | person | 1921-09-01 | 1921-09-01 | 001E32373E05BA96 |  | 1 |
+| 66 | 66 | patients | person | 1920-04-01 | 1920-04-01 | 0021B3C854C968C8 |  | 1 |
+
+---
 
 We could do dumb things like count the number of times a row shows up in a union:
 
-```ConceptQL{all_keys: true}
-# All rows with a value of 2 would be rows that were both Male and White
-[
-  "count",
-  [
-    "union",
-    [
-      "gender",
-      "male"
-    ],
-    [
-      "race",
-      "white"
-    ]
-  ]
-]
+---
+
+**Example 11 - All rows with a value of 2 would be rows that were both Male and White**
+
+```JSON
+
+["count",["union",["gender","male"],["race","white"]]]
+
 ```
+
+![All rows with a value of 2 would be rows that were both Male and White](possibilities/71be2a1835ad866f6bf2e9e084066bc5490d2c11ca447a4347c5aa2cfb562b10.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | value_as_number |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | --------------- |
+| 214 | 214 | patients | person | 1914-07-01 | 1914-07-01 | 006D1BD234E5C844 |  | 2 |
+| 108 | 108 | patients | person | 1927-04-01 | 1927-04-01 | 0031161707ED8F11 |  | 1 |
+| 193 | 193 | patients | person | 1925-01-01 | 1925-01-01 | 00615D59B209C63C |  | 2 |
+| 151 | 151 | patients | person | 1928-10-01 | 1928-10-01 | 004802C6917D51BE |  | 1 |
+| 69 | 69 | patients | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |  | 1 |
+| 209 | 209 | patients | person | 1926-01-01 | 1926-01-01 | 00683B894CEB137A |  | 1 |
+| 110 | 110 | patients | person | 1928-03-01 | 1928-03-01 | 0031E4B9F2F11B24 |  | 2 |
+| 133 | 133 | patients | person | 1932-03-01 | 1932-03-01 | 0039A9422C87FBEC |  | 2 |
+| 64 | 64 | patients | person | 1942-08-01 | 1942-08-01 | 00208E3E5AED8BC2 |  | 2 |
+| 229 | 229 | patients | person | 1935-01-01 | 1935-01-01 | 00769CAC5C4C7793 |  | 2 |
+
+---
 
 #### Numeric Value Comparison
 
@@ -250,28 +329,21 @@ Acts like any other binary operator.  L and R streams, joined by person.  Any L 
 
 Numeric doesn't have to take a stream.  If it doesn't have a stream as an argument, it acts like a selection operator much like date_range
 
-```ConceptQL
-# People with more than 1 MI
-[
-  "greater_than",
-  {
-    "left": [
-      "count",
-      [
-        "person",
-        [
-          "icd9",
-          "412"
-        ]
-      ]
-    ],
-    "right": [
-      "numeric",
-      1
-    ]
-  }
-]
+---
+
+**Example 12 - People with more than 1 MI**
+
+```JSON
+
+["greater_than",{"left":["count",["person",["icd9","412"]]],"right":["numeric",1]}]
+
 ```
+
+![People with more than 1 MI](possibilities/c1d0402862221d85aceedc7d76b3f82149b612cbd972f14d0ca9011e1e2c455c.png)
+
+```No Results.  Statement is experimental.```
+
+---
 
 #### sum
 
@@ -332,13 +404,32 @@ I'm considering defaulting each value_as\_\* column to some value.
     - source_value?
     - Boy, this one is even harder to default
 
-```ConceptQL
-# All MIs, defaulting value_as_numeric to 1, concept_id to concept id for 412, string to condition_source_value
-[
-  "icd9",
-  "412"
-]
+---
+
+**Example 13 - All MIs, defaulting value_as_numeric to 1, concept_id to concept id for 412, string to condition_source_value**
+
+```JSON
+
+["icd9","412"]
+
 ```
+
+![All MIs, defaulting value_as_numeric to 1, concept_id to concept id for 412, string to condition_source_value](possibilities/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
+| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
+| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
+| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
+| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
+| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
+| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
+| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
+
+---
 
 - Comparison
     - GT
@@ -369,43 +460,39 @@ I'm considering defaulting each value_as\_\* column to some value.
 
 Inspired by person_filter, why not just have a "filter" operator that filters L by R.  Takes L, R, and an "as" option.  `as` option temporarily casts the L and R streams to the type specified by :as and then does person by person comparison, only keeping rows that occur on both sides.  Handy for keeping procedures that coincide with conditions without fully casting the streams:
 
-```ConceptQL
-# All 99214's where person was irritable during a visit
-[
-  "filter",
-  {
-    "left": [
-      "cpt",
-      "99214"
-    ],
-    "right": [
-      "icd9",
-      "250.01"
-    ],
-    "as": "visit_occurrence"
-  }
-]
+---
+
+**Example 14 - All 99214's where person was irritable during a visit**
+
+```JSON
+
+["filter",{"left":["cpt","99214"],"right":["icd9","250.01"],"as":"visit_occurrence"}]
+
 ```
+
+![All 99214's where person was irritable during a visit](possibilities/1c1848581ee2c6ca48ce7c1a9dc01f85d2f4473fb92493ec2e33c3ea16871f17.png)
+
+```No Results found.```
+
+---
 
 person_filter then becomes a special case of general filter:
 
-```ConceptQL
-# All 99214's where person was irritable at some point in the data
-[
-  "filter",
-  {
-    "left": [
-      "cpt",
-      "99214"
-    ],
-    "right": [
-      "icd9",
-      "250.01"
-    ],
-    "as": "person"
-  }
-]
+---
+
+**Example 15 - All 99214's where person was irritable at some point in the data**
+
+```JSON
+
+["filter",{"left":["cpt","99214"],"right":["icd9","250.01"],"as":"person"}]
+
 ```
+
+![All 99214's where person was irritable at some point in the data](possibilities/07c8a0ced3cebbf1f8e5c781e519af5edf8e0c7c69d540ec811b20c5bdb63b6c.png)
+
+```No Results found.```
+
+---
 
 Filter operator is the opposite of Except.  It only includes L if R matches.
 
