@@ -1,60 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [ConceptQL Specification](#conceptql-specification)
-  - [Motivation for ConceptQL](#motivation-for-conceptql)
-  - [ConceptQL Overview](#conceptql-overview)
-    - [What ConceptQL Looks Like](#what-conceptql-looks-like)
-    - [ConceptQL Diagrams](#conceptql-diagrams)
-    - [Think of Results as a Stream](#think-of-results-as-a-stream)
-    - [Streams Have Types](#streams-have-types)
-    - [Why Types?](#why-types)
-    - [What *are* Streams Really?](#what-are-streams-really)
-  - [Selection Operators](#selection-operators)
-  - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
-  - [Set Operators](#set-operators)
-    - [`Union` Operator](#union-operator)
-    - [`Intersect` Operator](#intersect-operator)
-    - [`Except` Operator](#except-operator)
-    - [Discussion About Set Operators](#discussion-about-set-operators)
-      - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
-      - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#q-why-arent-all-streams-passed-forward-unaltered--why-union-like-typed-streams)
-  - [Time-oriented Operators](#time-oriented-operators)
-    - [Relative Temporal Operators](#relative-temporal-operators)
-      - [`Nth Occurrence` Operator](#nth-occurrence-operator)
-      - [`First` Operator](#first-operator)
-      - [`Last` Operator](#last-operator)
-    - [Date Literals](#date-literals)
-      - [`Date Range` Operator](#date-range-operator)
-      - [day](#day)
-      - [What is <date-format\>?](#what-is-date-format%5C)
-    - [Temporal Comparison Operators](#temporal-comparison-operators)
-      - [`Any Overlap` Operator](#any-overlap-operator)
-      - [Edge Behaviors of Before and After](#edge-behaviors-of-before-and-after)
-    - [Temporal Comparison Improvements](#temporal-comparison-improvements)
-      - [New Parameters](#new-parameters)
-      - [Considerations](#considerations)
-    - [`Time Window` Operator](#time-window-operator)
-      - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
-    - [`Episode` Operator](#episode-operator)
-  - [Inline-Filter Operators](#inline-filter-operators)
-    - ['Place of Service Filter` Operator](#place-of-service-filter-operator)
-    - [`Provenance` Operator](#provenance-operator)
-    - [`Provider Filter` Operator](#provider-filter-operator)
-  - [`One In Two Out` Operator](#one-in-two-out-operator)
-  - [`Person Filter`](#person-filter)
-  - [`Co-Reported` Operator](#co-reported-operator)
-  - [Sub-algorithms within a Larger Algorithm](#sub-algorithms-within-a-larger-algorithm)
-    - [`label` option](#label-option)
-    - [`Recall` operator](#recall-operator)
-  - [Appendix A - Selection Operators](#appendix-a---selection-operators)
-  - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
-    - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
-    - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
-  - [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # ConceptQL Specification
 
 [ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that allows researchers to unambiguously define their research algorithms.  Over the last 7 years, it has been running in production as the heart of our study-building software, [Jigsaw](https://jigsaw.io)
@@ -1374,7 +1317,7 @@ One side-effect of this operator is that the `criterion_domain` is set to "episo
 
 There are a couple of operators that filter an incoming stream before passing it along.
 
-### 'Place of Service Filter` Operator
+### `Place of Service Filter` Operator
 
 Often in claims data, an event is reported with a place of service via the CMS place of service codes, such as "inpatient hospital" (21) or "outpatient hospital" (22).  For these kinds of queries, ConceptQL has the `Place of Service Filter`
 

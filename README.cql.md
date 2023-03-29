@@ -945,7 +945,7 @@ One side-effect of this operator is that the `criterion_domain` is set to "episo
 
 There are a couple of operators that filter an incoming stream before passing it along.
 
-### 'Place of Service Filter` Operator
+### `Place of Service Filter` Operator
 
 Often in claims data, an event is reported with a place of service via the CMS place of service codes, such as "inpatient hospital" (21) or "outpatient hospital" (22).  For these kinds of queries, ConceptQL has the `Place of Service Filter`
 
