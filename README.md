@@ -1,3 +1,59 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [ConceptQL Specification](#conceptql-specification)
+  - [Motivation for ConceptQL](#motivation-for-conceptql)
+  - [ConceptQL Overview](#conceptql-overview)
+    - [What ConceptQL Looks Like](#what-conceptql-looks-like)
+    - [ConceptQL Diagrams](#conceptql-diagrams)
+    - [Think of Results as a Stream](#think-of-results-as-a-stream)
+    - [Streams Have Types](#streams-have-types)
+    - [Why Types?](#why-types)
+    - [What *are* Streams Really?](#what-are-streams-really)
+  - [Selection Operators](#selection-operators)
+  - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
+  - [Set Operators](#set-operators)
+    - [`Union` Operator](#union-operator)
+    - [`Intersect` Operator](#intersect-operator)
+    - [`Except` Operator](#except-operator)
+    - [Discussion About Set Operators](#discussion-about-set-operators)
+      - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
+      - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#q-why-arent-all-streams-passed-forward-unaltered--why-union-like-typed-streams)
+  - [Time-oriented Operators](#time-oriented-operators)
+    - [Relative Temporal Operators](#relative-temporal-operators)
+      - [`Nth Occurrence` Operator](#nth-occurrence-operator)
+      - [`First` Operator](#first-operator)
+      - [`Last` Operator](#last-operator)
+    - [Date Literals](#date-literals)
+      - [`Date Range` Operator](#date-range-operator)
+      - [day](#day)
+      - [What is <date-format\>?](#what-is-date-format%5C)
+    - [Temporal Comparison Operators](#temporal-comparison-operators)
+      - [`Any Overlap` Operator](#any-overlap-operator)
+      - [Edge Behaviors of Before and After](#edge-behaviors-of-before-and-after)
+    - [Temporal Comparison Improvements](#temporal-comparison-improvements)
+      - [New Parameters](#new-parameters)
+      - [Considerations](#considerations)
+    - [`Time Window` Operator](#time-window-operator)
+      - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
+    - [`Episode` Operator](#episode-operator)
+  - [Inline-Filter Operators](#inline-filter-operators)
+    - [`Place of Service Filter` Operator](#place-of-service-filter-operator)
+    - [`Provenance` Operator](#provenance-operator)
+    - [`Provider Filter` Operator](#provider-filter-operator)
+  - [`One In Two Out` Operator](#one-in-two-out-operator)
+  - [`Person Filter`](#person-filter)
+  - [`Co-Reported` Operator](#co-reported-operator)
+  - [`label` Option and Its Features](#label-option-and-its-features)
+    - [`Recall` operator](#recall-operator)
+  - [Appendix A - Selection Operators](#appendix-a---selection-operators)
+  - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
+    - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
+    - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
+  - [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # ConceptQL Specification
 
 [ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that allows researchers to unambiguously define their research algorithms.  Over the last 7 years, it has been running in production as the heart of our study-building software, [Jigsaw](https://jigsaw.io)
@@ -382,16 +438,16 @@ Because streams represent sets of results, it makes sense to include operators t
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 213 | 213 | person | 1940-02-01 | 1940-02-01 | 006C7FC30305A339 |
-| 214 | 214 | person | 1914-07-01 | 1914-07-01 | 006D1BD234E5C844 |
-| 146 | 146 | person | 1944-10-01 | 1944-10-01 | 0044E599C4A33421 |
-| 193 | 193 | person | 1925-01-01 | 1925-01-01 | 00615D59B209C63C |
-| 110 | 110 | person | 1928-03-01 | 1928-03-01 | 0031E4B9F2F11B24 |
-| 133 | 133 | person | 1932-03-01 | 1932-03-01 | 0039A9422C87FBEC |
-| 187 | 187 | person | 1936-01-01 | 1936-01-01 | 006084B3FA2A151C |
-| 64 | 64 | person | 1942-08-01 | 1942-08-01 | 00208E3E5AED8BC2 |
+| 131 | 131 | person | 1932-03-01 | 1932-03-01 | 00388B34335069C0 |
+| 168 | 168 | person | 1931-08-01 | 1931-08-01 | 00534E60E969C69E |
+| 70 | 70 | person | 1923-01-01 | 1923-01-01 | 00227C9BE53C38FD |
+| 87 | 87 | person | 1943-04-01 | 1943-04-01 | 0028A82FE0CA0802 |
+| 116 | 116 | person | 1944-01-01 | 1944-01-01 | 00331E23B76902ED |
+| 114 | 114 | person | 1940-07-01 | 1940-07-01 | 0032C178DA63958A |
+| 112 | 112 | person | 1936-08-01 | 1936-08-01 | 003282C0D50D34BA |
+| 84 | 84 | person | 1939-03-01 | 1939-03-01 | 00258EEA7B4078D1 |
 | 93 | 93 | person | 1941-04-01 | 1941-04-01 | 002A425E967ED186 |
-| 246 | 246 | person | 1925-11-01 | 1925-11-01 | 0081F3E8DAB3625F |
+| 224 | 224 | person | 1929-06-01 | 1929-06-01 | 0072A5D566AD2FBA |
 
 ---
 
@@ -467,16 +523,16 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 190 | 190 | person | 1939-07-01 | 1939-07-01 | 0060C263DA4EBBAF |
-| 108 | 108 | person | 1927-04-01 | 1927-04-01 | 0031161707ED8F11 |
-| 151 | 151 | person | 1928-10-01 | 1928-10-01 | 004802C6917D51BE |
-| 69 | 69 | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |
-| 96 | 96 | person | 1934-04-01 | 1934-04-01 | 002AFD7289D200A7 |
-| 75 | 75 | person | 1932-08-01 | 1932-08-01 | 00241223F034F97B |
+| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
 | 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
-| 238 | 238 | person | 1921-03-01 | 1921-03-01 | 007CE3AFEC3B1E5E |
+| 21 | 21 | person | 1932-08-01 | 1932-08-01 | 000C7486B11E7030 |
+| 22 | 22 | person | 1942-08-01 | 1942-08-01 | 000D6D88463D8A76 |
+| 50 | 50 | person | 1941-08-01 | 1941-08-01 | 001AEDD510C92C87 |
 | 68 | 68 | person | 1954-11-01 | 1954-11-01 | 0021D4CDAFC0609F |
-| 167 | 167 | person | 1941-06-01 | 1941-06-01 | 005241365C77FF65 |
+| 69 | 69 | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |
+| 71 | 71 | person | 1931-01-01 | 1931-01-01 | 0022CC1943D038E2 |
+| 72 | 72 | person | 1933-04-01 | 1933-04-01 | 002354398A00234E |
+| 75 | 75 | person | 1932-08-01 | 1932-08-01 | 00241223F034F97B |
 
 ---
 
@@ -496,16 +552,16 @@ If the left-hand stream has no types that match the right-hand stream, the left-
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 38 | 40556 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
-| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
+| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
+| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
 | 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 109 | 89334 | condition_occurrence | 2010-07-06 | 2010-07-06 | 412 |
-| 213 | 55557 | condition_occurrence | 2009-06-07 | 2009-06-07 | 412 |
-| 110 | 62592 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
-| 11 | 82614 | condition_occurrence | 2008-10-29 | 2008-10-29 | 412 |
-| 220 | 48449 | condition_occurrence | 2008-11-16 | 2008-11-20 | 412 |
+| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
+| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
+| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
+| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
 | 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
+| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
 
 ---
 
@@ -525,16 +581,16 @@ And just to show how multiple streams behave:
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
-| 11 | 82614 | condition_occurrence | 2008-10-29 | 2008-10-29 | 412 |
-| 177 | 48526 | condition_occurrence | 2008-09-23 | 2008-09-23 | 412 |
-| 190 | 190 | person | 1939-07-01 | 1939-07-01 | 0060C263DA4EBBAF |
-| 223 | 39893 | condition_occurrence | 2008-10-31 | 2008-10-31 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 108 | 108 | person | 1927-04-01 | 1927-04-01 | 0031161707ED8F11 |
-| 151 | 151 | person | 1928-10-01 | 1928-10-01 | 004802C6917D51BE |
+| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
+| 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
+| 21 | 21 | person | 1932-08-01 | 1932-08-01 | 000C7486B11E7030 |
+| 22 | 22 | person | 1942-08-01 | 1942-08-01 | 000D6D88463D8A76 |
+| 50 | 50 | person | 1941-08-01 | 1941-08-01 | 001AEDD510C92C87 |
+| 68 | 68 | person | 1954-11-01 | 1954-11-01 | 0021D4CDAFC0609F |
 | 69 | 69 | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
+| 71 | 71 | person | 1931-01-01 | 1931-01-01 | 0022CC1943D038E2 |
+| 72 | 72 | person | 1933-04-01 | 1933-04-01 | 002354398A00234E |
+| 75 | 75 | person | 1932-08-01 | 1932-08-01 | 00241223F034F97B |
 
 ---
 
@@ -1616,8 +1672,8 @@ And don't forget the left-hand side can have multiple types of streams:
 | 68 | 33110 | procedure_occurrence | 2010-08-13 | 2010-08-13 | 99214 |
 | 68 | 32826 | procedure_occurrence | 2009-07-22 | 2009-07-22 | 99214 |
 | 68 | 49092 | procedure_occurrence | 2008-10-28 | 2008-10-28 | 99214 |
-| 68 | 80436 | procedure_occurrence | 2009-11-13 | 2009-11-13 | 99214 |
 | 68 | 88881 | procedure_occurrence | 2010-03-17 | 2010-03-17 | 99214 |
+| 68 | 80436 | procedure_occurrence | 2009-11-13 | 2009-11-13 | 99214 |
 | 146 | 37311 | procedure_occurrence | 2009-08-17 | 2009-08-17 | 99214 |
 
 ---
@@ -1658,15 +1714,103 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 Note that both the diagnosis and procedure are pass on through the operator.
 
-## Sub-algorithms within a Larger Algorithm
+## `label` Option and Its Features
 
-If a algorithm is particularly complex, or has a stream of results that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.
+Any ConceptQL operator can be assigned a label.  The label simply provides a way to apply a brief description to an operator, generally, what kind of results the operator is producing.  
 
-### `label` option
+Any operator with a `label` inserts its `label` into the set of results.
 
-Any ConceptQL operator can be assigned a label.  The label simply provides a way to apply a brief description to an operator, generally, what kind of results the operator is producing.  Any operator that has a label can be accessed via the `Recall` operator.
+For instance, here are some diabetes diagnoses with a label applied:
+
+---
+
+**Example 47**
+
+```JSON
+
+["icd9","250.00",{"label":"diabetes"}]
+
+```
+
+![](README/ae17e429cc3455a947e1b0a13602b50d53f4b1fc709d9cb8c759dd2340f0a1cb.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
+| 68 | 19 | clinical_codes | condition_occurrence | 2008-04-19 | 2008-04-23 | 25000 | ICD9CM | diabetes |
+| 207 | 106 | clinical_codes | condition_occurrence | 2010-04-28 | 2010-05-02 | 25000 | ICD9CM | diabetes |
+| 131 | 170 | clinical_codes | condition_occurrence | 2008-03-22 | 2008-03-23 | 25000 | ICD9CM | diabetes |
+| 243 | 205 | clinical_codes | condition_occurrence | 2009-08-20 | 2009-08-23 | 25000 | ICD9CM | diabetes |
+| 230 | 231 | clinical_codes | condition_occurrence | 2008-03-30 | 2008-04-02 | 25000 | ICD9CM | diabetes |
+| 32 | 257 | clinical_codes | condition_occurrence | 2010-08-30 | 2010-09-07 | 25000 | ICD9CM | diabetes |
+| 79 | 267 | clinical_codes | condition_occurrence | 2009-08-09 | 2009-08-24 | 25000 | ICD9CM | diabetes |
+| 230 | 284 | clinical_codes | condition_occurrence | 2008-03-01 | 2008-03-06 | 25000 | ICD9CM | diabetes |
+| 168 | 297 | clinical_codes | condition_occurrence | 2010-02-14 | 2010-02-18 | 25000 | ICD9CM | diabetes |
+| 37 | 310 | clinical_codes | condition_occurrence | 2009-01-19 | 2009-01-20 | 25000 | ICD9CM | diabetes |
+
+---
+
+The most recent upstream `label` is the one that is output:
+
+---
+
+**Example 48**
+
+```JSON
+
+["first",["icd9","250.00",{"label":"won't show"}],{"label":"1st diabetes"}]
+
+```
+
+![](README/171c05fd88920d0ab583a95030008eca236e6e9570059ef9d0efacb9e99f446e.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
+| 2 | 89752 | clinical_codes | condition_occurrence | 2009-05-11 | 2009-05-11 | 25000 | ICD9CM | 1st diabetes |
+| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | 1st diabetes |
+| 5 | 89717 | clinical_codes | condition_occurrence | 2009-06-28 | 2009-06-28 | 25000 | ICD9CM | 1st diabetes |
+| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | 1st diabetes |
+| 8 | 95135 | clinical_codes | condition_occurrence | 2008-10-17 | 2008-10-17 | 25000 | ICD9CM | 1st diabetes |
+| 9 | 24929 | clinical_codes | condition_occurrence | 2010-08-01 | 2010-08-01 | 25000 | ICD9CM | 1st diabetes |
+| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | 1st diabetes |
+| 12 | 15443 | clinical_codes | condition_occurrence | 2009-04-20 | 2009-04-20 | 25000 | ICD9CM | 1st diabetes |
+| 13 | 19968 | clinical_codes | condition_occurrence | 2008-03-05 | 2008-03-05 | 25000 | ICD9CM | 1st diabetes |
+| 14 | 77991 | clinical_codes | condition_occurrence | 2009-06-05 | 2009-06-05 | 25000 | ICD9CM | 1st diabetes |
+
+---
+
+The idea behind this is to create hints about what is being output:
+
+---
+
+**Example 49**
+
+```JSON
+
+["first",["union",["icd9","250.00",{"label":"diabetes"}],["icd9","401.9",{"label":"hypertension"}]]]
+
+```
+
+![](README/a2f7ece76cf8636b34d5dcd03113c5593a779947cf9f088ae47a64f24e14eddb.png)
+
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
+| 1 | 1065 | clinical_codes | condition_occurrence | 2010-03-12 | 2010-03-13 | 4019 | ICD9CM | hypertension |
+| 2 | 57517 | clinical_codes | condition_occurrence | 2009-03-30 | 2009-03-30 | 4019 | ICD9CM | hypertension |
+| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | diabetes |
+| 5 | 38310 | clinical_codes | condition_occurrence | 2008-12-14 | 2008-12-14 | 4019 | ICD9CM | hypertension |
+| 6 | 76645 | clinical_codes | condition_occurrence | 2010-02-23 | 2010-02-23 | 4019 | ICD9CM | hypertension |
+| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | diabetes |
+| 8 | 55867 | clinical_codes | condition_occurrence | 2008-02-27 | 2008-02-27 | 4019 | ICD9CM | hypertension |
+| 9 | 27621 | clinical_codes | condition_occurrence | 2009-10-12 | 2009-10-19 | 4019 | ICD9CM | hypertension |
+| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | diabetes |
+| 12 | 34937 | clinical_codes | condition_occurrence | 2008-09-17 | 2008-09-17 | 4019 | ICD9CM | hypertension |
+
+---
+
 
 ### `Recall` operator
+
+If a algorithm is particularly complex, or has a stream of results that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
 
 - Takes 1 argument
     - The "label" of an operator from which you'd like to pull the exact same set of results
@@ -1675,7 +1819,7 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
-**Example 47 - Save away a stream of results to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
+**Example 50 - Save away a stream of results to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
 
 ```JSON
 
@@ -1733,7 +1877,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 48**
+**Example 51**
 
 ```JSON
 
@@ -1757,7 +1901,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 49**
+**Example 52**
 
 ```JSON
 

@@ -1162,15 +1162,34 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 Note that both the diagnosis and procedure are pass on through the operator.
 
-## Sub-algorithms within a Larger Algorithm
+## `label` Option and Its Features
 
-If a algorithm is particularly complex, or has a stream of results that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.
+Any ConceptQL operator can be assigned a label.  The label simply provides a way to apply a brief description to an operator, generally, what kind of results the operator is producing.  
 
-### `label` option
+Any operator with a `label` inserts its `label` into the set of results.
 
-Any ConceptQL operator can be assigned a label.  The label simply provides a way to apply a brief description to an operator, generally, what kind of results the operator is producing.  Any operator that has a label can be accessed via the `Recall` operator.
+For instance, here are some diabetes diagnoses with a label applied:
+
+```ConceptQL{all_keys: true}
+["icd9", "250.00", "label": "diabetes"]
+```
+
+The most recent upstream `label` is the one that is output:
+
+```ConceptQL{all_keys: true}
+["first", ["icd9", "250.00", "label": "won't show"], "label": "1st diabetes"]
+```
+
+The idea behind this is to create hints about what is being output:
+
+```ConceptQL{all_keys: true}
+["first", ["union", ["icd9", "250.00", "label": "diabetes"], ["icd9", "401.9", "label": "hypertension"]]]
+```
+
 
 ### `Recall` operator
+
+If a algorithm is particularly complex, or has a stream of results that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
 
 - Takes 1 argument
     - The "label" of an operator from which you'd like to pull the exact same set of results
