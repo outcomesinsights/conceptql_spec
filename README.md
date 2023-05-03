@@ -42,11 +42,19 @@
     - [`Provenance` Operator](#provenance-operator)
     - [`Provider Filter` Operator](#provider-filter-operator)
   - [`One In Two Out` Operator](#one-in-two-out-operator)
-  - [`Person Filter`](#person-filter)
+  - [`Person Filter` Operator](#person-filter-operator)
   - [`Co-Reported` Operator](#co-reported-operator)
   - [`label` Option and Its Features](#label-option-and-its-features)
-    - [`Recall` operator](#recall-operator)
-  - [Appendix A - Selection Operators](#appendix-a---selection-operators)
+    - [`Recall` Operator](#recall-operator)
+  - [Appendix A - Additional Operators](#appendix-a---additional-operators)
+    - [`Vocabulary` Operator](#vocabulary-operator)
+    - [More Temporal Operators](#more-temporal-operators)
+      - [`During` Operator](#during-operator)
+      - [`Contains` Operator](#contains-operator)
+    - [More Person Operators](#more-person-operators)
+      - [`Gender` Operator](#gender-operator)
+      - [`Race` Operator](#race-operator)
+    - [`Death` Operator](#death-operator)
   - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
     - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
     - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
@@ -771,7 +779,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 #### `First` Operator
 
-- Operator that is shorthand for writing ``[ "occurrence", 1 ]``
+- [Nth Occurrence Operator](#nth-occurrence-operator) that is shorthand for writing ``[ "occurrence", 1 ]``
 
 ---
 
@@ -802,7 +810,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 #### `Last` Operator
 
-- Operator that is shorthand for writing ``[ "occurrence", -1 ]``
+- [Nth Occurrence Operator](#nth-occurrence-operator) that is shorthand for writing ``[ "occurrence", -1 ]``
 
 ---
 
@@ -863,37 +871,6 @@ Dates follow these formats:
 As described above, each result carries a start and end date, defining its own date range.  It is through these date ranges that we are able to do temporal filtering of streams via temporal operators.
 
 Temporal operators work by comparing a left-hand stream (L) against a right-hand stream (R).  R can be either a set of streams or a pre-defined date range.  Each temporal operator has a comparison operator which defines how it compares dates between L and R.  A temporal operator passes results only from L downstream.  A temporal operator discards all results in the R stream after it makes all comparisons.
-
-The available set of temporal operators comes from the work of Allen's Interval Algebra[^AIA].  Interval Algebra defines 13 distinct temporal relationships, as shown in this handy chart [borrowed from this website](http://people.kmi.open.ac.uk/carlos/174):
-
-![](additional_images/AllensIntervalAlgebra.png)
-
-Our implementation of this algebra is originally going to be as strict as listed here, meaning that:
-
-- `Before`/`After`
-    - There must be a minimum 1-day gap between date ranges
-- `Meets`/`Met-by`
-    - Only if the first date range starts/ends a day before the next date range ends/starts
-- `Started-by`/`Starts`
-    - The start dates of the two ranges must be equal and the end dates must not be
-- `Finished-by`/`Finishes`
-    - The end dates of the two ranges must be equal and the start dates must not be
-- `Contains`/`During`
-    - The start/end dates of the two ranges must be different from each other
-- `Overlaps`/`Overlapped-by`
-    - The start date of one range and the end date of the other range must be outside the overlapping range
-- `Temporally coincides`
-    - Start dates must be equal, end dates must be equal
-
-A Sidebar on These Definitions:
-
-> These strict definitions may not be particularly handy or even intuitive.  It seems like contains, starts, finishes, and coincides are all examples of overlapping ranges.  Starts/finishes seem to be examples of one range containing another.  Meets/met-by seem to be special cases of before/after.  But these definitions, if used in their strict sense, are all mutually exclusive.
->
-> Allen's Interval Algebra seems to represent more complex temporal relationships through composition of the various definitions as [discussed on this site](https://www.ics.uci.edu/~alspaugh/cls/shr/allen.html)
->
-> We may want to adopt a less strict set of definitions, though their meanings may not be as easily defined as the ones provided by Allen's Interval Algebra
-
-When comparing results in L against a date range, results in L continue downstream only if they pass the comparison.
 
 ---
 
@@ -1533,7 +1510,7 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Optional
     - Defaults to Initial Event
 
-## `Person Filter`
+## `Person Filter` Operator
 
 Often we want to filter out a set of results by people.  For instance, say we wanted to find all MIs for all males.  We'd use the `Person Filter` operator for that.  Like the `Except` operator, it takes a left-hand stream and a right-hand stream.
 
@@ -1808,7 +1785,7 @@ The idea behind this is to create hints about what is being output:
 ---
 
 
-### `Recall` operator
+### `Recall` Operator
 
 If a algorithm is particularly complex, or has a stream of results that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
 
@@ -1844,23 +1821,50 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
+## Appendix A - Additional Operators
 
-## Appendix A - Selection Operators
+### `Vocabulary` Operator
 
-Below is a list of the most common selection operators available in ConceptQL
+A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
 
 | Operator Name | Stream Type | Arguments | Returns |
 | ---- | ---- | --------- | ------- |
-| cpt  | procedure_occurrence | 1 or more CPT codes | All results whose source_value match any of the CPT codes |
-| icd9 | condition_occurrence | 1 or more ICD-9CM codes | All results whose source_value match any of the ICD-9 codes |
+| cpt4  | procedure_occurrence | 1 or more CPT codes | All results whose source_value match any of the CPT codes |
+| icd9cm | condition_occurrence | 1 or more ICD-9CM codes | All results whose source_value match any of the ICD-9 codes |
 | icd9_procedure | procedure_occurrence | 1 or more ICD-9 procedure codes | All results whose source_value match any of the ICD-9 procedure codes |
-| icd10 | condition_occurrence | 1 or more ICD-10 | All results whose source_value match any of the ICD-10 codes |
+| icd10cm | condition_occurrence | 1 or more ICD-10 | All results whose source_value match any of the ICD-10 codes |
 | hcpcs  | procedure_occurrence | 1 or more HCPCS codes | All results whose source_value match any of the HCPCS codes |
 | gender | person | 1 or more gender concept_ids | All results whose gender_concept_id match any of the concept_ids|
 | loinc | observation | 1 or more LOINC codes | All results whose source_value match any of the LOINC codes |
 | race | person | 1 or more race concept_ids | All results whose race_concept_id match any of the concept_ids|
 | rxnorm | drug_exposure | 1 or more RxNorm IDs | All results whose drug_concept_id match any of the RxNorm IDs|
 | snomed | condition_occurrence | 1 or more SNOMED codes | All results whose source_value match any of the SNOMED codes |
+
+### More Temporal Operators
+
+#### `During` Operator
+
+The `During` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range is fully, and inclusively, contained within a right hand record's date range.
+
+#### `Contains` Operator
+
+The `Contains` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range fully, and inclusively, contains a right hand record's date range.
+
+### More Person Operators
+
+Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
+
+#### `Gender` Operator
+
+This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
+
+#### `Race` Operator
+
+This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
+
+### `Death` Operator
+
+This operator pulls all death records from the death table.
 
 ## Appendix B - Algorithm Showcase
 
