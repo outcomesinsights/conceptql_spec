@@ -8,4 +8,4 @@ fi
 bundle exec sequelizer config
 bundle exec ruby exe/knit.rb README.cql.md && \
 doctoc --github --notitle README.md && \
-mdl README.md
+bundle exec mdl README.md
