@@ -2,77 +2,77 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [ConceptQL Specification](#conceptql-specification)
-  - [Motivation for ConceptQL](#motivation-for-conceptql)
-  - [ConceptQL Overview](#conceptql-overview)
-    - [What ConceptQL Looks Like](#what-conceptql-looks-like)
-    - [ConceptQL Diagrams](#conceptql-diagrams)
-    - [Think of Records as a Stream](#think-of-records-as-a-stream)
-    - [Streams Have Types](#streams-have-types)
-    - [Why Types?](#why-types)
-    - [What *are* Streams Really?](#what-are-streams-really)
-  - [Selection Operators](#selection-operators)
-    - [`Vocabulary` Operator](#vocabulary-operator)
-    - [Person-related Operators](#person-related-operators)
-      - [`Gender` Operator](#gender-operator)
-      - [`Race` Operator](#race-operator)
-      - [`Ethnicity` Operator](#ethnicity-operator)
-      - [`Person` Operator](#person-operator)
-    - [Additional Selection Operators](#additional-selection-operators)
-      - [`Death` Operator](#death-operator)
-      - [`Information Periods` Operator](#information-periods-operator)
-    - [Utilization Operators](#utilization-operators)
-      - [`SNF` Operator](#snf-operator)
-      - [`Hospice` Operator](#hospice-operator)
-      - [`Hospitalization` Operator](#hospitalization-operator)
-  - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
-  - [Set Operators](#set-operators)
-    - [`Union` Operator](#union-operator)
-    - [`Except` Operator](#except-operator)
-    - [Discussion About Set Operators](#discussion-about-set-operators)
-  - [Time-oriented Operators](#time-oriented-operators)
-    - [Relative Temporal Operators](#relative-temporal-operators)
-      - [`Nth Occurrence` Operator](#nth-occurrence-operator)
-      - [`First` Operator](#first-operator)
-      - [`Last` Operator](#last-operator)
-    - [Date Literals](#date-literals)
-      - [`Date Range` Operator](#date-range-operator)
-      - [day](#day)
-      - [What is <date-format\>?](#what-is-date-format%5C)
-    - [Temporal Comparison Operators](#temporal-comparison-operators)
-      - [`During` Operator](#during-operator)
-      - [`Contains` Operator](#contains-operator)
-      - [`Any Overlap` Operator](#any-overlap-operator)
-      - [`Before` Operator](#before-operator)
-      - [`After` Operator](#after-operator)
-      - [Working Around `Before`/`After` Behavior](#working-around-beforeafter-behavior)
-    - [Time Manipulation Operators](#time-manipulation-operators)
-      - [`Time Window` Operator](#time-window-operator)
-      - [`Trim Date Start` Operator](#trim-date-start-operator)
-      - [`Trim Date End` Operator](#trim-date-end-operator)
-    - [Temporal Comparison Operator Options](#temporal-comparison-operator-options)
-      - [Considerations](#considerations)
-      - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
-    - [`Episode` Operator](#episode-operator)
-    - [`Concurrent Within` Operator](#concurrent-within-operator)
-  - [Inline-Filter Operators](#inline-filter-operators)
-    - [`Place of Service Filter` Operator](#place-of-service-filter-operator)
-    - [`Provenance` Operator](#provenance-operator)
-    - [`Provider Filter` Operator](#provider-filter-operator)
-    - [`One In Two Out` Operator](#one-in-two-out-operator)
-    - [`Person Filter` Operator](#person-filter-operator)
-  - [Comparison Operators](#comparison-operators)
-    - [`Filter` Operator](#filter-operator)
-    - [`Match` Operator](#match-operator)
-    - [`Co-Reported` Operator](#co-reported-operator)
-  - [`label` Option and Its Features](#label-option-and-its-features)
-    - [`Recall` Operator](#recall-operator)
-  - [Appendix A - Experimental Operators](#appendix-a---experimental-operators)
-    - [`Numeric Filter` Operator](#numeric-filter-operator)
-    - [`Equal` Operator](#equal-operator)
-  - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
-    - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
-    - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
-  - [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
+- [Motivation for ConceptQL](#motivation-for-conceptql)
+- [ConceptQL Overview](#conceptql-overview)
+  - [What ConceptQL Looks Like](#what-conceptql-looks-like)
+  - [ConceptQL Diagrams](#conceptql-diagrams)
+  - [Think of Records as a Stream](#think-of-records-as-a-stream)
+  - [Streams Have Types](#streams-have-types)
+  - [Why Types?](#why-types)
+  - [What *are* Streams Really?](#what-are-streams-really)
+- [Selection Operators](#selection-operators)
+  - [`Vocabulary` Operator](#vocabulary-operator)
+  - [Person-related Operators](#person-related-operators)
+    - [`Gender` Operator](#gender-operator)
+    - [`Race` Operator](#race-operator)
+    - [`Ethnicity` Operator](#ethnicity-operator)
+    - [`Person` Operator](#person-operator)
+  - [Additional Selection Operators](#additional-selection-operators)
+    - [`Death` Operator](#death-operator)
+    - [`Information Periods` Operator](#information-periods-operator)
+  - [Utilization Operators](#utilization-operators)
+    - [`SNF` Operator](#snf-operator)
+    - [`Hospice` Operator](#hospice-operator)
+    - [`Hospitalization` Operator](#hospitalization-operator)
+- [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
+- [Set Operators](#set-operators)
+  - [`Union` Operator](#union-operator)
+  - [`Except` Operator](#except-operator)
+  - [Discussion About Set Operators](#discussion-about-set-operators)
+- [Time-oriented Operators](#time-oriented-operators)
+  - [Relative Temporal Operators](#relative-temporal-operators)
+    - [`Nth Occurrence` Operator](#nth-occurrence-operator)
+    - [`First` Operator](#first-operator)
+    - [`Last` Operator](#last-operator)
+  - [Date Literals](#date-literals)
+    - [`Date Range` Operator](#date-range-operator)
+    - [day](#day)
+    - [What is <date-format\>?](#what-is-date-format%5C)
+  - [Temporal Comparison Operators](#temporal-comparison-operators)
+    - [`During` Operator](#during-operator)
+    - [`Contains` Operator](#contains-operator)
+    - [`Any Overlap` Operator](#any-overlap-operator)
+    - [`Before` Operator](#before-operator)
+    - [`After` Operator](#after-operator)
+    - [Working Around `Before`/`After` Behavior](#working-around-beforeafter-behavior)
+  - [Time Manipulation Operators](#time-manipulation-operators)
+    - [`Time Window` Operator](#time-window-operator)
+    - [`Trim Date Start` Operator](#trim-date-start-operator)
+    - [`Trim Date End` Operator](#trim-date-end-operator)
+  - [Temporal Comparison Operator Options](#temporal-comparison-operator-options)
+    - [Considerations](#considerations)
+    - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
+  - [`Episode` Operator](#episode-operator)
+  - [`Concurrent Within` Operator](#concurrent-within-operator)
+- [Inline-Filter Operators](#inline-filter-operators)
+  - [`Place of Service Filter` Operator](#place-of-service-filter-operator)
+  - [`Provenance` Operator](#provenance-operator)
+  - [`Provider Filter` Operator](#provider-filter-operator)
+  - [`One In Two Out` Operator](#one-in-two-out-operator)
+  - [`Person Filter` Operator](#person-filter-operator)
+- [Comparison Operators](#comparison-operators)
+  - [`Filter` Operator](#filter-operator)
+  - [`Match` Operator](#match-operator)
+  - [`Co-Reported` Operator](#co-reported-operator)
+- [`label` Option and Its Features](#label-option-and-its-features)
+  - [`Recall` Operator](#recall-operator)
+- [Appendix A - Experimental Operators](#appendix-a---experimental-operators)
+  - [`Numeric Filter` Operator](#numeric-filter-operator)
+  - [`Equal` Operator](#equal-operator)
+- [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
+  - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
+  - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
+- [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -82,7 +82,7 @@
 
 In that time its implementation has evolved considerably, but it has remained consistent with its original goals.
 
-## Motivation for ConceptQL
+# Motivation for ConceptQL
 
 Outcomes Insights has built a vast library of research algorithms and applied those algorithms to large databases of claims data.  Early into building the library, we realized we had to overcome two major issues:
 
@@ -147,9 +147,9 @@ WHERE cc.clinical_code_concept_id IN (
 
 As stated above, one of the goals of ConceptQL is to make it easy to assemble fairly complex queries without having to roll up our sleeves and write raw SQL.  To accommodate this complexity, ConceptQL itself has some complexities of its own.  That said, we believe ConceptQL will help researchers define, hone, and share their research algorithms.
 
-## ConceptQL Overview
+# ConceptQL Overview
 
-### What ConceptQL Looks Like
+## What ConceptQL Looks Like
 
 Perhaps seeing an example will be the quickest way to get a sense of a language.  Here is a trivial example to whet your appetite.  The example is in YAML, but could just as easily be in JSON or any other markup language capable of representing nested sets of heterogeneous arrays and hashes.  In fact, the ConceptQL "language" is a just set of nested arrays and hashes.  If you squint, it might even look a bit like [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)).  Indeed, the nested arrays are [S-expressions](https://en.wikipedia.org/wiki/S-expression).  
 
@@ -164,7 +164,7 @@ ConceptQL is a domain-specific, declarative "language" that represents search cr
 - 412
 ```
 
-### ConceptQL Diagrams
+## ConceptQL Diagrams
 
 Reading ConceptQL in YAML or JSON can be difficult.  It is often easier to explore ConceptQL using directed graphs.  For instance, the diagram for the simple example listed in YAML above is:
 
@@ -228,13 +228,13 @@ The diagram above reads "get all procedures that match the CPT 99214 (Office Vis
 
 Please note that all of the diagrams end with an arrow pointing at nothing.  We'll explain why soon.
 
-### Think of Records as a Stream
+## Think of Records as a Stream
 
 ConceptQL diagrams have the "leaf" operators at the top and "trunk" operators at the bottom.  You can think of the records of a ConceptQL statement as a flowing stream of data.  The leaf operators, or operators that gather records out of the database, act like tributaries.  The records flow downwards and either join with other records, or filter out other records until the streams emerge at the bottom of the diagram.  Think of each arrow as a stream of records, flowing down through one operator to the next.
 
 The trailing arrow in the diagrams serves as a reminder that every ConceptQL statement yields a stream of records.
 
-### Streams Have Types
+## Streams Have Types
 
 You might have noticed that the operators and edges in the diagrams often have a color.  That color represents what "type" of stream the operator or edge represents.  There are several types in ConceptQL, and you'll notice they are somewhat correlated with the tables found in [OMOP's CDM v4.0](https://github.com/OHDSI/CommonDataModel/releases/tag/v4):
 
@@ -253,13 +253,13 @@ Each stream has a vocabulary of origin (essentially, the vocabulary used to pull
 
 You'll also notice that the trailing arrow(s) at the end of the diagrams indicate which types of streams are ultimately passed on at the end of a ConceptQL statement.
 
-### Why Types?
+## Why Types?
 
 At its inception, ConceptQL was developed to query [OMOP's CDM v4.0](https://github.com/OHDSI/CommonDataModel/releases/tag/v4) and its associated tables.  Each table represented a certain "type" of data (e.g. condition_occurrence, procedure_occurrence, visit_occurrence, etc) and ConceptQL was designed to treat each type of data as distinct from the other types.
 
 Now that ConceptQL runs against the [GDM](https://github.com/outcomesinsights/generalized_data_model), types are far less important, but are still maintained to help users distinguish between the kinds of data a ConceptQL statement is querying.
 
-### What *are* Streams Really?
+## What *are* Streams Really?
 
 Though thinking in "streams" is helpful, on a few occasions we need to know what's going on under the hood.
 
@@ -334,13 +334,13 @@ When a ConceptQL statement is executed, it yields a final set of streams that ar
 
 This kind of aggregation and analysis is beyond the scope of ConceptQL.  ConceptQL will get you the IDs of the rows you're interested in, it's up to other parts of the calling system to determine what you do with them.
 
-## Selection Operators
+# Selection Operators
 
 Selection operators are search for specific records within the data, e.g. searching for a diagnosis of an old myocardial infarction (ICD-9-CM 412) is a selection.  Selection operators are always leaf operators, meaning no operators "feed" into a selection operator.
 
 There are several basic types of selection operators.
 
-### `Vocabulary` Operator
+## `Vocabulary` Operator
 
 A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
 
@@ -356,11 +356,11 @@ A `Vocabulary` operator is any selection operator that selects records based on 
 | snomed | condition_occurrence | 1 or more SNOMED codes | All records whose source_value match any of the SNOMED codes |
 
 
-### Person-related Operators
+## Person-related Operators
 
 Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
 
-#### `Gender` Operator
+### `Gender` Operator
 
 This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
 
@@ -391,7 +391,7 @@ This [person operator](#more-person-operators) selects people by gender.  Curren
 
 ---
 
-#### `Race` Operator
+### `Race` Operator
 
 This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
 
@@ -422,7 +422,7 @@ This [person operator](#more-person-operators) selects people by race.  Availabl
 
 ---
 
-#### `Ethnicity` Operator
+### `Ethnicity` Operator
 
 This [person operator](#more-person-operators) selects people by ethnicity.  Available ethnicities are defined in the Ethnicity vocabulary.
 
@@ -448,7 +448,7 @@ This [person operator](#more-person-operators) selects people by ethnicity.  Ava
 
 ---
 
-#### `Person` Operator
+### `Person` Operator
 
 This [person operator](#more-person-operators) selects all patient records.
 
@@ -479,9 +479,9 @@ This [person operator](#more-person-operators) selects all patient records.
 
 ---
 
-### Additional Selection Operators
+## Additional Selection Operators
 
-#### `Death` Operator
+### `Death` Operator
 
 This operator pulls all death records from the `death` table.
 
@@ -512,7 +512,7 @@ This operator pulls all death records from the `death` table.
 
 ---
 
-#### `Information Periods` Operator
+### `Information Periods` Operator
 
 This operator pulls all information period records from the `information_periods` table.
 
@@ -543,11 +543,11 @@ This operator pulls all information period records from the `information_periods
 
 ---
 
-### Utilization Operators
+## Utilization Operators
 
 Utilization operators are [selection operators](#selection-operators) that generate records related to admissions.
 
-#### `SNF` Operator
+### `SNF` Operator
 
 This [utilization operator](#utilization-operators) generates records that are associated with Skilled Nursing Facilities (SNF).
 
@@ -567,7 +567,7 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ---
 
-#### `Hospice` Operator
+### `Hospice` Operator
 
 This [utilization operator](#utilization-operators) generates records that are associated with Hospice Facilities.
 
@@ -587,7 +587,7 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ---
 
-#### `Hospitalization` Operator
+### `Hospitalization` Operator
 
 This [utilization operator](#utilization-operators) generates records that are associated with Hospitalizations.
 
@@ -618,15 +618,15 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ---
 
-## All Other Operators i.e. Mutation Operators
+# All Other Operators i.e. Mutation Operators
 
 Virtually all other operators add, remove, filter, or otherwise alter streams of records.  They are discussed in this section.
 
-## Set Operators
+# Set Operators
 
 Because streams represent sets of records, it makes sense to include operators that operate on sets
 
-### `Union` Operator
+## `Union` Operator
 
 - Takes any number of upstream operators and aggregates their streams
     - Unions together streams with identical types
@@ -717,7 +717,7 @@ Because streams represent sets of records, it makes sense to include operators t
 ---
 
 
-### `Except` Operator
+## `Except` Operator
 
 This operator takes two sets of incoming streams, a left-hand stream and a right-hand stream.  The operator matches like-type streams between the left-hand and right-hand streams. The operator removes any records in the left-hand stream if they appear in the right-hand stream.  The operator passes only records for the left-hand stream downstream.  The operator discards all records in the right-hand stream. For example:
 
@@ -806,7 +806,7 @@ And just to show how multiple streams behave:
 
 ---
 
-### Discussion About Set Operators
+## Discussion About Set Operators
 
 Why should we allow two different types of streams to continue downstream concurrently?
 
@@ -839,7 +839,7 @@ This feature lets us do interesting things, like find the first occurrence of ei
 
 ---
 
-## Time-oriented Operators
+# Time-oriented Operators
 
 All records in a stream carry a start_date and end_date with them.  All temporal comparisons of streams use these two date columns.  Each record in a stream derives its start and end date from its corresponding row in its table of origin.
 
@@ -847,11 +847,11 @@ If a record comes from a table that only has a single date value, the record der
 
 The person stream is a special case.  Person records use the person's date of birth as the start_date and end_date.  This may sound strange, but we will explain below why this can be useful.
 
-### Relative Temporal Operators
+## Relative Temporal Operators
 
 When looking at a set of records for a person, perhaps we want to select just the chronologically first or last record.  Or maybe we want to select the 2nd record or 2nd to last record.  Relative temporal operators provide this type of filtering.  Relative temporal operators use a record's start_date to determine chronological order.
 
-#### `Nth Occurrence` Operator
+### `Nth Occurrence` Operator
 
 - Takes a two arguments: the stream to select from and an integer argument
 - For the integer argument
@@ -921,7 +921,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-#### `First` Operator
+### `First` Operator
 
 - [Nth Occurrence Operator](#nth-occurrence-operator) that is shorthand for writing ``[ "occurrence", 1 ]``
 
@@ -952,7 +952,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-#### `Last` Operator
+### `Last` Operator
 
 - [Nth Occurrence Operator](#nth-occurrence-operator) that is shorthand for writing ``[ "occurrence", -1 ]``
 
@@ -983,23 +983,23 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-### Date Literals
+## Date Literals
 
 For situations where we need to represent pre-defined date ranges, we can use "date literal" operators.
 
-#### `Date Range` Operator
+### `Date Range` Operator
 
 - Takes a hash with two elements: { start: \<date-format\>, end: \<date-format\> }
 - Creates an inclusive, continuous range of dates defined by a start and end date
 
-#### day
+### day
 
 - Takes a single argument: \<date-format\>
 - Represents a single day
 - Shorthand for creating a date range that starts and ends on the same date
 - *Not yet implemented*
 
-#### What is <date-format\>?
+### What is <date-format\>?
 
 Dates follow these formats:
 
@@ -1010,7 +1010,7 @@ Dates follow these formats:
 - "END"
     - Represents the last date of information available from the data source.
 
-### Temporal Comparison Operators
+## Temporal Comparison Operators
 
 As described above, each record carries a start and end date, defining its own date range.  It is through these date ranges that we are able to do temporal filtering of streams via temporal operators.
 
@@ -1020,7 +1020,7 @@ If a person only has LHR or RHR but not both, the Temporal Operator does not pas
 
 Each operator performs a different type of comparison between LHR and RHR dates.  All operators have [some options](#temporal-comparison-operator-options) which are best described later.
 
-#### `During` Operator
+### `During` Operator
 
 This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date completely contained within a RHR start_date and end_date.
 
@@ -1051,7 +1051,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-#### `Contains` Operator
+### `Contains` Operator
 
 This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date which completely contain an RHR start_date and end_date.
 
@@ -1073,7 +1073,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-#### `Any Overlap` Operator
+### `Any Overlap` Operator
 
 This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR whose date range overlaps in any way with a RHR's date range.  This diagram attempts to demonstrate all L records that would qualify as having "any_overlap" with an R record.
 
@@ -1098,7 +1098,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-#### `Before` Operator
+### `Before` Operator
 
 This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
 
@@ -1133,7 +1133,7 @@ The `Before` operator uses the latter approach, so all LHR records are compared 
 
 ---
 
-#### `After` Operator
+### `After` Operator
 
 This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
 
@@ -1167,7 +1167,7 @@ The `After` operator uses the latter approach, so all LHR records are compared a
 
 ---
 
-#### Working Around `Before`/`After` Behavior
+### Working Around `Before`/`After` Behavior
 
 If this is not the behavior you desire, use one of the relative time operators to select which RHR should be the one used to do comparison
 
@@ -1198,9 +1198,9 @@ If this is not the behavior you desire, use one of the relative time operators t
 
 ---
 
-### Time Manipulation Operators
+## Time Manipulation Operators
 
-#### `Time Window` Operator
+### `Time Window` Operator
 
 There are situations when the date columns associated with a record should have their values shifted forward or backward in time to make a comparison with another set of dates.  This is where the `Time Window` operator is used.  It has the following properties:
 
@@ -1350,7 +1350,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-#### `Trim Date Start` Operator
+### `Trim Date Start` Operator
 
 Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
 
@@ -1394,7 +1394,7 @@ There are four possible scenarios:
 
 ---
 
-#### `Trim Date End` Operator
+### `Trim Date End` Operator
 
 Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
 
@@ -1438,7 +1438,7 @@ There are four possible scenarios:
 
 ---
 
-### Temporal Comparison Operator Options
+## Temporal Comparison Operator Options
 
 Sometimes it is difficult to reason through [`Time Window`](#time-window-operator) when working with temporal comparison operators.  It would be nice if a more intuitive language could be used to describe some common temporal relationships.
 
@@ -1527,7 +1527,7 @@ Walk through of example above:
 
 This example illustrates how `at_least` works.
 
-#### Considerations
+### Considerations
 
 Currently, temporal comparisons are done with an inner join between the LHR relation and the RHR relation.  This has some interesting effects:
 
@@ -1536,7 +1536,7 @@ Currently, temporal comparisons are done with an inner join between the LHR rela
 - If the same row appears in both the LHR and RHR relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
     - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
 
-#### Temporal Operators and Person Streams
+### Temporal Operators and Person Streams
 
 Person streams carry a patient's date of birth in their start and end date columns.  This makes them almost useless when they are part of the L stream of a temporal operator.  But person streams are useful as the R stream.  By `Time Window`ing the patient's date of birth, we can filter based on the patient's age like so:
 
@@ -1567,7 +1567,7 @@ Person streams carry a patient's date of birth in their start and end date colum
 
 ---
 
-### `Episode` Operator
+## `Episode` Operator
 
 There are rare occasions when we'd like to stitch a set of events together into a span of time, such as a set of prescriptions events into a span of time we'd consider a patient to be taking a certain medication.  ConceptQL provides the `Episode` operator for such an occasion.
 
@@ -1600,7 +1600,7 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHR of a [temporal operator](#temporal-comparison-operators).
 
-### `Concurrent Within` Operator
+## `Concurrent Within` Operator
 
 This operator compares a set of incoming streams.  A record is only passed along if there is a corresponding record in each of the other streams that occurs within the specified time frame.
 
@@ -1635,11 +1635,11 @@ The impetus for this operator was to be able to find procedures that occur withi
 
 ---
 
-## Inline-Filter Operators
+# Inline-Filter Operators
 
 There are a several operators that filter an incoming stream before passing it along.
 
-### `Place of Service Filter` Operator
+## `Place of Service Filter` Operator
 
 Often in claims data, an event is reported with a place of service via the CMS place of service codes, such as "inpatient hospital" (21) or "outpatient hospital" (22).  For these kinds of queries, ConceptQL has the `Place of Service Filter`
 
@@ -1661,7 +1661,7 @@ Often in claims data, an event is reported with a place of service via the CMS p
 
 Our sample data for the examples in this document does not contain any place of service information so there are no records after applying this filter.
 
-### `Provenance` Operator
+## `Provenance` Operator
 
 For better or worse, provenance, or rather information about the origin of claims data, is some times an important factor in research algorithms.  Often, paper authors will describe using "inpatient records", by which they mean using claims that come from "the inpatient file" from a set of claims data.  [GDM](https://github.com/outcomesinsights/generalized_data_model#contexts) tracks the provenance of data as part of its ETL process, and ConceptQL includes an operator to select rows that have a particular provenance, aptly called `Provenance`.
 
@@ -1692,7 +1692,7 @@ For better or worse, provenance, or rather information about the origin of claim
 
 ---
 
-### `Provider Filter` Operator
+## `Provider Filter` Operator
 
 There are times when we'd like to captures events only when a particular provider specialty was involved.  ConceptQL provides the `Provider Filter` operator for this.  This operator is a bit bare-bones at the moment in that it requires users to enter in the concept ID of the specialty they are seeking, rather than providing a list of known specialties.
 
@@ -1714,7 +1714,7 @@ There are times when we'd like to captures events only when a particular provide
 
 Our sample data for the examples in this document does not contain any provider specialty information so there are no records after applying this filter.
 
-### `One In Two Out` Operator
+## `One In Two Out` Operator
 
 A very common pattern in algorithms is to consider a condition to be valid if:
 - the condition is seen just once in the inpatient file, or
@@ -1799,7 +1799,7 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Optional
     - Defaults to Initial Event
 
-### `Person Filter` Operator
+## `Person Filter` Operator
 
 Often we want to filter out a set of records by people.  For instance, say we wanted to find all MIs for all males.  We'd use the `Person Filter` operator for that.  Like the `Except` operator, it takes a left-hand stream and a right-hand stream.
 
@@ -1944,19 +1944,19 @@ And don't forget the left-hand side can have multiple types of streams:
 
 ---
 
-## Comparison Operators
+# Comparison Operators
 
 These operators compare incoming streams of records in special ways to produce a set of records.
 
-### `Filter` Operator
+## `Filter` Operator
 
 Much like [temporal operators](#temporal-comparison-operators), this operator takes left and right hand streams.  It passes along LHR that have a RHR with a matching person_id, criterion_id, and criterion_domain.  Essentially, it checks to see if a LHR is also present in the right hand stream.
 
-### `Match` Operator
+## `Match` Operator
 
 This operator is nearly identical to the [`Filter` operator](#filter-operator) but primarily is used internally.  There are additional options available to this operator that are not exposed in the Jigsaw UI.  Users are advised to use the `Filter` operator as opposed to this one.
 
-### `Co-Reported` Operator
+## `Co-Reported` Operator
 
 Claims data often reports diagnoses on the same "line" as a procedure.  This is done for billing reasons, essentially the provider is saying "I preformed this procedure due to these conditions present in the patient".  ConceptQL has an operator that specifically targets this kind of relationship: `Co-Reported`
 
@@ -1992,7 +1992,7 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 Note that both the diagnosis and procedure are pass on through the operator.
 
-## `label` Option and Its Features
+# `label` Option and Its Features
 
 Any ConceptQL operator can be assigned a label.  The label simply provides a way to apply a brief description to an operator, generally, what kind of records the operator is producing.  
 
@@ -2085,7 +2085,7 @@ The idea behind this is to create hints about what is being output:
 
 ---
 
-### `Recall` Operator
+## `Recall` Operator
 
 If a algorithm is particularly complex, or has a stream of records that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
 
@@ -2121,25 +2121,25 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
-## Appendix A - Experimental Operators
+# Appendix A - Experimental Operators
 
 These are operators that are currently implemented but are subject to change or removal in the future.
 
-### `Numeric Filter` Operator
+## `Numeric Filter` Operator
 
 This is an [inline filter operator](#inline-filter-operators).  Passes along any record that contains a `value_as_number` that falls between the given options.  Records with `NULL` for `value_as_number` are discarded.
 
-### `Equal` Operator
+## `Equal` Operator
 
 Like a [temporal comparison operator](#temporal-comparison-operators), takes left and right hand streams and compares the value in the `value_as_number` column.  Passes along LHR where `value_as_number` matches a RHR record.
 
 LHR with `NULL` for `value_as_number` are discarded.
 
-## Appendix B - Algorithm Showcase
+# Appendix B - Algorithm Showcase
 
 Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.org/HOI) turned into ConceptQL statements to give more examples.  I truncated some of the sets of codes to help ensure the diagrams didn't get too large.
 
-### Acute Kidney Injury - Narrow Definition and diagnostic procedure
+## Acute Kidney Injury - Narrow Definition and diagnostic procedure
 
 - ICD-9CM of 584
 - AND
@@ -2164,7 +2164,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-### Mortality after Myocardial Infarction #3
+## Mortality after Myocardial Infarction #3
 
 - Person Died
 - And Occurrence of 410\* prior to death
@@ -2188,7 +2188,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-## Appendix C - History of ConceptQL and Its Evolution
+# Appendix C - History of ConceptQL and Its Evolution
 
 ConceptQL was originally developed to query data from the [OMOP Common Data Model (CDM) v4.0](https://github.com/OHDSI/CommonDataModel/releases/tag/v4).  This meant that ConceptQL was able to take simple statements like `[ "icd9", "412" ]` and determine the proper table to query (in this case `condition_occurrence`) along with the correct source_code and vocabulary_id to search for within that table.
 
