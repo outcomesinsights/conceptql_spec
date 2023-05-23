@@ -165,9 +165,111 @@ This kind of aggregation and analysis is beyond the scope of ConceptQL.  Concept
 
 ## Selection Operators
 
-Selection operators are the parts of a ConceptQL statement that search for specific values within the CDM data, e.g. searching the condition_occurrence table for a diagnosis of an old myocardial infarction (ICD-9CM 412) is a selection.  Selection operators are always leaf operators, meaning no operators "feed" into a selection operator.
+Selection operators are search for specific records within the data, e.g. searching for a diagnosis of an old myocardial infarction (ICD-9-CM 412) is a selection.  Selection operators are always leaf operators, meaning no operators "feed" into a selection operator.
 
-There are _many_ selection operators.  A list of currently implemented operators is available in Appendix A.
+There are several basic types of selection operators.
+
+### `Vocabulary` Operator
+
+A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
+
+| Operator Name | Stream Type | Arguments | Returns |
+| ---- | ---- | --------- | ------- |
+| cpt4  | procedure_occurrence | 1 or more CPT codes | All records whose source_value match any of the CPT codes |
+| icd9cm | condition_occurrence | 1 or more ICD-9CM codes | All records whose source_value match any of the ICD-9 codes |
+| icd9_procedure | procedure_occurrence | 1 or more ICD-9 procedure codes | All records whose source_value match any of the ICD-9 procedure codes |
+| icd10cm | condition_occurrence | 1 or more ICD-10 | All records whose source_value match any of the ICD-10 codes |
+| hcpcs  | procedure_occurrence | 1 or more HCPCS codes | All records whose source_value match any of the HCPCS codes |
+| loinc | observation | 1 or more LOINC codes | All records whose source_value match any of the LOINC codes |
+| rxnorm | drug_exposure | 1 or more RxNorm IDs | All records whose drug_concept_id match any of the RxNorm IDs|
+| snomed | condition_occurrence | 1 or more SNOMED codes | All records whose source_value match any of the SNOMED codes |
+
+
+### Person-related Operators
+
+Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
+
+#### `Gender` Operator
+
+This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
+
+```ConceptQL
+# Gathers all female person records
+[ "gender", "Female"]
+```
+
+#### `Race` Operator
+
+This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
+
+```ConceptQL
+# Gathers all persons indicated as white
+[ "race", "White"]
+```
+
+#### `Ethnicity` Operator
+
+This [person operator](#more-person-operators) selects people by ethnicity.  Available ethnicities are defined in the Ethnicity vocabulary.
+
+```ConceptQL
+# Gathers all persons indicated as Hispanic
+[ "ethnicity", "Hispanic"]
+```
+
+#### `Person` Operator
+
+This [person operator](#more-person-operators) selects all patient records.
+
+```ConceptQL
+# Gathers all persons indicated as Hispanic
+[ "person" ]
+```
+
+### Additional Selection Operators
+
+#### `Death` Operator
+
+This operator pulls all death records from the `death` table.
+
+```ConceptQL
+[ "death" ]
+```
+
+#### `Information Periods` Operator
+
+This operator pulls all information period records from the `information_periods` table.
+
+```ConceptQL
+[ "information_periods" ]
+```
+
+### Utilization Operators
+
+Utilization operators are [selection operators](#selection-operators) that generate records related to admissions.
+
+#### `SNF` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Skilled Nursing Facilities (SNF).
+
+```ConceptQL
+[ "snf" ]
+```
+
+#### `Hospice` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Hospice Facilities.
+
+```ConceptQL
+[ "hospice" ]
+```
+
+#### `Hospitalization` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Hospitalizations.
+
+```ConceptQL
+[ "hospitalization" ]
+```
 
 ## All Other Operators i.e. Mutation Operators
 
@@ -242,62 +344,6 @@ Because streams represent sets of records, it makes sense to include operators t
 ]
 ```
 
-### `Intersect` Operator
-
-1. Group incoming streams by type
-1. For each group of same-type streams
-     a. Intersect all streams, yielding a single stream that contains only those IDs common to those streams
-1. A single stream for each incoming type is sent downstream
-     a. If only a single stream of a type is upstream, that stream is essentially unaltered as it is passed downstream
-
-```ConceptQL
-# Yields a single stream of all patients that are male and white.  This involves two person streams and so records are intersected
-[
-  "intersect",
-  [
-    "gender",
-    "male"
-  ],
-  [
-    "race",
-    "white"
-  ]
-]
-```
-
-```ConceptQL
-# Yields two streams: a stream of all MI Conditions and a stream of all Male patients.  This is essentially the same behavior as Union in this case
-[
-  "intersect",
-  [
-    "icd9",
-    "412"
-  ],
-  [
-    "gender",
-    "Male"
-  ]
-]
-```
-
-```ConceptQL
-# Yields two streams: a stream of all Conditions where MI was Primary Diagnosis and a stream of all White, Male patients.
-[
-  "intersect",
-  [
-    "icd9",
-    "412"
-  ],
-  [
-    "gender",
-    "Male"
-  ],
-  [
-    "race",
-    "White"
-  ]
-]
-```
 
 ### `Except` Operator
 
@@ -367,10 +413,9 @@ And just to show how multiple streams behave:
 
 ### Discussion About Set Operators
 
-#### Q. Why should we allow two different types of streams to continue downstream concurrently?
+Why should we allow two different types of streams to continue downstream concurrently?
 
-- This feature lets us do interesting things, like find the first occurrence of either an MI or Death as in the example below
-    - Throw in a few more criteria and you could find the first occurrence of all censoring events for each patient
+This feature lets us do interesting things, like find the first occurrence of either an MI or Death as in the example below.  Throw in a few more criteria and you could find the first occurrence of all censoring events for each patient
 
 ```ConceptQL
 # First occurrence of either MI or Death for each patient
@@ -385,55 +430,6 @@ And just to show how multiple streams behave:
     [
       "death"
     ]
-  ]
-]
-```
-
-#### Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?
-
-- The way `Intersect` works, if we passed like-typed streams forward without unioning them, Intersect would end up intersecting the two un-unioned like-type streams and that's not what we intended
-- Essentially, these two diagrams would be identical:
-
-```ConceptQL
-# Two streams: a stream of all Conditions matching either 412 or 250.01 and a stream of Procedures matching 99214
-[
-  "intersect",
-  [
-    "union",
-    [
-      "icd9",
-      "412"
-    ],
-    [
-      "icd9",
-      "250.01"
-    ]
-  ],
-  [
-    "cpt",
-    "99214"
-  ]
-]
-```
-
-```ConceptQL
-# Two streams: a stream of all Conditions matching either 412 AND 250.01 (an empty stream, a condition cannot be both 412 and 250.01 at the same time) and a stream of Procedures matching 99214
-[
-  "intersect",
-  [
-    "intersect",
-    [
-      "icd9",
-      "412"
-    ],
-    [
-      "icd9",
-      "250.01"
-    ]
-  ],
-  [
-    "cpt",
-    "99214"
   ]
 ]
 ```
@@ -543,7 +539,15 @@ Dates follow these formats:
 
 As described above, each record carries a start and end date, defining its own date range.  It is through these date ranges that we are able to do temporal filtering of streams via temporal operators.
 
-Temporal operators work by comparing a left-hand stream (L) against a right-hand stream (R).  R can be either a set of streams or a pre-defined date range.  Each temporal operator has a comparison operator which defines how it compares dates between L and R.  A temporal operator passes records only from L downstream.  A temporal operator discards all records in the R stream after it makes all comparisons.
+Temporal operators take two incoming sets of records, a set of left-hand records (LHR) and a set of right-hand records (RHR).  A temporal operator groups records by person, then compares dates each person's LHR against dates in their RHR.  Only LHR are passed along.  RHR are discarded after the comparison.
+
+If a person only has LHR or RHR but not both, the Temporal Operator does not pass any LHR records along.
+
+Each operator performs a different type of comparison between LHR and RHR dates.  All operators have [some options](#temporal-comparison-operator-options) which are best described later.
+
+#### `During` Operator
+
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date completely contained within a RHR start_date and end_date.
 
 ```ConceptQL
 # All MIs for the year 2010
@@ -565,24 +569,25 @@ Temporal operators work by comparing a left-hand stream (L) against a right-hand
 ]
 ```
 
-When comparing records in L against a set of records in R, the temporal operator compares records in stream L against records in stream R on a person-by-person basis.
+#### `Contains` Operator
 
-- If a person has records in L or R stream, but not in both, none of their records continue downstream
-- On a per person basis, the temporal operator joins all records in the L stream to all records in the R stream
-    - Any records in the L stream that meet the temporal comparison against any records in the R stream continue downstream
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date which completely contain an RHR start_date and end_date.
 
 ```ConceptQL
-# All MIs While Patients had Part A Medicare
+# All MIs occurring on 2010-06-22
 [
-  "during",
+  "contains",
   {
     "left": [
       "icd9",
       "412"
     ],
     "right": [
-      "payer",
-      "Part A"
+      "date_range",
+      {
+        "start": "2010-06-22",
+        "end": "2010-06-22"
+      }
     ]
   }
 ]
@@ -590,20 +595,37 @@ When comparing records in L against a set of records in R, the temporal operator
 
 #### `Any Overlap` Operator
 
-As a foray into defining less strict relationships, we've created the `Any Overlap` operator, which passes through any records in L that overlap whatsoever with a record in R.  This diagram attempts to demonstrate all L records that would qualify as having "any_overlap" with an R record.
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR whose date range overlaps in any way with a RHR's date range.  This diagram attempts to demonstrate all L records that would qualify as having "any_overlap" with an R record.
 
 ![](additional_images/any_overlap.png)
 
-#### Edge Behaviors of Before and After
+```ConceptQL
+# All MIs that overlap with the month of 2010-06
+[
+  "any_overlap",
+  {
+    "left": [
+      "icd9",
+      "412"
+    ],
+    "right": [
+      "date_range",
+      {
+        "start": "2010-06-01",
+        "end": "2010-06-30"
+      }
+    ]
+  }
+]
+```
 
-For 11 of the 13 temporal operators, comparison of records is straight-forward.  However, the `Before`/`After` operators have a slight twist.
+#### `Before` Operator
 
-Imagine events 1-1-2-1-2-1.  In my mind, three 1's come before a 2 and two 1's come after a 2.  Accordingly:
+This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
 
-- When comparing L **before** R, the temporal operator compares L against the **LAST** occurrence of R per person
-- When comparing L **after** R, the temporal operator compares L against the **FIRST** occurrence of R per person
+Imagine events A-A-B-A-B-A.  How many A's come before a B?  One could argue that only two A's come before the first B, so only the first two A's qualify.  However, there are three A's that ultimately come before a B.
 
-If we're looking for events in L that occur before events in R, then any event in L that occurs before the last event in R technically meet the comparison of "before".  The reverse is true for after: all events in L that occur after the first event in R technically occur after R.
+The `Before` operator uses the latter approach, so all LHR records are compared against the start_date of the **last** RHR record.
 
 ```ConceptQL
 # All MIs that occurred before a patient's __last__ case of diabetes (250.01)
@@ -622,7 +644,34 @@ If we're looking for events in L that occur before events in R, then any event i
 ]
 ```
 
-If this is not the behavior you desire, use one of the sequence operators to select which event in R should be the one used to do comparison
+#### `After` Operator
+
+This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
+
+Imagine events A-A-B-A-B-A.  How many A's come after a B?  One could argue that only one A come before the last B, so only the last A qualifies.  However, there are two A's that ultimately come after a B.
+
+The `After` operator uses the latter approach, so all LHR records are compared against the end_date of the **first** RHR record.
+
+```ConceptQL
+# All MIs that occurred after a patient's __first__ case of diabetes (250.01)
+[
+  "after",
+  {
+    "left": [
+      "icd9",
+      "412"
+    ],
+    "right": [
+      "icd9",
+      "250.01"
+    ]
+  }
+]
+```
+
+#### Working Around `Before`/`After` Behavior
+
+If this is not the behavior you desire, use one of the relative time operators to select which RHR should be the one used to do comparison
 
 ```ConceptQL
 # All MIs that occurred before a patient's __first__ case of diabetes (250.01)
@@ -644,128 +693,9 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 ]
 ```
 
-### Temporal Comparison Improvements
+### Time Manipulation Operators
 
-Sometimes it is difficult to reason through `Time Window` (described below) when working with temporal comparison operators.  It would be nice if a more intuitive language could be used to describe some common temporal relationships.
-
-We've added a few parameters, primarily for the `Before` and `After` operators, that will help with temporal comparisons.
-
-#### New Parameters
-
-- `within`
-    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
-    - The start_date and end_date of the RHS are adjusted out in each direction by the amount specified and the event must pass the original temporal comparison and then fall within the window created by the adjustment
-- `at_least`
-    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
-- `occurrences`
-    - Takes an whole number
-
-Let's see them in action:
-
-**Prescriptions After a Office Visit** - Find all prescriptions of interest occurring within three days after an office visit
-
-```ConceptQL
-[
-    "after", {
-        "left": [
-            "ndc", "61392070054", "65084025214", "65726040125", { "label": "Prescriptions of Interest" }
-        ],
-        "right": [
-            "cpt", "99214", { "label": "Office Visit" }
-        ],
-        "within": "3d"
-    }
-]
-```
-
-Walk through of example above:
-
-- Pull some prescriptions of interest into LHS
-- Pull some office visits into RHS
-- Compare LHS against RHS, enforcing that the LHS' start_date falls after the RHS' end_date
-- Enforce that any remaining LHS' start_date falls within an RHS's (start_date - 3 days) and (end_date + 3 days)
-
-**Find all Heart Attacks Probably Resulting in Death** -- Does anyone die within a year of a heart attack?
-
-```ConceptQL
-[
-    "before", {
-        "left": [
-            "icd9", "410.00", "410.01", "410.10", "410.11"
-        ],
-        "right": [
-            "death"
-        ],
-        "within": "1y"
-    }
-]
-```
-
-Walk through of example above:
-
-- Pull hospitalizations into LHS
-- Pull death records into RHS
-- Compare LHS against RHS, enforcing that the LHS' end_date falls before the RHS' start_date
-- Enforce that any remaining LHS row's end_date falls within an RHS row's (start_date - 1 year) and (end_date + 1 year)
-
-
-```ConceptQL
-# Multiple Myeloma algorithm -- Select all diabetes diagnoses that are preceded by at least 3 other diabetes diagnoses within 90 days of each other.
-[
-    "after", {
-        "left": [
-            "icd9",
-            "250.00",
-            { "label": "Diabetes Dx" }
-        ],
-        "right": [
-            "recall",
-            "Diabetes Dx"
-        ],
-        "occurrences": 3,
-        "within": "90d"
-    }
-]
-```
-
-Walk through of example above:
-
-- Pull diabetes diagnoses into LHS
-- Pull same set of diagnoses into RHS
-- Keep all LHS rows where LHS' start_date falls between RHS' end_date and (end_date + 90 days)
-- Use a window function to group LHS by matching RHS row and sort group by date, then number each LHS row
-- Keep only LHS rows that have a number greater than 3
-- Dedupe LHS rows on output
-
-```ConceptQL
-# Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes
-[
-    "after", {
-        "left": [
-            "icd9",
-            "410.00", "410.01", "410.10", "410.11",
-            { "label": "Heart Attack Dx" }
-        ],
-        "right": [
-            "icd9", "250.01", { "label": "Diabetes Dx"}
-        ],
-        "at_least": "1w"
-    }
-]
-```
-
-This example illustrates how `at_least` works.
-
-#### Considerations
-
-Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
-
-- If more than one RHS row matches with an LHS row, multiple copies of the LHS row will end up in the downstream records
-    - Should we limit the LHS to only unique rows, essentially de-duping the downstream records?
-- If the same row appears in both the LHS and RHS relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
-    - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
-
-### `Time Window` Operator
+#### `Time Window` Operator
 
 There are situations when the date columns associated with a record should have their values shifted forward or backward in time to make a comparison with another set of dates.  This is where the `Time Window` operator is used.  It has the following properties:
 
@@ -872,6 +802,163 @@ There are situations when the date columns associated with a record should have 
 ]
 ```
 
+#### `Trim Date Start` Operator
+
+Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
+
+The operator finds the most recent end_date in the RHR and uses that date to "trim" the start_dates of each LHR record.
+
+There are four possible scenarios:
+
+- There is no corresponding RHR for the LHR
+  - LHR row is passed through unaffected
+- RHR end_date is before LHR start_date
+  - LHR row is passed through unaffected
+- RHR end_date is after LHR end_date
+  - LHR row is completely discarded
+- RHR end_date falls between LHR start_date and end_date
+  - LHR's start_date is set to RHR's end_date
+
+```ConceptQL
+# Create time windows starting at 1980 and ending when patient is 50
+[
+  "trim_date_start", {
+    "left": [
+      "time_window",
+      [ "person" ],
+      { "end": "+50y"}
+    ],
+    "right": [ "date_range", {
+      "start": "1980-01-01",
+      "end": "1980-01-01",
+    }]
+  }
+]
+```
+
+#### `Trim Date End` Operator
+
+Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
+
+The operator finds the earliest start_date in the RHR and uses that date to "trim" the end_dates of each LHR record.
+
+There are four possible scenarios:
+
+- There is no corresponding RHR for the LHR
+  - LHR row is passed through unaffected
+- RHR start_date is after LHR end_date
+  - LHR row is passed through unaffected
+- RHR start_date is before LHR start_date
+  - LHR row is completely discarded
+- RHR start_date falls between LHR start_date and end_date
+  - LHR's end_date is set to RHR's start_date
+
+```ConceptQL
+# Create time windows starting at patient's birth and ending when patient is 50 or 1980, what ever is earlier
+[
+  "trim_date_end", {
+    "left": [
+      "time_window",
+      [ "person" ],
+      { "end": "+50y"}
+    ],
+    "right": [ "date_range", {
+      "start": "1980-01-01",
+      "end": "1980-01-01",
+    }]
+  }
+]
+```
+
+### Temporal Comparison Operator Options
+
+Sometimes it is difficult to reason through [`Time Window`](#time-window-operator) when working with temporal comparison operators.  It would be nice if a more intuitive language could be used to describe some common temporal relationships.
+
+We've added a few parameters, primarily for the `Before` and `After` operators, that will help with temporal comparisons.
+
+- `within`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHR are adjusted out in each direction by the amount specified and the LHR must pass the original temporal comparison and then fall within the window created by the adjustment
+- `at_least`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHR are adjusted out in each direction by the amount specified and the LHR must pass the original temporal comparison and then fall outside the window created by the adjustment
+
+Let's see them in action:
+
+**Prescriptions After a Office Visit** - Find all prescriptions of interest occurring within three days after an office visit
+
+```ConceptQL
+[
+    "after", {
+        "left": [
+            "ndc", "61392070054", "65084025214", "65726040125", { "label": "Prescriptions of Interest" }
+        ],
+        "right": [
+            "cpt", "99214", { "label": "Office Visit" }
+        ],
+        "within": "3d"
+    }
+]
+```
+
+Walk through of example above:
+
+- Pull some prescriptions of interest into LHR
+- Pull some office visits into RHR
+- Compare LHR against RHR, enforcing that the LHR' start_date falls after the RHR' end_date
+- Enforce that any remaining LHR' start_date falls within an RHR's (start_date - 3 days) and (end_date + 3 days)
+
+**Find all Heart Attacks Probably Resulting in Death** -- Does anyone die within a year of a heart attack?
+
+```ConceptQL
+[
+    "before", {
+        "left": [
+            "icd9", "410.00", "410.01", "410.10", "410.11"
+        ],
+        "right": [
+            "death"
+        ],
+        "within": "1y"
+    }
+]
+```
+
+Walk through of example above:
+
+- Pull hospitalizations into LHR
+- Pull death records into RHR
+- Compare LHR against RHR, enforcing that the LHR' end_date falls before the RHR' start_date
+- Enforce that any remaining LHR row's end_date falls within an RHR row's (start_date - 1 year) and (end_date + 1 year)
+
+```ConceptQL
+# Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes
+[
+    "after", {
+        "left": [
+            "icd9",
+            "410.00", "410.01", "410.10", "410.11",
+            { "label": "Heart Attack Dx" }
+        ],
+        "right": [
+            "icd9", "250.01", { "label": "Diabetes Dx"}
+        ],
+        "at_least": "1w"
+    }
+]
+```
+
+This example illustrates how `at_least` works.
+
+#### Considerations
+
+Currently, temporal comparisons are done with an inner join between the LHR relation and the RHR relation.  This has some interesting effects:
+
+- If more than one RHR row matches with an LHR row, multiple copies of the LHR row will end up in the downstream records
+    - Should we limit the LHR to only unique rows, essentially de-duping the downstream records?
+- If the same row appears in both the LHR and RHR relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
+    - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
+
 #### Temporal Operators and Person Streams
 
 Person streams carry a patient's date of birth in their start and end date columns.  This makes them almost useless when they are part of the L stream of a temporal operator.  But person streams are useful as the R stream.  By `Time Window`ing the patient's date of birth, we can filter based on the patient's age like so:
@@ -905,14 +992,36 @@ Person streams carry a patient's date of birth in their start and end date colum
 There are rare occasions when we'd like to stitch a set of events together into a span of time, such as a set of prescriptions events into a span of time we'd consider a patient to be taking a certain medication.  ConceptQL provides the `Episode` operator for such an occasion.
 
 ```ConceptQL
+# Episodes of diabetes diagnoses
 [ "episode", ["icd9", "250.00"], { "gap_of": "90" } ]
 ```
 
-One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHS of a temporal operator.
+One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHR of a [temporal operator](#temporal-comparison-operators).
+
+### `Concurrent Within` Operator
+
+This operator compares a set of incoming streams.  A record is only passed along if there is a corresponding record in each of the other streams that occurs within the specified time frame.
+
+For instance, say the operator is passed two streams, A and B, and the time frame is 30 days before or after.  If a record in A occurs within 30 days of a record in B, both the record from A and the record from B get passed along.
+
+The impetus for this operator was to be able to find procedures that occur within a certain period of time from a diagnosis and to be able to get both the procedure record and the diagnosis record as output.
+
+```ConceptQL
+# Diabetes diagnosis within 30 days of an office visit
+[
+  "concurrent_within",
+  ["cpt_or_hcpcs", "99214"],
+  ["icd9", "250.00"],
+  {
+    "start": "-30d",
+    "end": "30d"
+  }
+]
+```
 
 ## Inline-Filter Operators
 
-There are a couple of operators that filter an incoming stream before passing it along.
+There are a several operators that filter an incoming stream before passing it along.
 
 ### `Place of Service Filter` Operator
 
@@ -942,7 +1051,7 @@ There are times when we'd like to captures events only when a particular provide
 
 Our sample data for the examples in this document does not contain any provider specialty information so there are no records after applying this filter.
 
-## `One In Two Out` Operator
+### `One In Two Out` Operator
 
 A very common pattern in algorithms is to consider a condition to be valid if:
 - the condition is seen just once in the inpatient file, or
@@ -1005,7 +1114,7 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Optional
     - Defaults to Initial Event
 
-## `Person Filter` Operator
+### `Person Filter` Operator
 
 Often we want to filter out a set of records by people.  For instance, say we wanted to find all MIs for all males.  We'd use the `Person Filter` operator for that.  Like the `Except` operator, it takes a left-hand stream and a right-hand stream.
 
@@ -1117,7 +1226,19 @@ And don't forget the left-hand side can have multiple types of streams:
 ]
 ```
 
-## `Co-Reported` Operator
+## Comparison Operators
+
+These operators compare incoming streams of records in special ways to produce a set of records.
+
+### `Filter` Operator
+
+Much like [temporal operators](#temporal-comparison-operators), this operator takes left and right hand streams.  It passes along LHR that have a RHR with a matching person_id, criterion_id, and criterion_domain.  Essentially, it checks to see if a LHR is also present in the right hand stream.
+
+### `Match` Operator
+
+This operator is nearly identical to the [`Filter` operator](#filter-operator) but primarily is used internally.  There are additional options available to this operator that are not exposed in the Jigsaw UI.  Users are advised to use the `Filter` operator as opposed to this one.
+
+### `Co-Reported` Operator
 
 Claims data often reports diagnoses on the same "line" as a procedure.  This is done for billing reasons, essentially the provider is saying "I preformed this procedure due to these conditions present in the patient".  ConceptQL has an operator that specifically targets this kind of relationship: `Co-Reported`
 
@@ -1155,7 +1276,6 @@ The idea behind this is to create hints about what is being output:
 ["first", ["union", ["icd9", "250.00", "label": "diabetes"], ["icd9", "401.9", "label": "hypertension"]]]
 ```
 
-
 ### `Recall` Operator
 
 If a algorithm is particularly complex, or has a stream of records that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
@@ -1170,50 +1290,19 @@ A stream must be have a label applied to it before `Recall` can use it.
 [["one_in_two_out",["except",{"left":["union",["icd9","330.0","330.1","330.2","330.3","330.8","330.9","331.0","331.11","331.19","331.2","331.3","331.4","331.5","331.6","331.7","331.81","331.82","331.83","331.89","331.9","332.0","333.4","333.5","333.7","333.71","333.72","333.79","333.85","333.94","334.0","334.1","334.2","334.3","334.4","334.8","334.9","335.0","335.10","335.11","335.19","335.20","335.21","335.22","335.23","335.24","335.29","335.8","335.9","338.0","340","341.0","341.1","341.20","341.21","341.22","341.8","341.9","345.00","345.01","345.10","345.11","345.2","345.3","345.40","345.41","345.50","345.51","345.60","345.61","345.70","345.71","345.80","345.81","345.90","345.91","347.00","347.01","347.10","347.11","649.40","649.41","649.42","649.43","649.44","768.70","768.71","768.72","768.73","780.31","780.32","780.33","780.39","784.3"],["icd10cm","E75.00","E75.01","E75.02","E75.09","E75.10","E75.11","E75.19","E75.23","E75.25","E75.26","E75.29","E75.4","F84.2","G10","G11.0","G11.1","G11.2","G11.3","G11.4","G11.8","G11.9","G12.0","G12.1","G12.20","G12.21","G12.22","G12.23","G12.24","G12.25","G12.29","G12.8","G12.9","G13.2","G13.8","G20","G21.4","G24.01","G24.02","G24.09","G24.2","G24.8","G25.4","G25.5","G25.81","G30.0","G30.1","G30.8","G30.9","G31.01","G31.09","G31.1","G31.2","G31.81","G31.82","G31.83","G31.84","G31.85","G31.89","G31.9","G32.81","G35","G36.1","G36.8","G36.9","G37.0","G37.1","G37.2","G37.3","G37.4","G37.5","G37.8","G37.9","G40.001","G40.009","G40.011","G40.019","G40.101","G40.109","G40.111","G40.119","G40.201","G40.209","G40.211","G40.219","G40.301","G40.309","G40.311","G40.319","G40.401","G40.409","G40.411","G40.419","G40.501","G40.509","G40.801","G40.802","G40.803","G40.804","G40.811","G40.812","G40.813","G40.814","G40.821","G40.822","G40.823","G40.824","G40.89","G40.901","G40.909","G40.911","G40.919","G40.A01","G40.A09","G40.A11","G40.A19","G40.B01","G40.B09","G40.B11","G40.B19","G47.411","G47.419","G47.421","G47.429","G80.3","G89.0","G91.0","G91.1","G91.2","G91.3","G91.4","G91.8","G91.9","G93.7","G93.89","G93.9","G94","O99.350","O99.351","O99.352","O99.353","O99.354","O99.355","P91.60","P91.61","P91.62","P91.63","R41.0","R41.82","R47.01","R56.00","R56.01","R56.1","R56.9"],{"label":"neuro dxs"}],"right":["co_reported",["recall","neuro dxs"],["drg","020","021","022","023","024","025","026","027","028","029","030","031","032","033","034","035","036","037","038","039","040","041","042","052","053","054","055","056","057","058","059","060","061","062","063","064","065","066","067","068","069","070","071","072","073","074","075","076","077","078","079","080","081","082","083","084","085","086","087","088","089","090","091","092","093","094","095","096","097","098","099","100","101","102","103"]]}],{"outpatient_event_to_return":"Confirming Event","outpatient_minimum_gap":"30d","inpatient_return_date":"Discharge Date","outpatient_maximum_gap":"365d"}]]
 ```
 
-## Appendix A - Additional Operators
+## Appendix A - Experimental Operators
 
-### `Vocabulary` Operator
+These are operators that are currently implemented but are subject to change or removal in the future.
 
-A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
+### `Numeric Filter` Operator
 
-| Operator Name | Stream Type | Arguments | Returns |
-| ---- | ---- | --------- | ------- |
-| cpt4  | procedure_occurrence | 1 or more CPT codes | All records whose source_value match any of the CPT codes |
-| icd9cm | condition_occurrence | 1 or more ICD-9CM codes | All records whose source_value match any of the ICD-9 codes |
-| icd9_procedure | procedure_occurrence | 1 or more ICD-9 procedure codes | All records whose source_value match any of the ICD-9 procedure codes |
-| icd10cm | condition_occurrence | 1 or more ICD-10 | All records whose source_value match any of the ICD-10 codes |
-| hcpcs  | procedure_occurrence | 1 or more HCPCS codes | All records whose source_value match any of the HCPCS codes |
-| gender | person | 1 or more gender concept_ids | All records whose gender_concept_id match any of the concept_ids|
-| loinc | observation | 1 or more LOINC codes | All records whose source_value match any of the LOINC codes |
-| race | person | 1 or more race concept_ids | All records whose race_concept_id match any of the concept_ids|
-| rxnorm | drug_exposure | 1 or more RxNorm IDs | All records whose drug_concept_id match any of the RxNorm IDs|
-| snomed | condition_occurrence | 1 or more SNOMED codes | All records whose source_value match any of the SNOMED codes |
+This is an [inline filter operator](#inline-filter-operators).  Passes along any record that contains a `value_as_number` that falls between the given options.  Records with `NULL` for `value_as_number` are discarded.
 
-### More Temporal Operators
+### `Equal` Operator
 
-#### `During` Operator
+Like a [temporal comparison operator](#temporal-comparison-operators), takes left and right hand streams and compares the value in the `value_as_number` column.  Passes along LHR where `value_as_number` matches a RHR record.
 
-The `During` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range is fully, and inclusively, contained within a right hand record's date range.
-
-#### `Contains` Operator
-
-The `Contains` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range fully, and inclusively, contains a right hand record's date range.
-
-### More Person Operators
-
-Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
-
-#### `Gender` Operator
-
-This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
-
-#### `Race` Operator
-
-This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
-
-### `Death` Operator
-
-This operator pulls all death records from the death table.
+LHR with `NULL` for `value_as_number` are discarded.
 
 ## Appendix B - Algorithm Showcase
 

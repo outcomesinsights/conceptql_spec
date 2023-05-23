@@ -11,14 +11,24 @@
     - [Why Types?](#why-types)
     - [What *are* Streams Really?](#what-are-streams-really)
   - [Selection Operators](#selection-operators)
+    - [`Vocabulary` Operator](#vocabulary-operator)
+    - [Person-related Operators](#person-related-operators)
+      - [`Gender` Operator](#gender-operator)
+      - [`Race` Operator](#race-operator)
+      - [`Ethnicity` Operator](#ethnicity-operator)
+      - [`Person` Operator](#person-operator)
+    - [Additional Selection Operators](#additional-selection-operators)
+      - [`Death` Operator](#death-operator)
+      - [`Information Periods` Operator](#information-periods-operator)
+    - [Utilization Operators](#utilization-operators)
+      - [`SNF` Operator](#snf-operator)
+      - [`Hospice` Operator](#hospice-operator)
+      - [`Hospitalization` Operator](#hospitalization-operator)
   - [All Other Operators i.e. Mutation Operators](#all-other-operators-ie-mutation-operators)
   - [Set Operators](#set-operators)
     - [`Union` Operator](#union-operator)
-    - [`Intersect` Operator](#intersect-operator)
     - [`Except` Operator](#except-operator)
     - [Discussion About Set Operators](#discussion-about-set-operators)
-      - [Q. Why should we allow two different types of streams to continue downstream concurrently?](#q-why-should-we-allow-two-different-types-of-streams-to-continue-downstream-concurrently)
-      - [Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?](#q-why-arent-all-streams-passed-forward-unaltered--why-union-like-typed-streams)
   - [Time-oriented Operators](#time-oriented-operators)
     - [Relative Temporal Operators](#relative-temporal-operators)
       - [`Nth Occurrence` Operator](#nth-occurrence-operator)
@@ -29,32 +39,36 @@
       - [day](#day)
       - [What is <date-format\>?](#what-is-date-format%5C)
     - [Temporal Comparison Operators](#temporal-comparison-operators)
+      - [`During` Operator](#during-operator)
+      - [`Contains` Operator](#contains-operator)
       - [`Any Overlap` Operator](#any-overlap-operator)
-      - [Edge Behaviors of Before and After](#edge-behaviors-of-before-and-after)
-    - [Temporal Comparison Improvements](#temporal-comparison-improvements)
-      - [New Parameters](#new-parameters)
+      - [`Before` Operator](#before-operator)
+      - [`After` Operator](#after-operator)
+      - [Working Around `Before`/`After` Behavior](#working-around-beforeafter-behavior)
+    - [Time Manipulation Operators](#time-manipulation-operators)
+      - [`Time Window` Operator](#time-window-operator)
+      - [`Trim Date Start` Operator](#trim-date-start-operator)
+      - [`Trim Date End` Operator](#trim-date-end-operator)
+    - [Temporal Comparison Operator Options](#temporal-comparison-operator-options)
       - [Considerations](#considerations)
-    - [`Time Window` Operator](#time-window-operator)
       - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
     - [`Episode` Operator](#episode-operator)
+    - [`Concurrent Within` Operator](#concurrent-within-operator)
   - [Inline-Filter Operators](#inline-filter-operators)
     - [`Place of Service Filter` Operator](#place-of-service-filter-operator)
     - [`Provenance` Operator](#provenance-operator)
     - [`Provider Filter` Operator](#provider-filter-operator)
-  - [`One In Two Out` Operator](#one-in-two-out-operator)
-  - [`Person Filter` Operator](#person-filter-operator)
-  - [`Co-Reported` Operator](#co-reported-operator)
+    - [`One In Two Out` Operator](#one-in-two-out-operator)
+    - [`Person Filter` Operator](#person-filter-operator)
+  - [Comparison Operators](#comparison-operators)
+    - [`Filter` Operator](#filter-operator)
+    - [`Match` Operator](#match-operator)
+    - [`Co-Reported` Operator](#co-reported-operator)
   - [`label` Option and Its Features](#label-option-and-its-features)
     - [`Recall` Operator](#recall-operator)
-  - [Appendix A - Additional Operators](#appendix-a---additional-operators)
-    - [`Vocabulary` Operator](#vocabulary-operator)
-    - [More Temporal Operators](#more-temporal-operators)
-      - [`During` Operator](#during-operator)
-      - [`Contains` Operator](#contains-operator)
-    - [More Person Operators](#more-person-operators)
-      - [`Gender` Operator](#gender-operator)
-      - [`Race` Operator](#race-operator)
-    - [`Death` Operator](#death-operator)
+  - [Appendix A - Experimental Operators](#appendix-a---experimental-operators)
+    - [`Numeric Filter` Operator](#numeric-filter-operator)
+    - [`Equal` Operator](#equal-operator)
   - [Appendix B - Algorithm Showcase](#appendix-b---algorithm-showcase)
     - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
     - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
@@ -322,9 +336,287 @@ This kind of aggregation and analysis is beyond the scope of ConceptQL.  Concept
 
 ## Selection Operators
 
-Selection operators are the parts of a ConceptQL statement that search for specific values within the CDM data, e.g. searching the condition_occurrence table for a diagnosis of an old myocardial infarction (ICD-9CM 412) is a selection.  Selection operators are always leaf operators, meaning no operators "feed" into a selection operator.
+Selection operators are search for specific records within the data, e.g. searching for a diagnosis of an old myocardial infarction (ICD-9-CM 412) is a selection.  Selection operators are always leaf operators, meaning no operators "feed" into a selection operator.
 
-There are _many_ selection operators.  A list of currently implemented operators is available in Appendix A.
+There are several basic types of selection operators.
+
+### `Vocabulary` Operator
+
+A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
+
+| Operator Name | Stream Type | Arguments | Returns |
+| ---- | ---- | --------- | ------- |
+| cpt4  | procedure_occurrence | 1 or more CPT codes | All records whose source_value match any of the CPT codes |
+| icd9cm | condition_occurrence | 1 or more ICD-9CM codes | All records whose source_value match any of the ICD-9 codes |
+| icd9_procedure | procedure_occurrence | 1 or more ICD-9 procedure codes | All records whose source_value match any of the ICD-9 procedure codes |
+| icd10cm | condition_occurrence | 1 or more ICD-10 | All records whose source_value match any of the ICD-10 codes |
+| hcpcs  | procedure_occurrence | 1 or more HCPCS codes | All records whose source_value match any of the HCPCS codes |
+| loinc | observation | 1 or more LOINC codes | All records whose source_value match any of the LOINC codes |
+| rxnorm | drug_exposure | 1 or more RxNorm IDs | All records whose drug_concept_id match any of the RxNorm IDs|
+| snomed | condition_occurrence | 1 or more SNOMED codes | All records whose source_value match any of the SNOMED codes |
+
+
+### Person-related Operators
+
+Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
+
+#### `Gender` Operator
+
+This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
+
+---
+
+**Example 6 - Gathers all female person records**
+
+```JSON
+
+["gender","Female"]
+
+```
+
+![Gathers all female person records](README/56e3d05526221fa65d1cacb8bfe77e849366f935f492a70f0ee52793f9773cff.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 3 | 3 | person | 1936-09-01 | 1936-09-01 | 0001FDD721E223DC |
+| 9 | 9 | person | 1976-09-01 | 1976-09-01 | 000345A39D4157C9 |
+| 10 | 10 | person | 1938-10-01 | 1938-10-01 | 00036A21B65B0206 |
+| 11 | 11 | person | 1934-02-01 | 1934-02-01 | 000489E7EAAD463F |
+| 13 | 13 | person | 1936-07-01 | 1936-07-01 | 0004F0ABD505251D |
+| 15 | 15 | person | 1936-03-01 | 1936-03-01 | 00070B63745BE497 |
+| 17 | 17 | person | 1919-09-01 | 1919-09-01 | 0007F12A492FD25D |
+| 18 | 18 | person | 1919-10-01 | 1919-10-01 | 000A005BA0BED3EA |
+| 19 | 19 | person | 1942-07-01 | 1942-07-01 | 000B4662348C35B4 |
+| 26 | 26 | person | 1939-12-01 | 1939-12-01 | 0010D6F80D245D62 |
+
+---
+
+#### `Race` Operator
+
+This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
+
+---
+
+**Example 7 - Gathers all persons indicated as white**
+
+```JSON
+
+["race","White"]
+
+```
+
+![Gathers all persons indicated as white](README/245c2752d997a2a31f359f63c2b05c8a519a56743cd5356fbfd1b7e05fe59a2b.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 1 | 1 | person | 1923-05-01 | 1923-05-01 | 00013D2EFD8E45D1 |
+| 2 | 2 | person | 1943-01-01 | 1943-01-01 | 00016F745862898F |
+| 3 | 3 | person | 1936-09-01 | 1936-09-01 | 0001FDD721E223DC |
+| 5 | 5 | person | 1936-08-01 | 1936-08-01 | 00024B3D2352D2D0 |
+| 7 | 7 | person | 1922-07-01 | 1922-07-01 | 0002F28CE057345B |
+| 8 | 8 | person | 1935-09-01 | 1935-09-01 | 000308435E3E5B76 |
+| 9 | 9 | person | 1976-09-01 | 1976-09-01 | 000345A39D4157C9 |
+| 11 | 11 | person | 1934-02-01 | 1934-02-01 | 000489E7EAAD463F |
+| 12 | 12 | person | 1929-06-01 | 1929-06-01 | 00048EF1F4791C68 |
+| 13 | 13 | person | 1936-07-01 | 1936-07-01 | 0004F0ABD505251D |
+
+---
+
+#### `Ethnicity` Operator
+
+This [person operator](#more-person-operators) selects people by ethnicity.  Available ethnicities are defined in the Ethnicity vocabulary.
+
+---
+
+**Example 8 - Gathers all persons indicated as Hispanic**
+
+```JSON
+
+["ethnicity","Hispanic"]
+
+```
+
+![Gathers all persons indicated as Hispanic](README/c3d9612b3fb2165339d043d6afe8ea1d8d47a932acbe7a693b9eaf6b2709837e.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
+| 22 | 22 | person | 1942-08-01 | 1942-08-01 | 000D6D88463D8A76 |
+| 72 | 72 | person | 1933-04-01 | 1933-04-01 | 002354398A00234E |
+| 76 | 76 | person | 1938-03-01 | 1938-03-01 | 00242FF5E7A3F2D9 |
+| 181 | 181 | person | 1939-11-01 | 1939-11-01 | 005E0AB5172E715F |
+
+---
+
+#### `Person` Operator
+
+This [person operator](#more-person-operators) selects all patient records.
+
+---
+
+**Example 9 - Gathers all persons indicated as Hispanic**
+
+```JSON
+
+["person"]
+
+```
+
+![Gathers all persons indicated as Hispanic](README/162e772b1a736322be3ccb4a74560a0263f2bf85d3817aede296c37d22d792d6.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 1 | 1 | person | 1923-05-01 | 1923-05-01 | 00013D2EFD8E45D1 |
+| 2 | 2 | person | 1943-01-01 | 1943-01-01 | 00016F745862898F |
+| 3 | 3 | person | 1936-09-01 | 1936-09-01 | 0001FDD721E223DC |
+| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
+| 5 | 5 | person | 1936-08-01 | 1936-08-01 | 00024B3D2352D2D0 |
+| 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
+| 7 | 7 | person | 1922-07-01 | 1922-07-01 | 0002F28CE057345B |
+| 8 | 8 | person | 1935-09-01 | 1935-09-01 | 000308435E3E5B76 |
+| 9 | 9 | person | 1976-09-01 | 1976-09-01 | 000345A39D4157C9 |
+| 10 | 10 | person | 1938-10-01 | 1938-10-01 | 00036A21B65B0206 |
+
+---
+
+### Additional Selection Operators
+
+#### `Death` Operator
+
+This operator pulls all death records from the `death` table.
+
+---
+
+**Example 51**
+
+```JSON
+
+["death"]
+
+```
+
+![](README/e281558c677a04df02e53dcc7fd6497a0d831e4037560cd13942b67ab10f98f4.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 16 | 1 | death | 2010-12-01 | 2010-12-01 |  |
+| 26 | 2 | death | 2009-07-01 | 2009-07-01 |  |
+| 65 | 3 | death | 2009-01-01 | 2009-01-01 |  |
+| 119 | 4 | death | 2008-09-01 | 2008-09-01 |  |
+| 166 | 5 | death | 2008-07-01 | 2008-07-01 |  |
+| 181 | 6 | death | 2010-07-01 | 2010-07-01 |  |
+| 190 | 7 | death | 2009-09-01 | 2009-09-01 |  |
+| 191 | 8 | death | 2009-09-01 | 2009-09-01 |  |
+| 201 | 9 | death | 2008-05-01 | 2008-05-01 |  |
+| 215 | 10 | death | 2008-01-01 | 2008-01-01 |  |
+
+---
+
+#### `Information Periods` Operator
+
+This operator pulls all information period records from the `information_periods` table.
+
+---
+
+**Example 52**
+
+```JSON
+
+["information_periods"]
+
+```
+
+![](README/741f3a199999a141d1a96c3ff599efb30879f7f2673ff9f8b661ab5d703a51ee.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 1 | 1 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 1 | 2 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 1 | 3 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 1 | 4 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 2 | 5 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 2 | 6 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 2 | 7 | observation_period | 2009-01-01 | 2010-12-31 |  |
+| 2 | 793 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 3 | 8 | observation_period | 2008-01-01 | 2010-12-31 |  |
+| 3 | 9 | observation_period | 2008-01-01 | 2010-12-31 |  |
+
+---
+
+### Utilization Operators
+
+Utilization operators are [selection operators](#selection-operators) that generate records related to admissions.
+
+#### `SNF` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Skilled Nursing Facilities (SNF).
+
+---
+
+**Example 12**
+
+```JSON
+
+["snf"]
+
+```
+
+![](README/7ae66f90823b289cca573865beae8f42aca7671cd35650c40f821ff0045378c7.png)
+
+```No Results found.```
+
+---
+
+#### `Hospice` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Hospice Facilities.
+
+---
+
+**Example 13**
+
+```JSON
+
+["hospice"]
+
+```
+
+![](README/914160be2ea332b121673ee2fe82ae5dcd0a28d9d4140468db55dd8b6a9299f0.png)
+
+```No Results found.```
+
+---
+
+#### `Hospitalization` Operator
+
+This [utilization operator](#utilization-operators) generates records that are associated with Hospitalizations.
+
+---
+
+**Example 14**
+
+```JSON
+
+["hospitalization"]
+
+```
+
+![](README/c5b781df8be8f0b7de7b59f9060265f0c40d423c1b2b6fbd8ccee52d8863e69c.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 134 | 1 | condition_occurrence | 2009-11-23 | 2009-11-30 |  |
+| 247 | 2 | condition_occurrence | 2008-02-28 | 2008-03-04 |  |
+| 68 | 3 | condition_occurrence | 2008-04-19 | 2008-04-23 |  |
+| 247 | 4 | condition_occurrence | 2008-03-25 | 2008-03-29 |  |
+| 66 | 5 | condition_occurrence | 2009-08-04 | 2009-08-06 |  |
+| 95 | 6 | condition_occurrence | 2008-09-03 | 2008-09-12 |  |
+| 247 | 7 | condition_occurrence | 2008-08-14 | 2008-08-21 |  |
+| 202 | 8 | condition_occurrence | 2008-08-18 | 2008-08-20 |  |
+| 247 | 9 | condition_occurrence | 2008-07-13 | 2008-07-18 |  |
+| 153 | 10 | condition_occurrence | 2010-01-29 | 2010-02-08 |  |
+
+---
 
 ## All Other Operators i.e. Mutation Operators
 
@@ -424,94 +716,6 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ---
 
-### `Intersect` Operator
-
-1. Group incoming streams by type
-1. For each group of same-type streams
-     a. Intersect all streams, yielding a single stream that contains only those IDs common to those streams
-1. A single stream for each incoming type is sent downstream
-     a. If only a single stream of a type is upstream, that stream is essentially unaltered as it is passed downstream
-
----
-
-**Example 9 - Yields a single stream of all patients that are male and white.  This involves two person streams and so records are intersected**
-
-```JSON
-
-["intersect",["gender","male"],["race","white"]]
-
-```
-
-![Yields a single stream of all patients that are male and white.  This involves two person streams and so records are intersected](README/85c57156d29a509f04205b8a310f632ec214fcea3156df9642194871697407be.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 131 | person | 1932-03-01 | 1932-03-01 | 00388B34335069C0 |
-| 168 | 168 | person | 1931-08-01 | 1931-08-01 | 00534E60E969C69E |
-| 70 | 70 | person | 1923-01-01 | 1923-01-01 | 00227C9BE53C38FD |
-| 87 | 87 | person | 1943-04-01 | 1943-04-01 | 0028A82FE0CA0802 |
-| 116 | 116 | person | 1944-01-01 | 1944-01-01 | 00331E23B76902ED |
-| 114 | 114 | person | 1940-07-01 | 1940-07-01 | 0032C178DA63958A |
-| 112 | 112 | person | 1936-08-01 | 1936-08-01 | 003282C0D50D34BA |
-| 84 | 84 | person | 1939-03-01 | 1939-03-01 | 00258EEA7B4078D1 |
-| 93 | 93 | person | 1941-04-01 | 1941-04-01 | 002A425E967ED186 |
-| 224 | 224 | person | 1929-06-01 | 1929-06-01 | 0072A5D566AD2FBA |
-
----
-
----
-
-**Example 10 - Yields two streams: a stream of all MI Conditions and a stream of all Male patients.  This is essentially the same behavior as Union in this case**
-
-```JSON
-
-["intersect",["icd9","412"],["gender","Male"]]
-
-```
-
-![Yields two streams: a stream of all MI Conditions and a stream of all Male patients.  This is essentially the same behavior as Union in this case](README/514f263e976d07c0d9e0a86c79bcbdcddc7d444d7b72135294ad78758effd28f.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
-| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
-| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
-| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
-| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
-| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
-
----
-
----
-
-**Example 11 - Yields two streams: a stream of all Conditions where MI was Primary Diagnosis and a stream of all White, Male patients.**
-
-```JSON
-
-["intersect",["icd9","412"],["gender","Male"],["race","White"]]
-
-```
-
-![Yields two streams: a stream of all Conditions where MI was Primary Diagnosis and a stream of all White, Male patients.](README/0e1c8c7d994bb9d369a80049310771145fe254a66a85125c90734b0b87de13d4.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
-| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
-| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
-| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
-| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
-| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
-
----
 
 ### `Except` Operator
 
@@ -604,10 +808,9 @@ And just to show how multiple streams behave:
 
 ### Discussion About Set Operators
 
-#### Q. Why should we allow two different types of streams to continue downstream concurrently?
+Why should we allow two different types of streams to continue downstream concurrently?
 
-- This feature lets us do interesting things, like find the first occurrence of either an MI or Death as in the example below
-    - Throw in a few more criteria and you could find the first occurrence of all censoring events for each patient
+This feature lets us do interesting things, like find the first occurrence of either an MI or Death as in the example below.  Throw in a few more criteria and you could find the first occurrence of all censoring events for each patient
 
 ---
 
@@ -633,65 +836,6 @@ And just to show how multiple streams behave:
 | 65 | 3 | death | 2009-01-01 | 2009-01-01 |  |
 | 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
 | 73 | 52843 | condition_occurrence | 2008-11-16 | 2008-11-16 | 412 |
-
----
-
-#### Q. Why aren't all streams passed forward unaltered?  Why union like-typed streams?
-
-- The way `Intersect` works, if we passed like-typed streams forward without unioning them, Intersect would end up intersecting the two un-unioned like-type streams and that's not what we intended
-- Essentially, these two diagrams would be identical:
-
----
-
-**Example 16 - Two streams: a stream of all Conditions matching either 412 or 250.01 and a stream of Procedures matching 99214**
-
-```JSON
-
-["intersect",["union",["icd9","412"],["icd9","250.01"]],["cpt","99214"]]
-
-```
-
-![Two streams: a stream of all Conditions matching either 412 or 250.01 and a stream of Procedures matching 99214](README/e2b6e8beb4df3bcaaf238d83358456e4b287144fd18864f6014670feaa38630a.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
-| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
-| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
-| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
-| 136 | 15609 | condition_occurrence | 2009-04-06 | 2009-04-06 | 25001 |
-| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
-
----
-
----
-
-**Example 17 - Two streams: a stream of all Conditions matching either 412 AND 250.01 (an empty stream, a condition cannot be both 412 and 250.01 at the same time) and a stream of Procedures matching 99214**
-
-```JSON
-
-["intersect",["intersect",["icd9","412"],["icd9","250.01"]],["cpt","99214"]]
-
-```
-
-![Two streams: a stream of all Conditions matching either 412 AND 250.01 (an empty stream, a condition cannot be both 412 and 250.01 at the same time) and a stream of Procedures matching 99214](README/18a95745438db62bd81f56a5192f4313a36579d4c7e4f26ac0e91caf0df82231.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 173 | 13767 | procedure_occurrence | 2009-04-01 | 2009-04-01 | 99214 |
-| 148 | 13960 | procedure_occurrence | 2010-07-02 | 2010-07-02 | 99214 |
-| 188 | 14207 | procedure_occurrence | 2008-02-17 | 2008-02-17 | 99214 |
-| 239 | 14245 | procedure_occurrence | 2010-09-01 | 2010-09-01 | 99214 |
-| 247 | 14359 | procedure_occurrence | 2008-12-01 | 2008-12-01 | 99214 |
-| 27 | 14733 | procedure_occurrence | 2008-09-11 | 2008-09-11 | 99214 |
-| 35 | 14776 | procedure_occurrence | 2008-09-24 | 2008-09-24 | 99214 |
-| 148 | 15051 | procedure_occurrence | 2008-12-02 | 2008-12-02 | 99214 |
-| 127 | 15217 | procedure_occurrence | 2008-05-29 | 2008-05-29 | 99214 |
-| 60 | 15332 | procedure_occurrence | 2009-02-13 | 2009-02-13 | 99214 |
 
 ---
 
@@ -870,7 +1014,15 @@ Dates follow these formats:
 
 As described above, each record carries a start and end date, defining its own date range.  It is through these date ranges that we are able to do temporal filtering of streams via temporal operators.
 
-Temporal operators work by comparing a left-hand stream (L) against a right-hand stream (R).  R can be either a set of streams or a pre-defined date range.  Each temporal operator has a comparison operator which defines how it compares dates between L and R.  A temporal operator passes records only from L downstream.  A temporal operator discards all records in the R stream after it makes all comparisons.
+Temporal operators take two incoming sets of records, a set of left-hand records (LHR) and a set of right-hand records (RHR).  A temporal operator groups records by person, then compares dates each person's LHR against dates in their RHR.  Only LHR are passed along.  RHR are discarded after the comparison.
+
+If a person only has LHR or RHR but not both, the Temporal Operator does not pass any LHR records along.
+
+Each operator performs a different type of comparison between LHR and RHR dates.  All operators have [some options](#temporal-comparison-operator-options) which are best described later.
+
+#### `During` Operator
+
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date completely contained within a RHR start_date and end_date.
 
 ---
 
@@ -899,44 +1051,60 @@ Temporal operators work by comparing a left-hand stream (L) against a right-hand
 
 ---
 
-When comparing records in L against a set of records in R, the temporal operator compares records in stream L against records in stream R on a person-by-person basis.
+#### `Contains` Operator
 
-- If a person has records in L or R stream, but not in both, none of their records continue downstream
-- On a per person basis, the temporal operator joins all records in the L stream to all records in the R stream
-    - Any records in the L stream that meet the temporal comparison against any records in the R stream continue downstream
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR that have a start_date and end_date which completely contain an RHR start_date and end_date.
 
 ---
 
-**Example 23 - All MIs While Patients had Part A Medicare**
+**Example 23 - All MIs occurring on 2010-06-22**
 
 ```JSON
 
-["during",{"left":["icd9","412"],"right":["payer","Part A"]}]
+["contains",{"left":["icd9","412"],"right":["date_range",{"start":"2010-06-22","end":"2010-06-22"}]}]
 
 ```
 
-![All MIs While Patients had Part A Medicare](README/ed039f82867241393b1a6a7153d3690461103934c72c1f3eaa3d99a12bb40885.png)
+![All MIs occurring on 2010-06-22](README/3711f7cd299795890ba67bab0028b3704bb945981f7e9d55cc54fb3c149873d1.png)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
 
 ---
 
 #### `Any Overlap` Operator
 
-As a foray into defining less strict relationships, we've created the `Any Overlap` operator, which passes through any records in L that overlap whatsoever with a record in R.  This diagram attempts to demonstrate all L records that would qualify as having "any_overlap" with an R record.
+This is a [temporal operator](#temporal-comparison-operators).  It passes along any LHR whose date range overlaps in any way with a RHR's date range.  This diagram attempts to demonstrate all L records that would qualify as having "any_overlap" with an R record.
 
 ![](additional_images/any_overlap.png)
 
-#### Edge Behaviors of Before and After
+---
 
-For 11 of the 13 temporal operators, comparison of records is straight-forward.  However, the `Before`/`After` operators have a slight twist.
+**Example 24 - All MIs that overlap with the month of 2010-06**
 
-Imagine events 1-1-2-1-2-1.  In my mind, three 1's come before a 2 and two 1's come after a 2.  Accordingly:
+```JSON
 
-- When comparing L **before** R, the temporal operator compares L against the **LAST** occurrence of R per person
-- When comparing L **after** R, the temporal operator compares L against the **FIRST** occurrence of R per person
+["any_overlap",{"left":["icd9","412"],"right":["date_range",{"start":"2010-06-01","end":"2010-06-30"}]}]
 
-If we're looking for events in L that occur before events in R, then any event in L that occurs before the last event in R technically meet the comparison of "before".  The reverse is true for after: all events in L that occur after the first event in R technically occur after R.
+```
+
+![All MIs that overlap with the month of 2010-06](README/f06367690443de9137f53ad4c6751ff5dadb90367e1144544b9774b11867e7d3.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
+| 110 | 62592 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+
+---
+
+#### `Before` Operator
+
+This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
+
+Imagine events A-A-B-A-B-A.  How many A's come before a B?  One could argue that only two A's come before the first B, so only the first two A's qualify.  However, there are three A's that ultimately come before a B.
+
+The `Before` operator uses the latter approach, so all LHR records are compared against the start_date of the **last** RHR record.
 
 ---
 
@@ -965,7 +1133,43 @@ If we're looking for events in L that occur before events in R, then any event i
 
 ---
 
-If this is not the behavior you desire, use one of the sequence operators to select which event in R should be the one used to do comparison
+#### `After` Operator
+
+This is a [temporal operator](#temporal-comparison-operators).  Its behavior warrants a bit of explanation.
+
+Imagine events A-A-B-A-B-A.  How many A's come after a B?  One could argue that only one A come before the last B, so only the last A qualifies.  However, there are two A's that ultimately come after a B.
+
+The `After` operator uses the latter approach, so all LHR records are compared against the end_date of the **first** RHR record.
+
+---
+
+**Example 26 - All MIs that occurred after a patient's __first__ case of diabetes (250.01)**
+
+```JSON
+
+["after",{"left":["icd9","412"],"right":["icd9","250.01"]}]
+
+```
+
+![All MIs that occurred after a patient's __first__ case of diabetes (250.01)](README/474804a6057d4b8c1f71251faca96a7bb548550904fc4cec75a3c212d5a1f252.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 96 | 20748 | condition_occurrence | 2008-09-21 | 2008-09-24 | 412 |
+| 223 | 38682 | condition_occurrence | 2008-07-28 | 2008-07-28 | 412 |
+| 223 | 39893 | condition_occurrence | 2008-10-31 | 2008-10-31 | 412 |
+| 77 | 58165 | condition_occurrence | 2010-10-06 | 2010-10-06 | 412 |
+| 190 | 61423 | condition_occurrence | 2009-04-09 | 2009-04-09 | 412 |
+| 110 | 62592 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 214 | 83257 | condition_occurrence | 2009-11-12 | 2009-11-12 | 412 |
+| 152 | 84298 | condition_occurrence | 2010-11-22 | 2010-11-22 | 412 |
+| 187 | 87583 | condition_occurrence | 2010-12-26 | 2010-12-26 | 412 |
+
+---
+
+#### Working Around `Before`/`After` Behavior
+
+If this is not the behavior you desire, use one of the relative time operators to select which RHR should be the one used to do comparison
 
 ---
 
@@ -994,145 +1198,9 @@ If this is not the behavior you desire, use one of the sequence operators to sel
 
 ---
 
-### Temporal Comparison Improvements
+### Time Manipulation Operators
 
-Sometimes it is difficult to reason through `Time Window` (described below) when working with temporal comparison operators.  It would be nice if a more intuitive language could be used to describe some common temporal relationships.
-
-We've added a few parameters, primarily for the `Before` and `After` operators, that will help with temporal comparisons.
-
-#### New Parameters
-
-- `within`
-    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
-    - The start_date and end_date of the RHS are adjusted out in each direction by the amount specified and the event must pass the original temporal comparison and then fall within the window created by the adjustment
-- `at_least`
-    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
-- `occurrences`
-    - Takes an whole number
-
-Let's see them in action:
-
-**Prescriptions After a Office Visit** - Find all prescriptions of interest occurring within three days after an office visit
-
----
-
-**Example 26**
-
-```JSON
-
-["after",{"left":["ndc","61392070054","65084025214","65726040125",{"label":"Prescriptions of Interest"}],"right":["cpt","99214",{"label":"Office Visit"}],"within":"3d"}]
-
-```
-
-![](README/2a208621300e85b97db39199c287d3fca7b08ce81812f331e0694d99fb48671e.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 207 | 11312 | drug_exposure | 2010-08-13 | 2010-08-13 | 61392070054 |
-
----
-
-Walk through of example above:
-
-- Pull some prescriptions of interest into LHS
-- Pull some office visits into RHS
-- Compare LHS against RHS, enforcing that the LHS' start_date falls after the RHS' end_date
-- Enforce that any remaining LHS' start_date falls within an RHS's (start_date - 3 days) and (end_date + 3 days)
-
-**Find all Heart Attacks Probably Resulting in Death** -- Does anyone die within a year of a heart attack?
-
----
-
-**Example 27**
-
-```JSON
-
-["before",{"left":["icd9","410.00","410.01","410.10","410.11"],"right":["death"],"within":"1y"}]
-
-```
-
-![](README/4f52997f637f2432c1fc18bb3413a8c79f0dc5f25a0077b6b4dceb86353239f6.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 191 | 42977 | condition_occurrence | 2009-05-21 | 2009-05-21 | 41010 |
-
----
-
-Walk through of example above:
-
-- Pull hospitalizations into LHS
-- Pull death records into RHS
-- Compare LHS against RHS, enforcing that the LHS' end_date falls before the RHS' start_date
-- Enforce that any remaining LHS row's end_date falls within an RHS row's (start_date - 1 year) and (end_date + 1 year)
-
-
----
-
-**Example 28 - Multiple Myeloma algorithm -- Select all diabetes diagnoses that are preceded by at least 3 other diabetes diagnoses within 90 days of each other.**
-
-```JSON
-
-["after",{"left":["icd9","250.00",{"label":"Diabetes Dx"}],"right":["recall","Diabetes Dx"],"occurrences":3,"within":"90d"}]
-
-```
-
-![Multiple Myeloma algorithm -- Select all diabetes diagnoses that are preceded by at least 3 other diabetes diagnoses within 90 days of each other.](README/0e6739d7a5e4b296341a35177f9fd14c7664a85fa78dbb9830fc61dd95401f96.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 68 | 19 | condition_occurrence | 2008-04-19 | 2008-04-23 | 25000 |
-| 243 | 205 | condition_occurrence | 2009-08-20 | 2009-08-23 | 25000 |
-| 230 | 231 | condition_occurrence | 2008-03-30 | 2008-04-02 | 25000 |
-| 168 | 297 | condition_occurrence | 2010-02-14 | 2010-02-18 | 25000 |
-| 247 | 337 | condition_occurrence | 2008-03-29 | 2008-03-30 | 25000 |
-| 123 | 904 | condition_occurrence | 2008-12-28 | 2008-12-31 | 25000 |
-| 17 | 929 | condition_occurrence | 2010-05-22 | 2010-06-12 | 25000 |
-| 60 | 983 | condition_occurrence | 2009-07-19 | 2009-07-22 | 25000 |
-| 178 | 1158 | condition_occurrence | 2008-11-26 | 2008-11-28 | 25000 |
-| 179 | 1324 | condition_occurrence | 2008-09-18 | 2008-09-19 | 25000 |
-
----
-
-Walk through of example above:
-
-- Pull diabetes diagnoses into LHS
-- Pull same set of diagnoses into RHS
-- Keep all LHS rows where LHS' start_date falls between RHS' end_date and (end_date + 90 days)
-- Use a window function to group LHS by matching RHS row and sort group by date, then number each LHS row
-- Keep only LHS rows that have a number greater than 3
-- Dedupe LHS rows on output
-
----
-
-**Example 29 - Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes**
-
-```JSON
-
-["after",{"left":["icd9","410.00","410.01","410.10","410.11",{"label":"Heart Attack Dx"}],"right":["icd9","250.01",{"label":"Diabetes Dx"}],"at_least":"1w"}]
-
-```
-
-![Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes](README/808768e04b813f7184a6ac9274fa673d97815dca0cb34202135abdebfa95d248.png)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 58 | 79480 | condition_occurrence | 2009-02-24 | 2009-02-24 | 41011 |
-
----
-
-This example illustrates how `at_least` works.
-
-#### Considerations
-
-Currently, temporal comparisons are done with an inner join between the LHS relation and the RHS relation.  This has some interesting effects:
-
-- If more than one RHS row matches with an LHS row, multiple copies of the LHS row will end up in the downstream records
-    - Should we limit the LHS to only unique rows, essentially de-duping the downstream records?
-- If the same row appears in both the LHS and RHS relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
-    - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
-
-### `Time Window` Operator
+#### `Time Window` Operator
 
 There are situations when the date columns associated with a record should have their values shifted forward or backward in time to make a comparison with another set of dates.  This is where the `Time Window` operator is used.  It has the following properties:
 
@@ -1282,6 +1350,192 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
+#### `Trim Date Start` Operator
+
+Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
+
+The operator finds the most recent end_date in the RHR and uses that date to "trim" the start_dates of each LHR record.
+
+There are four possible scenarios:
+
+- There is no corresponding RHR for the LHR
+  - LHR row is passed through unaffected
+- RHR end_date is before LHR start_date
+  - LHR row is passed through unaffected
+- RHR end_date is after LHR end_date
+  - LHR row is completely discarded
+- RHR end_date falls between LHR start_date and end_date
+  - LHR's start_date is set to RHR's end_date
+
+---
+
+**Example 37 - Create time windows starting at 1980 and ending when patient is 50**
+
+```JSON
+
+["trim_date_start",{"left":["time_window",["person"],{"end":"+50y"}],"right":["date_range",{"start":"1980-01-01","end":"1980-01-01"}]}]
+
+```
+
+![Create time windows starting at 1980 and ending when patient is 50](README/9910b0259a76632784a2821fdeef7bda85b9b84f13451f26e7c343f8f50894e7.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 2 | 2 | person | 1980-01-01 | 1993-01-01 | 00016F745862898F |
+| 3 | 3 | person | 1980-01-01 | 1986-09-01 | 0001FDD721E223DC |
+| 4 | 4 | person | 1980-01-01 | 1991-06-01 | 00021CA6FF03E670 |
+| 5 | 5 | person | 1980-01-01 | 1986-08-01 | 00024B3D2352D2D0 |
+| 6 | 6 | person | 1980-01-01 | 1993-10-01 | 0002DAE1C81CC70D |
+| 8 | 8 | person | 1980-01-01 | 1985-09-01 | 000308435E3E5B76 |
+| 9 | 9 | person | 1980-01-01 | 2026-09-01 | 000345A39D4157C9 |
+| 10 | 10 | person | 1980-01-01 | 1988-10-01 | 00036A21B65B0206 |
+| 11 | 11 | person | 1980-01-01 | 1984-02-01 | 000489E7EAAD463F |
+| 13 | 13 | person | 1980-01-01 | 1986-07-01 | 0004F0ABD505251D |
+
+---
+
+#### `Trim Date End` Operator
+
+Like [temporal comparison operators](#temporal-comparison-operators), this operator takes left and right hand streams of records.
+
+The operator finds the earliest start_date in the RHR and uses that date to "trim" the end_dates of each LHR record.
+
+There are four possible scenarios:
+
+- There is no corresponding RHR for the LHR
+  - LHR row is passed through unaffected
+- RHR start_date is after LHR end_date
+  - LHR row is passed through unaffected
+- RHR start_date is before LHR start_date
+  - LHR row is completely discarded
+- RHR start_date falls between LHR start_date and end_date
+  - LHR's end_date is set to RHR's start_date
+
+---
+
+**Example 38 - Create time windows starting at patient's birth and ending when patient is 50 or 1980, what ever is earlier**
+
+```JSON
+
+["trim_date_end",{"left":["time_window",["person"],{"end":"+50y"}],"right":["date_range",{"start":"1980-01-01","end":"1980-01-01"}]}]
+
+```
+
+![Create time windows starting at patient's birth and ending when patient is 50 or 1980, what ever is earlier](README/c823865e902310f4d5ca1bfb2dda01af9d72f7bb28e63a51734cdd2413bdec46.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 1 | 1 | person | 1923-05-01 | 1973-05-01 | 00013D2EFD8E45D1 |
+| 2 | 2 | person | 1943-01-01 | 1980-01-01 | 00016F745862898F |
+| 3 | 3 | person | 1936-09-01 | 1980-01-01 | 0001FDD721E223DC |
+| 4 | 4 | person | 1941-06-01 | 1980-01-01 | 00021CA6FF03E670 |
+| 5 | 5 | person | 1936-08-01 | 1980-01-01 | 00024B3D2352D2D0 |
+| 6 | 6 | person | 1943-10-01 | 1980-01-01 | 0002DAE1C81CC70D |
+| 7 | 7 | person | 1922-07-01 | 1972-07-01 | 0002F28CE057345B |
+| 8 | 8 | person | 1935-09-01 | 1980-01-01 | 000308435E3E5B76 |
+| 9 | 9 | person | 1976-09-01 | 1980-01-01 | 000345A39D4157C9 |
+| 10 | 10 | person | 1938-10-01 | 1980-01-01 | 00036A21B65B0206 |
+
+---
+
+### Temporal Comparison Operator Options
+
+Sometimes it is difficult to reason through [`Time Window`](#time-window-operator) when working with temporal comparison operators.  It would be nice if a more intuitive language could be used to describe some common temporal relationships.
+
+We've added a few parameters, primarily for the `Before` and `After` operators, that will help with temporal comparisons.
+
+- `within`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHR are adjusted out in each direction by the amount specified and the LHR must pass the original temporal comparison and then fall within the window created by the adjustment
+- `at_least`
+    - Takes same date adjustment format as `time_window`, e.g. 30d or 2m or 1y-3d
+    - The start_date and end_date of the RHR are adjusted out in each direction by the amount specified and the LHR must pass the original temporal comparison and then fall outside the window created by the adjustment
+
+Let's see them in action:
+
+**Prescriptions After a Office Visit** - Find all prescriptions of interest occurring within three days after an office visit
+
+---
+
+**Example 26**
+
+```JSON
+
+["after",{"left":["ndc","61392070054","65084025214","65726040125",{"label":"Prescriptions of Interest"}],"right":["cpt","99214",{"label":"Office Visit"}],"within":"3d"}]
+
+```
+
+![](README/2a208621300e85b97db39199c287d3fca7b08ce81812f331e0694d99fb48671e.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 207 | 11312 | drug_exposure | 2010-08-13 | 2010-08-13 | 61392070054 |
+
+---
+
+Walk through of example above:
+
+- Pull some prescriptions of interest into LHR
+- Pull some office visits into RHR
+- Compare LHR against RHR, enforcing that the LHR' start_date falls after the RHR' end_date
+- Enforce that any remaining LHR' start_date falls within an RHR's (start_date - 3 days) and (end_date + 3 days)
+
+**Find all Heart Attacks Probably Resulting in Death** -- Does anyone die within a year of a heart attack?
+
+---
+
+**Example 27**
+
+```JSON
+
+["before",{"left":["icd9","410.00","410.01","410.10","410.11"],"right":["death"],"within":"1y"}]
+
+```
+
+![](README/4f52997f637f2432c1fc18bb3413a8c79f0dc5f25a0077b6b4dceb86353239f6.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 191 | 42977 | condition_occurrence | 2009-05-21 | 2009-05-21 | 41010 |
+
+---
+
+Walk through of example above:
+
+- Pull hospitalizations into LHR
+- Pull death records into RHR
+- Compare LHR against RHR, enforcing that the LHR' end_date falls before the RHR' start_date
+- Enforce that any remaining LHR row's end_date falls within an RHR row's (start_date - 1 year) and (end_date + 1 year)
+
+---
+
+**Example 29 - Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes**
+
+```JSON
+
+["after",{"left":["icd9","410.00","410.01","410.10","410.11",{"label":"Heart Attack Dx"}],"right":["icd9","250.01",{"label":"Diabetes Dx"}],"at_least":"1w"}]
+
+```
+
+![Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes](README/808768e04b813f7184a6ac9274fa673d97815dca0cb34202135abdebfa95d248.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 58 | 79480 | condition_occurrence | 2009-02-24 | 2009-02-24 | 41011 |
+
+---
+
+This example illustrates how `at_least` works.
+
+#### Considerations
+
+Currently, temporal comparisons are done with an inner join between the LHR relation and the RHR relation.  This has some interesting effects:
+
+- If more than one RHR row matches with an LHR row, multiple copies of the LHR row will end up in the downstream records
+    - Should we limit the LHR to only unique rows, essentially de-duping the downstream records?
+- If the same row appears in both the LHR and RHR relation, it is likely the row will match itself (e.g. a row occurs during itself and contains itself etc.)
+    - This is a bit awkward and perhaps we should skip joining rows against each other if they are identical (i.e. have the same `criterion_id` and `criterion_type`)?
+
 #### Temporal Operators and Person Streams
 
 Person streams carry a patient's date of birth in their start and end date columns.  This makes them almost useless when they are part of the L stream of a temporal operator.  But person streams are useful as the R stream.  By `Time Window`ing the patient's date of birth, we can filter based on the patient's age like so:
@@ -1319,7 +1573,7 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 ---
 
-**Example 36**
+**Example 43 - Episodes of diabetes diagnoses**
 
 ```JSON
 
@@ -1327,7 +1581,7 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 ```
 
-![](README/4841db72317adf99264546f5cc887f49aae8e4d05ead39546fa3c266ffc37f7e.png)
+![Episodes of diabetes diagnoses](README/4841db72317adf99264546f5cc887f49aae8e4d05ead39546fa3c266ffc37f7e.png)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1344,11 +1598,46 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 ---
 
-One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHS of a temporal operator.
+One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHR of a [temporal operator](#temporal-comparison-operators).
+
+### `Concurrent Within` Operator
+
+This operator compares a set of incoming streams.  A record is only passed along if there is a corresponding record in each of the other streams that occurs within the specified time frame.
+
+For instance, say the operator is passed two streams, A and B, and the time frame is 30 days before or after.  If a record in A occurs within 30 days of a record in B, both the record from A and the record from B get passed along.
+
+The impetus for this operator was to be able to find procedures that occur within a certain period of time from a diagnosis and to be able to get both the procedure record and the diagnosis record as output.
+
+---
+
+**Example 44 - Diabetes diagnosis within 30 days of an office visit**
+
+```JSON
+
+["concurrent_within",["cpt_or_hcpcs","99214"],["icd9","250.00"],{"start":"-30d","end":"30d"}]
+
+```
+
+![Diabetes diagnosis within 30 days of an office visit](README/05ccc396adcb747bc17d536f6b28971614c7a7a1417583ed640cf3880573cbd7.png)
+
+| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
+| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 19 | 62873 | procedure_occurrence | 2008-05-10 | 2008-05-10 | 99214 |
+| 77 | 52511 | condition_occurrence | 2008-10-26 | 2008-10-26 | 25000 |
+| 83 | 52455 | condition_occurrence | 2010-10-26 | 2010-10-26 | 25000 |
+| 86 | 68057 | procedure_occurrence | 2009-04-21 | 2009-04-21 | 99214 |
+| 95 | 29773 | procedure_occurrence | 2008-12-07 | 2008-12-07 | 99214 |
+| 98 | 56125 | procedure_occurrence | 2009-11-16 | 2009-11-18 | 99214 |
+| 99 | 94263 | condition_occurrence | 2009-06-27 | 2009-06-27 | 25000 |
+| 105 | 85026 | condition_occurrence | 2008-03-07 | 2008-03-07 | 25000 |
+| 108 | 91221 | procedure_occurrence | 2009-06-05 | 2009-06-05 | 99214 |
+| 110 | 92651 | procedure_occurrence | 2010-05-08 | 2010-05-08 | 99214 |
+
+---
 
 ## Inline-Filter Operators
 
-There are a couple of operators that filter an incoming stream before passing it along.
+There are a several operators that filter an incoming stream before passing it along.
 
 ### `Place of Service Filter` Operator
 
@@ -1425,7 +1714,7 @@ There are times when we'd like to captures events only when a particular provide
 
 Our sample data for the examples in this document does not contain any provider specialty information so there are no records after applying this filter.
 
-## `One In Two Out` Operator
+### `One In Two Out` Operator
 
 A very common pattern in algorithms is to consider a condition to be valid if:
 - the condition is seen just once in the inpatient file, or
@@ -1510,7 +1799,7 @@ In order to simplify how sets of inpatient and outpatient records are compared t
     - Optional
     - Defaults to Initial Event
 
-## `Person Filter` Operator
+### `Person Filter` Operator
 
 Often we want to filter out a set of records by people.  For instance, say we wanted to find all MIs for all males.  We'd use the `Person Filter` operator for that.  Like the `Except` operator, it takes a left-hand stream and a right-hand stream.
 
@@ -1655,7 +1944,19 @@ And don't forget the left-hand side can have multiple types of streams:
 
 ---
 
-## `Co-Reported` Operator
+## Comparison Operators
+
+These operators compare incoming streams of records in special ways to produce a set of records.
+
+### `Filter` Operator
+
+Much like [temporal operators](#temporal-comparison-operators), this operator takes left and right hand streams.  It passes along LHR that have a RHR with a matching person_id, criterion_id, and criterion_domain.  Essentially, it checks to see if a LHR is also present in the right hand stream.
+
+### `Match` Operator
+
+This operator is nearly identical to the [`Filter` operator](#filter-operator) but primarily is used internally.  There are additional options available to this operator that are not exposed in the Jigsaw UI.  Users are advised to use the `Filter` operator as opposed to this one.
+
+### `Co-Reported` Operator
 
 Claims data often reports diagnoses on the same "line" as a procedure.  This is done for billing reasons, essentially the provider is saying "I preformed this procedure due to these conditions present in the patient".  ConceptQL has an operator that specifically targets this kind of relationship: `Co-Reported`
 
@@ -1784,7 +2085,6 @@ The idea behind this is to create hints about what is being output:
 
 ---
 
-
 ### `Recall` Operator
 
 If a algorithm is particularly complex, or has a stream of records that are used more than once, it can be helpful to break the algorithm into a set of sub-algorithms.  This can be done using the `label` options and the `Recall` operator.  Any operator that has a label can be accessed via the `Recall` operator.
@@ -1821,50 +2121,19 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
-## Appendix A - Additional Operators
+## Appendix A - Experimental Operators
 
-### `Vocabulary` Operator
+These are operators that are currently implemented but are subject to change or removal in the future.
 
-A `Vocabulary` operator is any selection operator that selects records based on codes from a specific vocabulary.  Below is a list of the most common vocabulary operators available in ConceptQL:
+### `Numeric Filter` Operator
 
-| Operator Name | Stream Type | Arguments | Returns |
-| ---- | ---- | --------- | ------- |
-| cpt4  | procedure_occurrence | 1 or more CPT codes | All records whose source_value match any of the CPT codes |
-| icd9cm | condition_occurrence | 1 or more ICD-9CM codes | All records whose source_value match any of the ICD-9 codes |
-| icd9_procedure | procedure_occurrence | 1 or more ICD-9 procedure codes | All records whose source_value match any of the ICD-9 procedure codes |
-| icd10cm | condition_occurrence | 1 or more ICD-10 | All records whose source_value match any of the ICD-10 codes |
-| hcpcs  | procedure_occurrence | 1 or more HCPCS codes | All records whose source_value match any of the HCPCS codes |
-| gender | person | 1 or more gender concept_ids | All records whose gender_concept_id match any of the concept_ids|
-| loinc | observation | 1 or more LOINC codes | All records whose source_value match any of the LOINC codes |
-| race | person | 1 or more race concept_ids | All records whose race_concept_id match any of the concept_ids|
-| rxnorm | drug_exposure | 1 or more RxNorm IDs | All records whose drug_concept_id match any of the RxNorm IDs|
-| snomed | condition_occurrence | 1 or more SNOMED codes | All records whose source_value match any of the SNOMED codes |
+This is an [inline filter operator](#inline-filter-operators).  Passes along any record that contains a `value_as_number` that falls between the given options.  Records with `NULL` for `value_as_number` are discarded.
 
-### More Temporal Operators
+### `Equal` Operator
 
-#### `During` Operator
+Like a [temporal comparison operator](#temporal-comparison-operators), takes left and right hand streams and compares the value in the `value_as_number` column.  Passes along LHR where `value_as_number` matches a RHR record.
 
-The `During` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range is fully, and inclusively, contained within a right hand record's date range.
-
-#### `Contains` Operator
-
-The `Contains` operator is a [Temporal Operator](#temporal-comparison-operators).  For each person, records on the left hand side are compared to records on the right hand side.  It only passes along those left hand records whose date range fully, and inclusively, contains a right hand record's date range.
-
-### More Person Operators
-
-Person operators generate person records, or records that are derived from the table containing patient demographics.  The start_date and end_date for a person-based record is the patient's birth date, as explained in more detail [in temporal operators and person streams](#temporal-operators-and-person-streams).
-
-#### `Gender` Operator
-
-This [person operator](#more-person-operators) selects people by gender.  Currently, available genders are Male, Female, or Unknown.
-
-#### `Race` Operator
-
-This [person operator](#more-person-operators) selects people by race.  Available races are defined in the Race vocabulary.
-
-### `Death` Operator
-
-This operator pulls all death records from the death table.
+LHR with `NULL` for `value_as_number` are discarded.
 
 ## Appendix B - Algorithm Showcase
 
