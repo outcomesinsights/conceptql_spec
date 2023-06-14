@@ -17,7 +17,7 @@ class AnnotateGrapher
     blank[:height] = 0
     blank[:label] = ''
     blank[:fixedsize] = true
-    link_to(g, statement, root, blank)
+    link_to(g, statement, root, blank, tailport: "MIDDLE")
 
     g.output(output_type => file_path)
   end
@@ -25,22 +25,22 @@ class AnnotateGrapher
   private
 
   DOMAIN_COLORS = {
-    person: 'blue',
-    visit_occurrence: 'orange',
-    condition_occurrence: 'red',
-    procedure_occurrence: 'green3',
+    person: "#7193cd",
+    visit_occurrence: "#d1a776",
+    condition_occurrence: "#ad4a5b",
+    procedure_occurrence: "#90d796",
     procedure_cost: 'gold',
-    death: 'brown',
+    death: "#704a4a",
     payer_plan_period: 'blue',
-    drug_exposure: 'purple',
-    observation: 'magenta',
-    misc: 'black',
+    drug_exposure: "#9f57a5",
+    observation: "#6fbbba",
+    misc: "#959294",
     invalid: 'gray'
   }
 
   def domain_color(*domains)
     domains.flatten!
-    domains.length == 1 ? DOMAIN_COLORS[domains.first] || 'gray' : 'black'
+    domains.length == 1 ? DOMAIN_COLORS[domains.first] || 'gray' : "#959294"
   end
 
   def domains(op)
@@ -49,8 +49,10 @@ class AnnotateGrapher
     domains
   end
 
-  def link_to(g, from, from_node, to)
-    edge_options = {}
+  def link_to(g, from, from_node, to, edge_options = {})
+    edge_options = {
+      fontname: "Roboto,sans-serif"
+    }.merge(edge_options)
 
     opts = from.last[:annotation]
     domains(from).each do |domain|
@@ -58,7 +60,7 @@ class AnnotateGrapher
       #next unless (domain_opts = (opts[:counts][domain])).is_a?(Hash)
       n = domain_opts[:n]
       if n
-        edge_options[:label] = " rows=#{commatize(opts[:counts][domain][:rows])} \n n=#{commatize(n)}"
+        edge_options[:label] = %Q{<<FONT COLOR="#817980">&nbsp;rows=#{commatize(opts[:counts][domain][:rows])}<BR />&nbsp;n=#{commatize(n)}</FONT>>}
         edge_options[:style] = 'dashed' if n.zero?
       end
       e = g.add_edges(from_node, to, edge_options)
@@ -66,56 +68,79 @@ class AnnotateGrapher
     end
   end
 
+  def wrap_args(args, line_length)
+    args_str = args.join(', ')
+
+    return args_str if args_str.length <= line_length
+
+    parts = args_str.split
+
+    line = []
+    lines = []
+
+    while next_tok = parts.shift
+      line << next_tok
+      if line.map(&:length).inject(&:+) >= line_length
+        lines << line.join(" ")
+        line = []
+      end
+    end
+    
+    lines.join('<BR />')
+  end
+
+  def construct_label(opts, args)
+    args_n_opts = ""
+    unless args.empty?
+      args_n_opts = wrap_args(args, 30)
+    end
+
+    exclude = [:annotation, :name, :color, :left, :right]
+    label_opts = opts.reject{|k,_| exclude.include?(k)}
+    unless label_opts.blank?
+      args_n_opts += "<BR />" unless args_n_opts.empty?
+      args_n_opts += label_opts.map{|k,v| "#{k}: #{v}"}.join("<BR />")
+    end
+
+    args_n_opts = "&nbsp;" if args_n_opts.blank?
+    
+    label = %Q{<<TABLE BORDER="0" CELLBORDER="-1" CELLSPACING="-1">
+        <TR>
+          <TD WIDTH="20" ROWSPAN="2" BGCOLOR="#{opts[:color]}" PORT="LEFT"></TD>
+          <TD WIDTH="20" ROWSPAN="2" BGCOLOR="#{opts[:color]}" PORT="MIDDLE"></TD>
+          <TD WIDTH="20" ROWSPAN="2" BGCOLOR="#{opts[:color]}" PORT="RIGHT"></TD>
+          <TD ALIGN="LEFT"><B><FONT POINT-SIZE="16">#{opts[:name]}</FONT></B></TD>
+        </TR>
+        <TR>
+          <TD ALIGN="LEFT"><FONT COLOR="#817980">#{args_n_opts}</FONT></TD>
+        </TR>
+      </TABLE>>}.gsub("\n", "")
+  end
+
   def traverse(g, op)
     op_name, *args, opts = op
+    opts[:name] ||= op_name.to_s.titlecase
+    opts[:color] = domain_color(*domains(op))
     node_name = "#{op_name}_#{@counter += 1}"
     upstreams, args = args.partition { |arg| arg.is_a?(Array) }
     upstreams.map! do |upstream|
       [upstream, traverse(g, upstream)]
     end
 
+    me = g.add_nodes(node_name, label: construct_label(opts, args), shape: :plaintext, fontname: "Roboto,sans-serif")
+
     if left = opts[:left]
       right = opts[:right]
-      left_node = traverse(g, left)
       right_node = traverse(g, right)
-    else
-      me = g.add_nodes(node_name)
-      me[:color] = domain_color(*domains(op))
+      left_node = traverse(g, left)
+      link_to(g, left, left_node, me, tailport: "MIDDLE", headport: "LEFT")
+      link_to(g, right, right_node, me, tailport: "MIDDLE", headport: "RIGHT")
     end
-    label = opts[:name] || op_name.to_s.titlecase
-    unless args.empty?
-      label += ":\n"
-      args_str = args.join(', ')
-      if args_str.length <= 100
-        label += args_str
-      else
-        parts = args_str.split
-        label += parts.each_slice(args_str.length / parts.count).map do |subparts|
-          subparts.join(' ')
-        end.join ('\n')
-      end
-    end
-    exclude = [:annotation, :name, :left, :right]
-    label_opts = opts.reject{|k,_| exclude.include?(k)}
-    label += "\n#{label_opts.map{|k,v| "#{k}: #{v}"}.join("\n")}" unless label_opts.nil? || label_opts.empty?
 
     upstreams.each do |upstream, node|
-      link_to(g, upstream, node, me)
+      link_to(g, upstream, node, me, tailport: "MIDDLE", headport: "MIDDLE")
     end
 
-    if left_node
-      cluster_name = "cluster_#{op_name}_#{@counter += 1}"
-      me = g.send(cluster_name) do |sub|
-        sub[rank: 'same', label: label, color: 'black']
-        sub.send("#{cluster_name}_left").send('[]', shape: 'point', color: domain_color(*domains(op)))
-        sub.send("#{cluster_name}_right").send('[]', shape: 'point')
-      end
-      link_to(g, left, left_node, me.send("#{cluster_name}_left"))
-      link_to(g, right, right_node, me.send("#{cluster_name}_right"))
-      me = me.send("#{cluster_name}_left")
-    end
-
-    me[:label] = label
     me
   end
 

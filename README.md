@@ -487,7 +487,7 @@ This operator pulls all death records from the `death` table.
 
 ---
 
-**Example 51**
+**Example 10**
 
 ```JSON
 
@@ -518,7 +518,7 @@ This operator pulls all information period records from the `information_periods
 
 ---
 
-**Example 52**
+**Example 11**
 
 ```JSON
 
@@ -637,7 +637,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ---
 
-**Example 6 - Two streams of the same type (condition_occurrence) joined into a single stream**
+**Example 15 - Two streams of the same type (condition_occurrence) joined into a single stream**
 
 ```JSON
 
@@ -664,7 +664,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ---
 
-**Example 7 - Two streams of the same type (condition_occurrence) joined into a single stream, then a different stream (procedure_occurrence) flows concurrently**
+**Example 16 - Two streams of the same type (condition_occurrence) joined into a single stream, then a different stream (procedure_occurrence) flows concurrently**
 
 ```JSON
 
@@ -691,7 +691,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ---
 
-**Example 8 - Two streams of the same type (condition_occurrence) joined into a single stream, along with a different stream (procedure_occurrence) flows concurrently (same as above example)**
+**Example 17 - Two streams of the same type (condition_occurrence) joined into a single stream, along with a different stream (procedure_occurrence) flows concurrently (same as above example)**
 
 ```JSON
 
@@ -723,7 +723,7 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 
 ---
 
-**Example 12 - All males who are not white**
+**Example 18 - All males who are not white**
 
 ```JSON
 
@@ -752,7 +752,7 @@ If the left-hand stream has no types that match the right-hand stream, the left-
 
 ---
 
-**Example 13 - All Conditions that are MI**
+**Example 19 - All Conditions that are MI**
 
 ```JSON
 
@@ -781,7 +781,7 @@ And just to show how multiple streams behave:
 
 ---
 
-**Example 14 - Passes two streams downstream: a stream of Conditions that are MI (this stream is completely unaffected by the right hand stream) and a stream of People that are Male but not White**
+**Example 20 - Passes two streams downstream: a stream of Conditions that are MI (this stream is completely unaffected by the right hand stream) and a stream of People that are Male but not White**
 
 ```JSON
 
@@ -814,7 +814,7 @@ This feature lets us do interesting things, like find the first occurrence of ei
 
 ---
 
-**Example 15 - First occurrence of either MI or Death for each patient**
+**Example 21 - First occurrence of either MI or Death for each patient**
 
 ```JSON
 
@@ -867,7 +867,7 @@ When looking at a set of records for a person, perhaps we want to select just th
 
 ---
 
-**Example 18 - For each patient, select the Condition that represents the second occurrence of an MI**
+**Example 22 - For each patient, select the Condition that represents the second occurrence of an MI**
 
 ```JSON
 
@@ -896,7 +896,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-**Example 19**
+**Example 23**
 
 ```JSON
 
@@ -927,7 +927,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-**Example 20 - For each patient, select the Condition that represents the first occurrence of an MI**
+**Example 24 - For each patient, select the Condition that represents the first occurrence of an MI**
 
 ```JSON
 
@@ -958,7 +958,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ---
 
-**Example 21 - For each patient, select the Condition that represents the last occurrence of an MI**
+**Example 25 - For each patient, select the Condition that represents the last occurrence of an MI**
 
 ```JSON
 
@@ -1026,7 +1026,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-**Example 22 - All MIs for the year 2010**
+**Example 26 - All MIs for the year 2010**
 
 ```JSON
 
@@ -1057,7 +1057,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-**Example 23 - All MIs occurring on 2010-06-22**
+**Example 27 - All MIs occurring on 2010-06-22**
 
 ```JSON
 
@@ -1081,7 +1081,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ---
 
-**Example 24 - All MIs that overlap with the month of 2010-06**
+**Example 28 - All MIs that overlap with the month of 2010-06**
 
 ```JSON
 
@@ -1108,7 +1108,7 @@ The `Before` operator uses the latter approach, so all LHR records are compared 
 
 ---
 
-**Example 24 - All MIs that occurred before a patient's __last__ case of diabetes (250.01)**
+**Example 29 - All MIs that occurred before a patient's __last__ case of diabetes (250.01)**
 
 ```JSON
 
@@ -1143,7 +1143,7 @@ The `After` operator uses the latter approach, so all LHR records are compared a
 
 ---
 
-**Example 26 - All MIs that occurred after a patient's __first__ case of diabetes (250.01)**
+**Example 30 - All MIs that occurred after a patient's __first__ case of diabetes (250.01)**
 
 ```JSON
 
@@ -1173,7 +1173,7 @@ If this is not the behavior you desire, use one of the relative time operators t
 
 ---
 
-**Example 25 - All MIs that occurred before a patient's __first__ case of diabetes (250.01)**
+**Example 31 - All MIs that occurred before a patient's __first__ case of diabetes (250.01)**
 
 ```JSON
 
@@ -1225,7 +1225,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-**Example 30 - All Diagnoses of Diabetes (ICD-9 250.01) within 30 days of an MI**
+**Example 32 - All Diagnoses of Diabetes (ICD-9 250.01) within 30 days of an MI**
 
 ```JSON
 
@@ -1244,7 +1244,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-**Example 31 - Shift the window for all MIs back by 200 years**
+**Example 33 - Shift the window for all MIs back by 200 years**
 
 ```JSON
 
@@ -1271,7 +1271,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-**Example 32 - Expand the dates for all MIs to a window ranging from 2 months and 2 days prior to 1 year and 3 days after the MI**
+**Example 34 - Expand the dates for all MIs to a window ranging from 2 months and 2 days prior to 1 year and 3 days after the MI**
 
 ```JSON
 
@@ -1298,7 +1298,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-**Example 33 - Collapse all 412 date ranges down to just the date of admission by leaving start_date unaffected and setting end_date to start_date**
+**Example 35 - Collapse all 412 date ranges down to just the date of admission by leaving start_date unaffected and setting end_date to start_date**
 
 ```JSON
 
@@ -1325,7 +1325,7 @@ There are situations when the date columns associated with a record should have 
 
 ---
 
-**Example 34 - Nonsensical, but allowed: swap the start_date and end_date for a range**
+**Example 36 - Nonsensical, but allowed: swap the start_date and end_date for a range**
 
 ```JSON
 
@@ -1457,7 +1457,7 @@ Let's see them in action:
 
 ---
 
-**Example 26**
+**Example 39**
 
 ```JSON
 
@@ -1484,7 +1484,7 @@ Walk through of example above:
 
 ---
 
-**Example 27**
+**Example 40**
 
 ```JSON
 
@@ -1509,7 +1509,7 @@ Walk through of example above:
 
 ---
 
-**Example 29 - Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes**
+**Example 41 - Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes**
 
 ```JSON
 
@@ -1542,7 +1542,7 @@ Person streams carry a patient's date of birth in their start and end date colum
 
 ---
 
-**Example 35 - All MIs that occurred after a male patient's 50th birthday**
+**Example 42 - All MIs that occurred after a male patient's 50th birthday**
 
 ```JSON
 
@@ -1645,7 +1645,7 @@ Often in claims data, an event is reported with a place of service via the CMS p
 
 ---
 
-**Example 37**
+**Example 45**
 
 ```JSON
 
@@ -1667,7 +1667,7 @@ For better or worse, provenance, or rather information about the origin of claim
 
 ---
 
-**Example 38**
+**Example 46**
 
 ```JSON
 
@@ -1698,7 +1698,7 @@ There are times when we'd like to captures events only when a particular provide
 
 ---
 
-**Example 39**
+**Example 47**
 
 ```JSON
 
@@ -1725,7 +1725,7 @@ We have created an operator that handles this pattern: `One In Two Out`
 
 ---
 
-**Example 40 - First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses**
+**Example 48 - First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses**
 
 ```JSON
 
@@ -1807,7 +1807,7 @@ Unlike the `Except` operator, the `Person Filter` operator will use all types of
 
 ---
 
-**Example 41 - All MI Conditions for people who are male**
+**Example 49 - All MI Conditions for people who are male**
 
 ```JSON
 
@@ -1836,7 +1836,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 42 - All MI Conditions for people who had an office visit at some point in the data**
+**Example 50 - All MI Conditions for people who had an office visit at some point in the data**
 
 ```JSON
 
@@ -1863,7 +1863,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 43 - All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)**
+**Example 51 - All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)**
 
 ```JSON
 
@@ -1890,7 +1890,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 44 - All MI Conditions for people who are Male OR had an office visit at some point in the data**
+**Example 52 - All MI Conditions for people who are Male OR had an office visit at some point in the data**
 
 ```JSON
 
@@ -1919,7 +1919,7 @@ And don't forget the left-hand side can have multiple types of streams:
 
 ---
 
-**Example 45 - Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male**
+**Example 53 - Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male**
 
 ```JSON
 
@@ -1965,7 +1965,7 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 ---
 
-**Example 46 - Diabetes diagnosis reported as part the reason for an office visit**
+**Example 54 - Diabetes diagnosis reported as part the reason for an office visit**
 
 ```JSON
 
@@ -2002,7 +2002,7 @@ For instance, here are some diabetes diagnoses with a label applied:
 
 ---
 
-**Example 47**
+**Example 55**
 
 ```JSON
 
@@ -2031,7 +2031,7 @@ The most recent upstream `label` is the one that is output:
 
 ---
 
-**Example 48**
+**Example 56**
 
 ```JSON
 
@@ -2060,7 +2060,7 @@ The idea behind this is to create hints about what is being output:
 
 ---
 
-**Example 49**
+**Example 57**
 
 ```JSON
 
@@ -2096,7 +2096,7 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
-**Example 50 - Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
+**Example 58 - Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
 
 ```JSON
 
@@ -2150,7 +2150,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 51**
+**Example 59**
 
 ```JSON
 
@@ -2174,7 +2174,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 52**
+**Example 60**
 
 ```JSON
 
