@@ -8,8 +8,8 @@ gem "mdl"
 
 gem "ruby-graphviz", "~> 1.2"
 
-gem "pry-byebug", "~> 3.10"
+gem "pry-byebug", "~> 3.12"
 
-gem "pg", "~> 1.4"
+gem "pg", "~> 1.6"
 
 gem "facets", "~> 3.1"
