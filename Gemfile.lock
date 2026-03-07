@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 928803ba4268b6dd387f330f56ccfb5203bab291
+  revision: 40f45cbcd788a59116d9d1a022b1b4afdfd16107
   branch: main
   specs:
     conceptql (0.3.0)
@@ -14,7 +14,7 @@ GIT
       ostruct
       reline
       sequel (~> 5.66)
-      sequelizer (~> 0.1.3)
+      sequelizer (>= 0.1.3, < 1.0)
       thor (~> 1.0)
 
 GIT
@@ -68,7 +68,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.18.1)
+    json (2.19.0)
     kramdown (2.5.2)
       rexml (>= 3.4.4)
     kramdown-parser-gfm (1.1.0)
@@ -116,7 +116,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     securerandom (0.4.1)
-    sequel (5.101.0)
+    sequel (5.102.0)
       bigdecimal
     stringio (3.2.0)
     thor (1.5.0)
