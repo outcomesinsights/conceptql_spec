@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 087496e826a24eb8aad334441642d726a47d0d67
+  revision: 24c11bfd5ddae669d4165e5e6e7a15f5c0a698f3
   branch: main
   specs:
     conceptql (0.3.0)
@@ -45,7 +45,7 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
     base64 (0.3.0)
-    bigdecimal (4.0.1)
+    bigdecimal (4.1.0)
     byebug (13.0.0)
       reline (>= 0.6.0)
     chef-utils (19.1.164)
@@ -82,7 +82,7 @@ GEM
       mixlib-shellout
     memo_wise (1.13.0)
     method_source (1.1.0)
-    minitest (6.0.2)
+    minitest (6.0.3)
       drb (~> 2.0)
       prism (~> 1.5)
     mixlib-cli (2.1.8)
@@ -116,7 +116,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     securerandom (0.4.1)
-    sequel (5.102.0)
+    sequel (5.103.0)
       bigdecimal
     stringio (3.2.0)
     thor (1.5.0)
