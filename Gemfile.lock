@@ -58,7 +58,7 @@ GEM
     dotenv (2.8.1)
     drb (2.2.3)
     erb (6.0.2)
-    facets (3.1.0)
+    facets (3.2.0)
     hashie (3.6.0)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
@@ -131,7 +131,7 @@ PLATFORMS
 
 DEPENDENCIES
   conceptql!
-  facets (~> 3.1)
+  facets (~> 3.2)
   mdl
   pg (~> 1.6)
   pry-byebug (~> 3.12)
