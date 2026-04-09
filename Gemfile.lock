@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 24c11bfd5ddae669d4165e5e6e7a15f5c0a698f3
+  revision: 2c4d8b082cb9dfaef28e886e6d137ea3e9e4d922
   branch: main
   specs:
     conceptql (0.3.0)
@@ -45,7 +45,7 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
     base64 (0.3.0)
-    bigdecimal (4.1.0)
+    bigdecimal (4.1.1)
     byebug (13.0.0)
       reline (>= 0.6.0)
     chef-utils (19.1.164)
