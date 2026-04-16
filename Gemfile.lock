@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 2c4d8b082cb9dfaef28e886e6d137ea3e9e4d922
+  revision: ecf837765e8d3bf6730fbf41fdf36469c2e72d67
   branch: main
   specs:
     conceptql (0.3.0)
@@ -57,7 +57,7 @@ GEM
     date (3.5.1)
     dotenv (2.8.1)
     drb (2.2.3)
-    erb (6.0.2)
+    erb (6.0.3)
     facets (3.2.0)
     hashie (3.6.0)
     i18n (1.14.8)
@@ -82,7 +82,7 @@ GEM
       mixlib-shellout
     memo_wise (1.13.0)
     method_source (1.1.0)
-    minitest (6.0.3)
+    minitest (6.0.4)
       drb (~> 2.0)
       prism (~> 1.5)
     mixlib-cli (2.1.8)
