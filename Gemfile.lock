@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 99eb16e990ee0dc8baa6c08608c96df5d9f7561b
+  revision: abb643a4a96b38fa2a34b1d1a6df50411b81d3c5
   branch: main
   specs:
     conceptql (0.3.0)
