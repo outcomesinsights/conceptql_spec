@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 9bc7f8f2e3ed4c9f72607698d61a75bc24052d69
+  revision: 316587dba2685ead8bd38db6b5587a651f35c584
   branch: main
   specs:
     conceptql (0.3.0)
@@ -56,7 +56,7 @@ GEM
     csv (3.3.6)
     dotenv (2.8.1)
     drb (2.2.3)
-    erb (6.0.6)
+    erb (6.0.7)
     facets (3.2.2)
     hashie (3.6.0)
     i18n (1.15.2)
@@ -67,7 +67,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (2.21.1)
+    json (2.21.2)
     kramdown (2.5.2)
       rexml (>= 3.4.4)
     kramdown-parser-gfm (1.1.0)
@@ -102,7 +102,7 @@ GEM
     pry-byebug (3.12.0)
       byebug (~> 13.0)
       pry (>= 0.13, < 0.17)
-    rbs (4.1.1)
+    rbs (4.1.2)
       logger
       prism (>= 1.6.0)
       tsort
@@ -117,7 +117,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     securerandom (0.4.1)
-    sequel (5.106.0)
+    sequel (5.107.0)
       bigdecimal
     thor (1.5.0)
     tomlrb (2.0.4)
