@@ -73,12 +73,13 @@ GEM
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
     logger (1.7.0)
-    mdl (0.17.0)
+    mdl (0.18.1)
       kramdown (~> 2.5)
       kramdown-parser-gfm (~> 1.1)
       mixlib-cli
       mixlib-config
       mixlib-shellout
+      uri
     memo_wise (1.13.0)
     method_source (1.1.0)
     minitest (6.0.6)
