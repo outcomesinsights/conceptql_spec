@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 0ab7f64ec0a0d57a2d2d3abc7256172c4e4fd2a4
+  revision: 4bf1ab28b8f884980d2a57153c9e861c8a8f272f
   branch: main
   specs:
     conceptql (0.3.0)
@@ -103,7 +103,7 @@ GEM
     pry-byebug (3.12.0)
       byebug (~> 13.0)
       pry (>= 0.13, < 0.17)
-    rbs (4.1.3)
+    rbs (4.2.0)
       logger
       prism (>= 1.6.0)
       tsort
