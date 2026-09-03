@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 4bf1ab28b8f884980d2a57153c9e861c8a8f272f
+  revision: 7f5e2a93945a473795172df1d9482792235bee21
   branch: main
   specs:
     conceptql (0.3.0)
@@ -118,7 +118,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     securerandom (0.4.1)
-    sequel (5.107.0)
+    sequel (5.108.0)
       bigdecimal
     thor (1.5.0)
     tomlrb (2.0.4)
