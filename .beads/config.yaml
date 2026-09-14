@@ -41,4 +41,6 @@
 # - github.org
 # - github.repo
 
-dolt.shared-server: true
+# Beads sync through the git-backed Dolt remote at refs/dolt/data.
+# This line selects that path; the pre-push gate drives it.
+sync.remote: "git+git@github.com:outcomesinsights/conceptql_spec.git"

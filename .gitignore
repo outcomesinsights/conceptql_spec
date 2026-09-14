@@ -5,3 +5,6 @@ README.html
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Beads sync via the Dolt remote (refs/dolt/data). Not the sync channel, not a backup.
+.beads/issues.jsonl
