@@ -8,3 +8,7 @@ README.html
 
 # Beads sync via the Dolt remote (refs/dolt/data). Not the sync channel, not a backup.
 .beads/issues.jsonl
+
+# bd agent-audit sidecar: never versioned (hm-40s). Root, not .beads/.gitignore,
+# because a first-time bd 1.1.2 `bd init` rewrites .beads/.gitignore wholesale.
+.beads/interactions.jsonl
