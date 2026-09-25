@@ -1695,25 +1695,36 @@ For better or worse, provenance, or rather information about the origin of claim
 
 ## `Provider Filter` Operator
 
-There are times when we'd like to captures events only when a particular provider specialty was involved.  ConceptQL provides the `Provider Filter` operator for this.  This operator is a bit bare-bones at the moment in that it requires users to enter in the concept ID of the specialty they are seeking, rather than providing a list of known specialties.
+There are times when we'd like to capture events only when a particular kind of provider was involved.  ConceptQL provides the `Provider Filter` operator for this.  It takes two options, and both are required:
+
+- `specialties` - the specialty of the provider we are looking for
+    - A record passes if either the practitioner's own specialty or the specialty recorded for the practitioner on that record's encounter matches
+- `roles` - the role the provider played in the encounter
+    - Roles come from the GDM_ROLE vocabulary, e.g. `100000066` (Performing physician), `100000067` (Attending physician), `100000068` (Operating physician), and `100000069` (Other physician)
+
+Each option takes a comma-separated list of concept IDs, and a record passes if it matches any of them.  Use `*` to skip that half of the filter, so `{ "specialties": "*", "roles": "100000067" }` keeps records that had an attending physician of any specialty.  Because a single record can involve several providers, a record may appear more than once if more than one of its providers matches.
+
+This operator is a bit bare-bones at the moment in that it requires users to enter in concept IDs, rather than providing a list of known specialties and roles.
+
+Here we look for diabetes diagnoses whose attending physician was an endocrinologist.  `38003868` is the NUCC specialty "Endocrinology, Diabetes & Metabolism Physician" and `100000067` is the "Attending physician" role.  The results show every column, so you can see the provider, both specialty columns, and the role that matched:
 
 ---
 
-**Example 47**
+**Example 47 - Diabetes diagnoses with an endocrinologist as the attending physician**
 
 ```JSON
 
-["provider_filter",["icd9","250.00"],{"specialties":"12301023"}]
+["provider_filter",["icd9","250.00"],{"specialties":"38003868","roles":"100000067"}]
 
 ```
 
-![](README/ef71e0a60a876620c7d41d081f7ed121489afab67fc37bee3b11da409b16c0b5.svg)
+![Diabetes diagnoses with an endocrinologist as the attending physician](README/c973bd6570e8526897035c9912ce09cb576d1b3ce9b3e53cbc8bcc10cb06bb8e.svg)
 
-```No Results.  Statement is experimental.```
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label | column_family | provider_id | context_specialty_concept_id | practitioner_specialty_concept_id | role_type_concept_id |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- | ------------- | ----------- | ---------------------------- | --------------------------------- | -------------------- |
+| 17 | 18184 | clinical_codes | condition_occurrence | 2010-08-22 | 2010-08-22 | 25000 | ICD9CM |  | default | 6856 | 38003868 |  | 100000067 |
 
 ---
-
-Our sample data for the examples in this document does not contain any provider specialty information so there are no records after applying this filter.
 
 ## `One In Two Out` Operator
 
