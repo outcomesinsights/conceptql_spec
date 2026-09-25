@@ -13,10 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # No ruby-version: setup-ruby reads it from .ruby-version.
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
 
       - name: Install mdl
         run: gem install mdl
@@ -36,7 +35,6 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
           bundler-cache: true
 
   ci:
