@@ -141,5 +141,8 @@ DEPENDENCIES
   pry-byebug (~> 3.12)
   sequelizer!
 
+RUBY VERSION
+  ruby 4.0.7p0
+
 BUNDLED WITH
-   2.4.7
+  4.0.20
