@@ -1,7 +1,7 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-gem "sequelizer", github: "outcomesinsights/sequelizer", branch: "glue"
+gem "sequelizer", github: "outcomesinsights/sequelizer", branch: "main"
 gem "conceptql", github: "outcomesinsights/conceptql", branch: "main"
 
 gem "mdl"
