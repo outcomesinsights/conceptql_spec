@@ -37,7 +37,7 @@
   - [Date Literals](#date-literals)
     - [`Date Range` Operator](#date-range-operator)
     - [day](#day)
-    - [What is <date-format\>?](#what-is-date-format%5C)
+    - [What is <date-format\>?](#what-is-date-format)
   - [Temporal Comparison Operators](#temporal-comparison-operators)
     - [`During` Operator](#during-operator)
     - [`Contains` Operator](#contains-operator)
@@ -73,6 +73,7 @@
   - [Acute Kidney Injury - Narrow Definition and diagnostic procedure](#acute-kidney-injury---narrow-definition-and-diagnostic-procedure)
   - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
 - [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
+- [Appendix D - Regenerating This Document](#appendix-d---regenerating-this-document)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -115,7 +116,7 @@ And generate a diagram that looks like this:
 
 ```
 
-![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
+![](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -178,7 +179,7 @@ Reading ConceptQL in YAML or JSON can be difficult.  It is often easier to explo
 
 ```
 
-![All Conditions Matching MI](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.png)
+![All Conditions Matching MI](README/f6b4fc31703cfb6327bbbd4614af8bb72da6d39fa3d53ada63a70157f2fad80e.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -207,7 +208,7 @@ Each oval depicts an "operator", or rather, a ConceptQL expression.  An arrow be
 
 ```
 
-![First Office Visit Per Patient](README/39d6a8eb71cae51b1d6937c97134e51f04fd47c54535ff0915fe6a8b4f197fb2.png)
+![First Office Visit Per Patient](README/39d6a8eb71cae51b1d6937c97134e51f04fd47c54535ff0915fe6a8b4f197fb2.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -277,7 +278,7 @@ So when we execute this ConceptQL statement, the resulting "stream" is all IDs f
 
 ```
 
-![All Male Patients](README/c82077b9455d0f9abc2c45ee1a298e38b99c9ce9cd685f65d87b376d7718d7ad.png)
+![All Male Patients](README/c82077b9455d0f9abc2c45ee1a298e38b99c9ce9cd685f65d87b376d7718d7ad.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -306,7 +307,7 @@ When we execute this ConceptQL statement, the resulting "stream" is all `clinica
 
 ```
 
-![All Condition Occurrences that match ICD-9CM 250.01](README/35b7dcb2e2f1ca320d78c7bb095361f64b3ffbd96ebc8efc5365a462f640fda6.png)
+![All Condition Occurrences that match ICD-9CM 250.01](README/35b7dcb2e2f1ca320d78c7bb095361f64b3ffbd96ebc8efc5365a462f640fda6.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -374,7 +375,7 @@ This [person operator](#more-person-operators) selects people by gender.  Curren
 
 ```
 
-![Gathers all female person records](README/56e3d05526221fa65d1cacb8bfe77e849366f935f492a70f0ee52793f9773cff.png)
+![Gathers all female person records](README/56e3d05526221fa65d1cacb8bfe77e849366f935f492a70f0ee52793f9773cff.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -405,7 +406,7 @@ This [person operator](#more-person-operators) selects people by race.  Availabl
 
 ```
 
-![Gathers all persons indicated as white](README/245c2752d997a2a31f359f63c2b05c8a519a56743cd5356fbfd1b7e05fe59a2b.png)
+![Gathers all persons indicated as white](README/245c2752d997a2a31f359f63c2b05c8a519a56743cd5356fbfd1b7e05fe59a2b.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -436,7 +437,7 @@ This [person operator](#more-person-operators) selects people by ethnicity.  Ava
 
 ```
 
-![Gathers all persons indicated as Hispanic](README/c3d9612b3fb2165339d043d6afe8ea1d8d47a932acbe7a693b9eaf6b2709837e.png)
+![Gathers all persons indicated as Hispanic](README/c3d9612b3fb2165339d043d6afe8ea1d8d47a932acbe7a693b9eaf6b2709837e.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -462,7 +463,7 @@ This [person operator](#more-person-operators) selects all patient records.
 
 ```
 
-![Gathers all persons indicated as Hispanic](README/162e772b1a736322be3ccb4a74560a0263f2bf85d3817aede296c37d22d792d6.png)
+![Gathers all persons indicated as Hispanic](README/162e772b1a736322be3ccb4a74560a0263f2bf85d3817aede296c37d22d792d6.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -495,7 +496,7 @@ This operator pulls all death records from the `death` table.
 
 ```
 
-![](README/e281558c677a04df02e53dcc7fd6497a0d831e4037560cd13942b67ab10f98f4.png)
+![](README/e281558c677a04df02e53dcc7fd6497a0d831e4037560cd13942b67ab10f98f4.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -526,7 +527,7 @@ This operator pulls all information period records from the `information_periods
 
 ```
 
-![](README/741f3a199999a141d1a96c3ff599efb30879f7f2673ff9f8b661ab5d703a51ee.png)
+![](README/741f3a199999a141d1a96c3ff599efb30879f7f2673ff9f8b661ab5d703a51ee.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -561,7 +562,7 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ```
 
-![](README/7ae66f90823b289cca573865beae8f42aca7671cd35650c40f821ff0045378c7.png)
+![](README/7ae66f90823b289cca573865beae8f42aca7671cd35650c40f821ff0045378c7.svg)
 
 ```No Results found.```
 
@@ -581,7 +582,7 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ```
 
-![](README/914160be2ea332b121673ee2fe82ae5dcd0a28d9d4140468db55dd8b6a9299f0.png)
+![](README/914160be2ea332b121673ee2fe82ae5dcd0a28d9d4140468db55dd8b6a9299f0.svg)
 
 ```No Results found.```
 
@@ -601,20 +602,20 @@ This [utilization operator](#utilization-operators) generates records that are a
 
 ```
 
-![](README/c5b781df8be8f0b7de7b59f9060265f0c40d423c1b2b6fbd8ccee52d8863e69c.png)
+![](README/c5b781df8be8f0b7de7b59f9060265f0c40d423c1b2b6fbd8ccee52d8863e69c.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 134 | 1 | condition_occurrence | 2009-11-23 | 2009-11-30 |  |
-| 247 | 2 | condition_occurrence | 2008-02-28 | 2008-03-04 |  |
-| 68 | 3 | condition_occurrence | 2008-04-19 | 2008-04-23 |  |
-| 247 | 4 | condition_occurrence | 2008-03-25 | 2008-03-29 |  |
-| 66 | 5 | condition_occurrence | 2009-08-04 | 2009-08-06 |  |
-| 95 | 6 | condition_occurrence | 2008-09-03 | 2008-09-12 |  |
-| 247 | 7 | condition_occurrence | 2008-08-14 | 2008-08-21 |  |
-| 202 | 8 | condition_occurrence | 2008-08-18 | 2008-08-20 |  |
-| 247 | 9 | condition_occurrence | 2008-07-13 | 2008-07-18 |  |
-| 153 | 10 | condition_occurrence | 2010-01-29 | 2010-02-08 |  |
+| 134 | 1 | condition_occurrence | 2009-11-23 | 2009-11-30 | 5854 |
+| 247 | 2 | condition_occurrence | 2008-02-28 | 2008-03-04 | 4019 |
+| 68 | 3 | condition_occurrence | 2008-04-19 | 2008-04-23 | 25000 |
+| 247 | 4 | condition_occurrence | 2008-03-25 | 2008-03-29 | 4019 |
+| 66 | 5 | condition_occurrence | 2009-08-04 | 2009-08-06 | 41401 |
+| 95 | 6 | condition_occurrence | 2008-09-03 | 2008-09-12 | 4011 |
+| 247 | 7 | condition_occurrence | 2008-08-14 | 2008-08-21 | 4223 |
+| 202 | 8 | condition_occurrence | 2008-08-18 | 2008-08-20 | 5990 |
+| 247 | 9 | condition_occurrence | 2008-07-13 | 2008-07-18 | 0417 |
+| 153 | 10 | condition_occurrence | 2010-01-29 | 2010-02-08 | 5849 |
 
 ---
 
@@ -645,7 +646,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ```
 
-![Two streams of the same type (condition_occurrence) joined into a single stream](README/2a925852d390b8b9d54e16f354c42ac3a31284ab56fe025943912faf60399d14.png)
+![Two streams of the same type (condition_occurrence) joined into a single stream](README/2a925852d390b8b9d54e16f354c42ac3a31284ab56fe025943912faf60399d14.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -672,7 +673,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ```
 
-![Two streams of the same type (condition_occurrence) joined into a single stream, then a different stream (procedure_occurrence) flows concurrently](README/07520638f7e898be1bebb8ab6fb6eb824024fdc97a25747f62684c4389afc0d0.png)
+![Two streams of the same type (condition_occurrence) joined into a single stream, then a different stream (procedure_occurrence) flows concurrently](README/07520638f7e898be1bebb8ab6fb6eb824024fdc97a25747f62684c4389afc0d0.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -699,7 +700,7 @@ Because streams represent sets of records, it makes sense to include operators t
 
 ```
 
-![Two streams of the same type (condition_occurrence) joined into a single stream, along with a different stream (procedure_occurrence) flows concurrently (same as above example)](README/3399e13ce4d77609ef48dd14ad9f20cb3d4a591f13259d63275608c9a515a617.png)
+![Two streams of the same type (condition_occurrence) joined into a single stream, along with a different stream (procedure_occurrence) flows concurrently (same as above example)](README/3399e13ce4d77609ef48dd14ad9f20cb3d4a591f13259d63275608c9a515a617.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -731,20 +732,20 @@ This operator takes two sets of incoming streams, a left-hand stream and a right
 
 ```
 
-![All males who are not white](README/9816c700006428e6ee95e5ed7bc716e06e7d323ee2c3f06c29237d8c0687b6fd.png)
+![All males who are not white](README/4c60158b916d71578ec382aed4fef9186dcb17699c5b008dd9869ed361094eaa.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
-| 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
-| 21 | 21 | person | 1932-08-01 | 1932-08-01 | 000C7486B11E7030 |
-| 22 | 22 | person | 1942-08-01 | 1942-08-01 | 000D6D88463D8A76 |
-| 50 | 50 | person | 1941-08-01 | 1941-08-01 | 001AEDD510C92C87 |
+| 205 | 205 | person | 1939-09-01 | 1939-09-01 | 0066EA6B0591E894 |
+| 125 | 125 | person | 1932-11-01 | 1932-11-01 | 0036126F8C445643 |
+| 238 | 238 | person | 1921-03-01 | 1921-03-01 | 007CE3AFEC3B1E5E |
+| 162 | 162 | person | 1932-06-01 | 1932-06-01 | 004F44BC89D8D747 |
+| 181 | 181 | person | 1939-11-01 | 1939-11-01 | 005E0AB5172E715F |
 | 68 | 68 | person | 1954-11-01 | 1954-11-01 | 0021D4CDAFC0609F |
-| 69 | 69 | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |
-| 71 | 71 | person | 1931-01-01 | 1931-01-01 | 0022CC1943D038E2 |
-| 72 | 72 | person | 1933-04-01 | 1933-04-01 | 002354398A00234E |
-| 75 | 75 | person | 1932-08-01 | 1932-08-01 | 00241223F034F97B |
+| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
+| 201 | 201 | person | 1949-06-01 | 1949-06-01 | 00653DC86A0E30D8 |
+| 190 | 190 | person | 1939-07-01 | 1939-07-01 | 0060C263DA4EBBAF |
+| 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
 
 ---
 
@@ -760,20 +761,20 @@ If the left-hand stream has no types that match the right-hand stream, the left-
 
 ```
 
-![All Conditions that are MI](README/253845fe6162621af407ebd110296ff4f6d8a3f23ec75dfb4ea8cda30be71262.png)
+![All Conditions that are MI](README/802fb1c1bc1e63efcf1024507a5b582de5f975e3d34317f6d1379e07815a4153.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
-| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
+| 184 | 24281 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 214 | 89463 | condition_occurrence | 2008-02-17 | 2008-02-17 | 412 |
+| 54 | 74606 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 93 | 82295 | condition_occurrence | 2009-11-08 | 2009-11-08 | 412 |
 | 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
+| 197 | 21914 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 172 | 87095 | condition_occurrence | 2009-01-20 | 2009-01-20 | 412 |
+| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
 | 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
-| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
-| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
 
 ---
 
@@ -789,20 +790,20 @@ And just to show how multiple streams behave:
 
 ```
 
-![Passes two streams downstream: a stream of Conditions that are MI (this stream is completely unaffected by the right hand stream) and a stream of People that are Male but not White](README/7351f7022b20011e1776438aed367a469417619b776a2902f6346f1c76d28659.png)
+![Passes two streams downstream: a stream of Conditions that are MI (this stream is completely unaffected by the right hand stream) and a stream of People that are Male but not White](README/b60d8d85fb4bba40969ce782f9f539fed0ca2ff5482577edde9333f332c478a8.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 4 | 4 | person | 1941-06-01 | 1941-06-01 | 00021CA6FF03E670 |
-| 6 | 6 | person | 1943-10-01 | 1943-10-01 | 0002DAE1C81CC70D |
-| 21 | 21 | person | 1932-08-01 | 1932-08-01 | 000C7486B11E7030 |
-| 22 | 22 | person | 1942-08-01 | 1942-08-01 | 000D6D88463D8A76 |
-| 50 | 50 | person | 1941-08-01 | 1941-08-01 | 001AEDD510C92C87 |
-| 68 | 68 | person | 1954-11-01 | 1954-11-01 | 0021D4CDAFC0609F |
-| 69 | 69 | person | 1925-05-01 | 1925-05-01 | 00225409819CF5F6 |
-| 71 | 71 | person | 1931-01-01 | 1931-01-01 | 0022CC1943D038E2 |
-| 72 | 72 | person | 1933-04-01 | 1933-04-01 | 002354398A00234E |
-| 75 | 75 | person | 1932-08-01 | 1932-08-01 | 00241223F034F97B |
+| 184 | 24281 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 214 | 89463 | condition_occurrence | 2008-02-17 | 2008-02-17 | 412 |
+| 205 | 205 | person | 1939-09-01 | 1939-09-01 | 0066EA6B0591E894 |
+| 54 | 74606 | condition_occurrence | 2008-06-05 | 2008-06-05 | 412 |
+| 93 | 82295 | condition_occurrence | 2009-11-08 | 2009-11-08 | 412 |
+| 125 | 125 | person | 1932-11-01 | 1932-11-01 | 0036126F8C445643 |
+| 238 | 238 | person | 1921-03-01 | 1921-03-01 | 007CE3AFEC3B1E5E |
+| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
+| 197 | 21914 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
 
 ---
 
@@ -822,7 +823,7 @@ This feature lets us do interesting things, like find the first occurrence of ei
 
 ```
 
-![First occurrence of either MI or Death for each patient](README/3bf7022e9a06d0b25d7e66f30508c7ac68453b51bbede666c94d7988f681bcad.png)
+![First occurrence of either MI or Death for each patient](README/3bf7022e9a06d0b25d7e66f30508c7ac68453b51bbede666c94d7988f681bcad.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -875,7 +876,7 @@ When looking at a set of records for a person, perhaps we want to select just th
 
 ```
 
-![For each patient, select the Condition that represents the second occurrence of an MI](README/267385650ec29b77f30e5da3d7103c5ce6982947722d939dfc3ea8e5d030ce59.png)
+![For each patient, select the Condition that represents the second occurrence of an MI](README/267385650ec29b77f30e5da3d7103c5ce6982947722d939dfc3ea8e5d030ce59.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -904,7 +905,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ```
 
-![](README/d5ab4877aa7234a8962f48b8cd7bcd04cce728e3446259ffce27fb78165c6173.png)
+![](README/f860f007f3702ee00a1b56b08950da5e204ebb55052a62b1b92ca037b0c22cc7.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -935,7 +936,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ```
 
-![For each patient, select the Condition that represents the first occurrence of an MI](README/04491942fcbd741982514f9eb12aeecf3d54b5b69a2b50c8331f7700169d5521.png)
+![For each patient, select the Condition that represents the first occurrence of an MI](README/04491942fcbd741982514f9eb12aeecf3d54b5b69a2b50c8331f7700169d5521.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -966,7 +967,7 @@ In the example shown below, the `unique` parameter under the `Nth Occurrence` op
 
 ```
 
-![For each patient, select the Condition that represents the last occurrence of an MI](README/ebacbd092e3d1a3c7b745a381e51e8ff9d63a21db23a16940193e18e57bc866f.png)
+![For each patient, select the Condition that represents the last occurrence of an MI](README/ebacbd092e3d1a3c7b745a381e51e8ff9d63a21db23a16940193e18e57bc866f.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1034,20 +1035,20 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ```
 
-![All MIs for the year 2010](README/ba90ef705f7be91c53c5eb4a81a439fa0f7c48532214bd3db3cc5c069160543e.png)
+![All MIs for the year 2010](README/2e63e2cda93cad60833d4478c7250fb12b1d4aca6750fa93337e775c88034d08.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
-| 90 | 33940 | condition_occurrence | 2010-05-26 | 2010-05-26 | 412 |
 | 38 | 40556 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
-| 239 | 49718 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
-| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
 | 77 | 58165 | condition_occurrence | 2010-10-06 | 2010-10-06 | 412 |
+| 90 | 33940 | condition_occurrence | 2010-05-26 | 2010-05-26 | 412 |
+| 109 | 89334 | condition_occurrence | 2010-07-06 | 2010-07-06 | 412 |
 | 110 | 62592 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
 | 152 | 84298 | condition_occurrence | 2010-11-22 | 2010-11-22 | 412 |
 | 187 | 87583 | condition_occurrence | 2010-12-26 | 2010-12-26 | 412 |
-| 109 | 89334 | condition_occurrence | 2010-07-06 | 2010-07-06 | 412 |
+| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
+| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
+| 239 | 49718 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
 
 ---
 
@@ -1065,7 +1066,7 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ```
 
-![All MIs occurring on 2010-06-22](README/3711f7cd299795890ba67bab0028b3704bb945981f7e9d55cc54fb3c149873d1.png)
+![All MIs occurring on 2010-06-22](README/6be8bab0a3361853e6181dc87f0dcc87ad9b5b1163d40ef547482c2610676688.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1089,12 +1090,12 @@ This is a [temporal operator](#temporal-comparison-operators).  It passes along 
 
 ```
 
-![All MIs that overlap with the month of 2010-06](README/f06367690443de9137f53ad4c6751ff5dadb90367e1144544b9774b11867e7d3.png)
+![All MIs that overlap with the month of 2010-06](README/157fa3a164dd585506988bfcddcac5cf23fe72c10b6546dab97ccb03940e53ed.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
 | 110 | 62592 | condition_occurrence | 2010-06-27 | 2010-06-27 | 412 |
+| 217 | 56467 | condition_occurrence | 2010-06-22 | 2010-06-23 | 412 |
 
 ---
 
@@ -1116,7 +1117,7 @@ The `Before` operator uses the latter approach, so all LHR records are compared 
 
 ```
 
-![All MIs that occurred before a patient's __last__ case of diabetes (250.01)](README/0fb154f472b824d08d2b7ad791c3121110bdf54f24aec435ec455951a7237531.png)
+![All MIs that occurred before a patient's __last__ case of diabetes (250.01)](README/d83aba1f2318ca0026820f2e033ea95739882562dfa5a54e17b44f430af28150.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1151,7 +1152,7 @@ The `After` operator uses the latter approach, so all LHR records are compared a
 
 ```
 
-![All MIs that occurred after a patient's __first__ case of diabetes (250.01)](README/474804a6057d4b8c1f71251faca96a7bb548550904fc4cec75a3c212d5a1f252.png)
+![All MIs that occurred after a patient's __first__ case of diabetes (250.01)](README/1cccafb8729889d64c2da718c8ddace79cc45dc0e463f35c2a0c961269df879d.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1181,7 +1182,7 @@ If this is not the behavior you desire, use one of the relative time operators t
 
 ```
 
-![All MIs that occurred before a patient's __first__ case of diabetes (250.01)](README/87da25f5d1725b54d327d6ded1e2fb404ea4571b25c9a2c5e6f81e4203eb907f.png)
+![All MIs that occurred before a patient's __first__ case of diabetes (250.01)](README/a504e62a45e22443284d7d1ca033e31708c49a94c89677bde7b3738f4667baa2.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1233,7 +1234,7 @@ There are situations when the date columns associated with a record should have 
 
 ```
 
-![All Diagnoses of Diabetes (ICD-9 250.01) within 30 days of an MI](README/3a8f2359dfa498f583e3ea4fde7485c7a1d4628f8d00a7d4be822cfee2077922.png)
+![All Diagnoses of Diabetes (ICD-9 250.01) within 30 days of an MI](README/4c91bfe5d8b1e37a227c75ebc0c53f7346e664b66c73b461ee91cffc18f99423.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1252,7 +1253,7 @@ There are situations when the date columns associated with a record should have 
 
 ```
 
-![Shift the window for all MIs back by 200 years](README/c242928af07fd4f925bb30c29dec132d7c60637ea4b98a62230857e8c63ca78a.png)
+![Shift the window for all MIs back by 200 years](README/9cd24b9b50410d868783625313392a4d17e7149d179246975e34c3d9b3b9c920.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1279,7 +1280,7 @@ There are situations when the date columns associated with a record should have 
 
 ```
 
-![Expand the dates for all MIs to a window ranging from 2 months and 2 days prior to 1 year and 3 days after the MI](README/cc960a268d51ccf2ebde657d36848f780213834844900018bce3d111843f7b0f.png)
+![Expand the dates for all MIs to a window ranging from 2 months and 2 days prior to 1 year and 3 days after the MI](README/700be184b22bd026350f8a677abdcbc36fc202d7442c9dbd604fde176a88b0e6.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1306,7 +1307,7 @@ There are situations when the date columns associated with a record should have 
 
 ```
 
-![Collapse all 412 date ranges down to just the date of admission by leaving start_date unaffected and setting end_date to start_date](README/91d3371a0270e59c3e553f574a91320dade6505032a2f2c9e447b5bb79f2d4b5.png)
+![Collapse all 412 date ranges down to just the date of admission by leaving start_date unaffected and setting end_date to start_date](README/b25368e1807f59c08e50c18865a76d22a8ef99248cb8ef9b45625e5dda4c7dc3.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1333,7 +1334,7 @@ There are situations when the date columns associated with a record should have 
 
 ```
 
-![Nonsensical, but allowed: swap the start_date and end_date for a range](README/6705af65d728c0d5c50d6c4d46253017a91eb459dbb1f40f92449f05d5562f4a.png)
+![Nonsensical, but allowed: swap the start_date and end_date for a range](README/e6e61614c55f7ea757eaf61528d2bb1f357a4f9825f8a0671fb1b4615b2d6eac.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1377,7 +1378,7 @@ There are four possible scenarios:
 
 ```
 
-![Create time windows starting at 1980 and ending when patient is 50](README/9910b0259a76632784a2821fdeef7bda85b9b84f13451f26e7c343f8f50894e7.png)
+![Create time windows starting at 1980 and ending when patient is 50](README/89f10196e5da105f06aa6a090b9c7994f64b1b69b9853d37cf6bc424b20770ab.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1421,7 +1422,7 @@ There are four possible scenarios:
 
 ```
 
-![Create time windows starting at patient's birth and ending when patient is 50 or 1980, what ever is earlier](README/c823865e902310f4d5ca1bfb2dda01af9d72f7bb28e63a51734cdd2413bdec46.png)
+![Create time windows starting at patient's birth and ending when patient is 50 or 1980, what ever is earlier](README/0d3c6f4e3e34534411a7e073bbbc592dbaa1b0441be3e791275796910a72f9ef.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1465,7 +1466,7 @@ Let's see them in action:
 
 ```
 
-![](README/2a208621300e85b97db39199c287d3fca7b08ce81812f331e0694d99fb48671e.png)
+![](README/909cce05fcd46a5c2a665cca4ff17974fcf9aba60aa6cd79989ac113613461d5.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1492,7 +1493,7 @@ Walk through of example above:
 
 ```
 
-![](README/4f52997f637f2432c1fc18bb3413a8c79f0dc5f25a0077b6b4dceb86353239f6.png)
+![](README/a8996ab1953fc8d0ad414421bceac5490477bbc5a97fec4ab1b7315b79efefc3.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1517,7 +1518,7 @@ Walk through of example above:
 
 ```
 
-![Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes](README/808768e04b813f7184a6ac9274fa673d97815dca0cb34202135abdebfa95d248.png)
+![Find all diagnosis of heart attack at least 1 week after a diagnosis of diabetes](README/48f81b512a62a70d10f08c65ca8abe17d0c46343ee395223acdaf148628fe768.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1550,7 +1551,7 @@ Person streams carry a patient's date of birth in their start and end date colum
 
 ```
 
-![All MIs that occurred after a male patient's 50th birthday](README/68fac940a32c7e40caacf8e560c61da552d57633d015ba98f2e98ec040a00c5b.png)
+![All MIs that occurred after a male patient's 50th birthday](README/8502c0bd3107b4b9e04198b537d07fa07ff3c27b0d663ede190cfdb16b99ccd4.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1581,7 +1582,7 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 ```
 
-![Episodes of diabetes diagnoses](README/4841db72317adf99264546f5cc887f49aae8e4d05ead39546fa3c266ffc37f7e.png)
+![Episodes of diabetes diagnoses](README/0fba326610e14d6fa9dd69f5b5000701ffea1a58cc17996db3ba2c4ec24e7963.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1618,20 +1619,20 @@ The impetus for this operator was to be able to find procedures that occur withi
 
 ```
 
-![Diabetes diagnosis within 30 days of an office visit](README/05ccc396adcb747bc17d536f6b28971614c7a7a1417583ed640cf3880573cbd7.png)
+![Diabetes diagnosis within 30 days of an office visit](README/874959f71c29aa3b3de23d5fb56324784531ff1088623d7c673d8338545f8fd5.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
+| 177 | 31686 | condition_occurrence | 2009-12-15 | 2009-12-15 | 25000 |
+| 230 | 20490 | condition_occurrence | 2008-09-11 | 2008-10-01 | 25000 |
 | 19 | 62873 | procedure_occurrence | 2008-05-10 | 2008-05-10 | 99214 |
 | 77 | 52511 | condition_occurrence | 2008-10-26 | 2008-10-26 | 25000 |
-| 83 | 52455 | condition_occurrence | 2010-10-26 | 2010-10-26 | 25000 |
 | 86 | 68057 | procedure_occurrence | 2009-04-21 | 2009-04-21 | 99214 |
-| 95 | 29773 | procedure_occurrence | 2008-12-07 | 2008-12-07 | 99214 |
-| 98 | 56125 | procedure_occurrence | 2009-11-16 | 2009-11-18 | 99214 |
-| 99 | 94263 | condition_occurrence | 2009-06-27 | 2009-06-27 | 25000 |
 | 105 | 85026 | condition_occurrence | 2008-03-07 | 2008-03-07 | 25000 |
-| 108 | 91221 | procedure_occurrence | 2009-06-05 | 2009-06-05 | 99214 |
-| 110 | 92651 | procedure_occurrence | 2010-05-08 | 2010-05-08 | 99214 |
+| 247 | 351 | condition_occurrence | 2008-02-07 | 2008-02-10 | 25000 |
+| 98 | 56125 | procedure_occurrence | 2009-11-16 | 2009-11-18 | 99214 |
+| 178 | 87444 | condition_occurrence | 2009-02-04 | 2009-02-04 | 25000 |
+| 83 | 52455 | condition_occurrence | 2010-10-26 | 2010-10-26 | 25000 |
 
 ---
 
@@ -1653,7 +1654,7 @@ Often in claims data, an event is reported with a place of service via the CMS p
 
 ```
 
-![](README/d7768c00aa41c8d28b43cbe19dbc7dcb080de56685fd1b38339a1f1a2f2f6a4e.png)
+![](README/d7768c00aa41c8d28b43cbe19dbc7dcb080de56685fd1b38339a1f1a2f2f6a4e.svg)
 
 ```No Results found.```
 
@@ -1675,12 +1676,10 @@ For better or worse, provenance, or rather information about the origin of claim
 
 ```
 
-![](README/5d23f974187d37184a7c2c227efeb1e0b95d6887f9acfea77ffed1ae12474a45.png)
+![](README/5d23f974187d37184a7c2c227efeb1e0b95d6887f9acfea77ffed1ae12474a45.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 68 | 19 | condition_occurrence | 2008-04-19 | 2008-04-23 | 25000 |
-| 207 | 106 | condition_occurrence | 2010-04-28 | 2010-05-02 | 25000 |
 | 131 | 170 | condition_occurrence | 2008-03-22 | 2008-03-23 | 25000 |
 | 243 | 205 | condition_occurrence | 2009-08-20 | 2009-08-23 | 25000 |
 | 230 | 231 | condition_occurrence | 2008-03-30 | 2008-04-02 | 25000 |
@@ -1688,7 +1687,9 @@ For better or worse, provenance, or rather information about the origin of claim
 | 79 | 267 | condition_occurrence | 2009-08-09 | 2009-08-24 | 25000 |
 | 230 | 284 | condition_occurrence | 2008-03-01 | 2008-03-06 | 25000 |
 | 168 | 297 | condition_occurrence | 2010-02-14 | 2010-02-18 | 25000 |
-| 37 | 310 | condition_occurrence | 2009-01-19 | 2009-01-20 | 25000 |
+| 247 | 337 | condition_occurrence | 2008-03-29 | 2008-03-30 | 25000 |
+| 247 | 351 | condition_occurrence | 2008-02-07 | 2008-02-10 | 25000 |
+| 177 | 504 | condition_occurrence | 2009-06-13 | 2009-06-16 | 25000 |
 
 ---
 
@@ -1706,9 +1707,9 @@ There are times when we'd like to captures events only when a particular provide
 
 ```
 
-![](README/8a9c5f763ca8db508b01f5060a6fab0978515e549a752602201527c9212630fd.png)
+![](README/ef71e0a60a876620c7d41d081f7ed121489afab67fc37bee3b11da409b16c0b5.svg)
 
-```No Results found.```
+```No Results.  Statement is experimental.```
 
 ---
 
@@ -1733,7 +1734,7 @@ We have created an operator that handles this pattern: `One In Two Out`
 
 ```
 
-![First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses](README/dcaa563941e6398b6a1d753caa9caadbc1034f26ad0417b0f1e1d9d7edb03f58.png)
+![First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses](README/1fe610f742d33dfddab94f0fbc9b2d1e55569cb334338fdda8921fb94285d1a3.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1815,7 +1816,7 @@ Unlike the `Except` operator, the `Person Filter` operator will use all types of
 
 ```
 
-![All MI Conditions for people who are male](README/0360fc0c2b7a88fd82ffc4d13387b76766649d5d42aa8f9349bbf60a81ac6119.png)
+![All MI Conditions for people who are male](README/01ac8152ce68c7cf6a403425b16f935a49ee8f98a58ba48ca7d349702a80f059.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1844,20 +1845,20 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ```
 
-![All MI Conditions for people who had an office visit at some point in the data](README/26fd52b5ac55438dd9f81b4a3f3913f1058c9f225c8a5e129007c1e9413d5881.png)
+![All MI Conditions for people who had an office visit at some point in the data](README/ba978232ee75b753aa2cbb2364da55470c9b1574599780ee898a3510a60b0506.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
-| 177 | 507 | condition_occurrence | 2009-06-13 | 2009-06-16 | 412 |
-| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
-| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
+| 184 | 24281 | condition_occurrence | 2008-01-07 | 2008-01-07 | 412 |
+| 190 | 61423 | condition_occurrence | 2009-04-09 | 2009-04-09 | 412 |
 | 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
-| 81 | 1405 | condition_occurrence | 2009-01-28 | 2009-01-30 | 412 |
-| 88 | 1572 | condition_occurrence | 2009-01-03 | 2009-01-09 | 412 |
-| 66 | 16171 | condition_occurrence | 2009-07-25 | 2009-07-25 | 412 |
-| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
-| 96 | 20748 | condition_occurrence | 2008-09-21 | 2008-09-24 | 412 |
+| 197 | 21914 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 149 | 28518 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
+| 73 | 52843 | condition_occurrence | 2008-11-16 | 2008-11-16 | 412 |
+| 11 | 82614 | condition_occurrence | 2008-10-29 | 2008-10-29 | 412 |
+| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
+| 239 | 49718 | condition_occurrence | 2010-02-12 | 2010-02-12 | 412 |
+| 239 | 47130 | condition_occurrence | 2009-08-04 | 2009-08-04 | 412 |
 
 ---
 
@@ -1871,7 +1872,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ```
 
-![All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)](README/e1cb0863b21e14256d61a54200316791f6547c78ba2f0156c110f4500f9bbd49.png)
+![All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)](README/f041a32efb9a2a154832ea269c0a62fa7190c7d9cb29f037f13c9100eacd2287.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1898,7 +1899,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ```
 
-![All MI Conditions for people who are Male OR had an office visit at some point in the data](README/5d331d74c460d75814b2d3138a9b7d90b5ddb2dcd85e1f5f260d183745fc3a1e.png)
+![All MI Conditions for people who are Male OR had an office visit at some point in the data](README/dd96916384c40e51f78b248e0a3e6fefb36ea3751d6563637ba5b2036a6a8990.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
@@ -1927,20 +1928,20 @@ And don't forget the left-hand side can have multiple types of streams:
 
 ```
 
-![Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male](README/c93dd18894a245a5647f99e1867d3779e4cd34c9c8f8860600ff0c837a5ffa53.png)
+![Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male](README/b1918fb8c0afe7e6b306204d08ac68e0adc1491812bc158a58f6c76cefde4d1b.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 71 | 31789 | procedure_occurrence | 2009-07-12 | 2009-07-12 | 99214 |
-| 68 | 35465 | procedure_occurrence | 2008-11-08 | 2008-11-08 | 99214 |
-| 68 | 35191 | procedure_occurrence | 2008-06-30 | 2008-06-30 | 99214 |
-| 68 | 35154 | procedure_occurrence | 2009-03-26 | 2009-03-26 | 99214 |
-| 68 | 33110 | procedure_occurrence | 2010-08-13 | 2010-08-13 | 99214 |
-| 68 | 32826 | procedure_occurrence | 2009-07-22 | 2009-07-22 | 99214 |
-| 68 | 49092 | procedure_occurrence | 2008-10-28 | 2008-10-28 | 99214 |
-| 68 | 88881 | procedure_occurrence | 2010-03-17 | 2010-03-17 | 99214 |
-| 68 | 80436 | procedure_occurrence | 2009-11-13 | 2009-11-13 | 99214 |
-| 146 | 37311 | procedure_occurrence | 2009-08-17 | 2009-08-17 | 99214 |
+| 131 | 172 | condition_occurrence | 2008-03-22 | 2008-03-23 | 412 |
+| 230 | 523 | condition_occurrence | 2008-03-14 | 2008-03-21 | 412 |
+| 161 | 963 | condition_occurrence | 2009-10-25 | 2009-10-29 | 412 |
+| 60 | 986 | condition_occurrence | 2009-07-19 | 2009-07-22 | 412 |
+| 213 | 15005 | condition_occurrence | 2010-02-07 | 2010-02-07 | 412 |
+| 220 | 20660 | condition_occurrence | 2009-10-31 | 2009-10-31 | 412 |
+| 96 | 20748 | condition_occurrence | 2008-09-21 | 2008-09-24 | 412 |
+| 197 | 21914 | condition_occurrence | 2009-05-07 | 2009-05-07 | 412 |
+| 149 | 28518 | condition_occurrence | 2008-04-07 | 2008-04-07 | 412 |
+| 212 | 34051 | condition_occurrence | 2009-10-07 | 2009-10-07 | 412 |
 
 ---
 
@@ -1973,20 +1974,20 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 ```
 
-![Diabetes diagnosis reported as part the reason for an office visit](README/dfc63bee1d9f447450c764cc505def315209de4c752ce49f4cb3779dd28b1001.png)
+![Diabetes diagnosis reported as part the reason for an office visit](README/dfc63bee1d9f447450c764cc505def315209de4c752ce49f4cb3779dd28b1001.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 25 | 93217 | condition_occurrence | 2008-09-18 | 2008-09-18 | 25000 |
-| 25 | 93220 | procedure_occurrence | 2008-09-18 | 2008-09-18 | 99214 |
-| 31 | 87695 | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 |
-| 31 | 87696 | procedure_occurrence | 2008-06-17 | 2008-06-17 | 99214 |
-| 40 | 81973 | condition_occurrence | 2009-05-01 | 2009-05-01 | 25000 |
-| 40 | 81993 | procedure_occurrence | 2009-05-01 | 2009-05-01 | 99214 |
-| 44 | 44702 | condition_occurrence | 2008-01-10 | 2008-01-10 | 25000 |
-| 44 | 44715 | procedure_occurrence | 2008-01-10 | 2008-01-10 | 99214 |
-| 58 | 35093 | condition_occurrence | 2009-06-15 | 2009-06-15 | 25000 |
-| 58 | 35095 | procedure_occurrence | 2009-06-15 | 2009-06-15 | 99214 |
+| 202 | 38757 | procedure_occurrence | 2010-07-21 | 2010-07-21 | 99214 |
+| 61 | 54188 | procedure_occurrence | 2010-01-14 | 2010-01-23 | 99214 |
+| 96 | 77076 | condition_occurrence | 2008-03-28 | 2008-03-28 | 25000 |
+| 178 | 84288 | procedure_occurrence | 2008-10-26 | 2008-10-26 | 99214 |
+| 161 | 83260 | condition_occurrence | 2008-09-30 | 2008-09-30 | 25000 |
+| 247 | 62385 | condition_occurrence | 2008-06-28 | 2008-06-28 | 25000 |
+| 187 | 33423 | condition_occurrence | 2010-09-10 | 2010-09-10 | 25000 |
+| 208 | 78854 | procedure_occurrence | 2009-05-27 | 2009-05-27 | 99214 |
+| 131 | 70430 | condition_occurrence | 2009-11-02 | 2009-11-02 | 25000 |
+| 243 | 35845 | procedure_occurrence | 2008-10-09 | 2008-10-09 | 99214 |
 
 ---
 
@@ -2010,20 +2011,20 @@ For instance, here are some diabetes diagnoses with a label applied:
 
 ```
 
-![](README/ae17e429cc3455a947e1b0a13602b50d53f4b1fc709d9cb8c759dd2340f0a1cb.png)
+![](README/5a17847161d7ca50586e1aa64fba95aaa6671d9fa359336ee8ea151d2aec4585.svg)
 
-| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
-| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
-| 68 | 19 | clinical_codes | condition_occurrence | 2008-04-19 | 2008-04-23 | 25000 | ICD9CM | diabetes |
-| 207 | 106 | clinical_codes | condition_occurrence | 2010-04-28 | 2010-05-02 | 25000 | ICD9CM | diabetes |
-| 131 | 170 | clinical_codes | condition_occurrence | 2008-03-22 | 2008-03-23 | 25000 | ICD9CM | diabetes |
-| 243 | 205 | clinical_codes | condition_occurrence | 2009-08-20 | 2009-08-23 | 25000 | ICD9CM | diabetes |
-| 230 | 231 | clinical_codes | condition_occurrence | 2008-03-30 | 2008-04-02 | 25000 | ICD9CM | diabetes |
-| 32 | 257 | clinical_codes | condition_occurrence | 2010-08-30 | 2010-09-07 | 25000 | ICD9CM | diabetes |
-| 79 | 267 | clinical_codes | condition_occurrence | 2009-08-09 | 2009-08-24 | 25000 | ICD9CM | diabetes |
-| 230 | 284 | clinical_codes | condition_occurrence | 2008-03-01 | 2008-03-06 | 25000 | ICD9CM | diabetes |
-| 168 | 297 | clinical_codes | condition_occurrence | 2010-02-14 | 2010-02-18 | 25000 | ICD9CM | diabetes |
-| 37 | 310 | clinical_codes | condition_occurrence | 2009-01-19 | 2009-01-20 | 25000 | ICD9CM | diabetes |
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label | column_family |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- | ------------- |
+| 131 | 170 | clinical_codes | condition_occurrence | 2008-03-22 | 2008-03-23 | 25000 | ICD9CM | diabetes | default |
+| 243 | 205 | clinical_codes | condition_occurrence | 2009-08-20 | 2009-08-23 | 25000 | ICD9CM | diabetes | default |
+| 230 | 231 | clinical_codes | condition_occurrence | 2008-03-30 | 2008-04-02 | 25000 | ICD9CM | diabetes | default |
+| 32 | 257 | clinical_codes | condition_occurrence | 2010-08-30 | 2010-09-07 | 25000 | ICD9CM | diabetes | default |
+| 79 | 267 | clinical_codes | condition_occurrence | 2009-08-09 | 2009-08-24 | 25000 | ICD9CM | diabetes | default |
+| 230 | 284 | clinical_codes | condition_occurrence | 2008-03-01 | 2008-03-06 | 25000 | ICD9CM | diabetes | default |
+| 168 | 297 | clinical_codes | condition_occurrence | 2010-02-14 | 2010-02-18 | 25000 | ICD9CM | diabetes | default |
+| 247 | 337 | clinical_codes | condition_occurrence | 2008-03-29 | 2008-03-30 | 25000 | ICD9CM | diabetes | default |
+| 247 | 351 | clinical_codes | condition_occurrence | 2008-02-07 | 2008-02-10 | 25000 | ICD9CM | diabetes | default |
+| 177 | 504 | clinical_codes | condition_occurrence | 2009-06-13 | 2009-06-16 | 25000 | ICD9CM | diabetes | default |
 
 ---
 
@@ -2039,20 +2040,20 @@ The most recent upstream `label` is the one that is output:
 
 ```
 
-![](README/171c05fd88920d0ab583a95030008eca236e6e9570059ef9d0efacb9e99f446e.png)
+![](README/ac7ad9cb0be86f11282abb8fb6b64c5483b96c5d04e91d2db60a98aa5098b64c.svg)
 
-| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
-| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
-| 2 | 89752 | clinical_codes | condition_occurrence | 2009-05-11 | 2009-05-11 | 25000 | ICD9CM | 1st diabetes |
-| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | 1st diabetes |
-| 5 | 89717 | clinical_codes | condition_occurrence | 2009-06-28 | 2009-06-28 | 25000 | ICD9CM | 1st diabetes |
-| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | 1st diabetes |
-| 8 | 95135 | clinical_codes | condition_occurrence | 2008-10-17 | 2008-10-17 | 25000 | ICD9CM | 1st diabetes |
-| 9 | 24929 | clinical_codes | condition_occurrence | 2010-08-01 | 2010-08-01 | 25000 | ICD9CM | 1st diabetes |
-| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | 1st diabetes |
-| 12 | 15443 | clinical_codes | condition_occurrence | 2009-04-20 | 2009-04-20 | 25000 | ICD9CM | 1st diabetes |
-| 13 | 19968 | clinical_codes | condition_occurrence | 2008-03-05 | 2008-03-05 | 25000 | ICD9CM | 1st diabetes |
-| 14 | 77991 | clinical_codes | condition_occurrence | 2009-06-05 | 2009-06-05 | 25000 | ICD9CM | 1st diabetes |
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label | column_family |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- | ------------- |
+| 2 | 89752 | clinical_codes | condition_occurrence | 2009-05-11 | 2009-05-11 | 25000 | ICD9CM | 1st diabetes | default |
+| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | 1st diabetes | default |
+| 5 | 89717 | clinical_codes | condition_occurrence | 2009-06-28 | 2009-06-28 | 25000 | ICD9CM | 1st diabetes | default |
+| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | 1st diabetes | default |
+| 8 | 95135 | clinical_codes | condition_occurrence | 2008-10-17 | 2008-10-17 | 25000 | ICD9CM | 1st diabetes | default |
+| 9 | 24929 | clinical_codes | condition_occurrence | 2010-08-01 | 2010-08-01 | 25000 | ICD9CM | 1st diabetes | default |
+| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | 1st diabetes | default |
+| 12 | 15443 | clinical_codes | condition_occurrence | 2009-04-20 | 2009-04-20 | 25000 | ICD9CM | 1st diabetes | default |
+| 13 | 19968 | clinical_codes | condition_occurrence | 2008-03-05 | 2008-03-05 | 25000 | ICD9CM | 1st diabetes | default |
+| 14 | 77991 | clinical_codes | condition_occurrence | 2009-06-05 | 2009-06-05 | 25000 | ICD9CM | 1st diabetes | default |
 
 ---
 
@@ -2068,20 +2069,20 @@ The idea behind this is to create hints about what is being output:
 
 ```
 
-![](README/a2f7ece76cf8636b34d5dcd03113c5593a779947cf9f088ae47a64f24e14eddb.png)
+![](README/3c4eae367736cd3a1217b409148ce14f42ded95d2097ead3789d01e72ef786ae.svg)
 
-| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label |
-| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- |
-| 1 | 1065 | clinical_codes | condition_occurrence | 2010-03-12 | 2010-03-13 | 4019 | ICD9CM | hypertension |
-| 2 | 57517 | clinical_codes | condition_occurrence | 2009-03-30 | 2009-03-30 | 4019 | ICD9CM | hypertension |
-| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | diabetes |
-| 5 | 38310 | clinical_codes | condition_occurrence | 2008-12-14 | 2008-12-14 | 4019 | ICD9CM | hypertension |
-| 6 | 76645 | clinical_codes | condition_occurrence | 2010-02-23 | 2010-02-23 | 4019 | ICD9CM | hypertension |
-| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | diabetes |
-| 8 | 55867 | clinical_codes | condition_occurrence | 2008-02-27 | 2008-02-27 | 4019 | ICD9CM | hypertension |
-| 9 | 27621 | clinical_codes | condition_occurrence | 2009-10-12 | 2009-10-19 | 4019 | ICD9CM | hypertension |
-| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | diabetes |
-| 12 | 34937 | clinical_codes | condition_occurrence | 2008-09-17 | 2008-09-17 | 4019 | ICD9CM | hypertension |
+| person_id | criterion_id | criterion_table | criterion_domain | start_date | end_date | source_value | source_vocabulary_id | label | column_family |
+| --------- | ------------ | --------------- | ---------------- | ---------- | -------- | ------------ | -------------------- | ----- | ------------- |
+| 1 | 1065 | clinical_codes | condition_occurrence | 2010-03-12 | 2010-03-13 | 4019 | ICD9CM | hypertension | default |
+| 2 | 57517 | clinical_codes | condition_occurrence | 2009-03-30 | 2009-03-30 | 4019 | ICD9CM | hypertension | default |
+| 3 | 93400 | clinical_codes | condition_occurrence | 2009-11-17 | 2009-11-17 | 25000 | ICD9CM | diabetes | default |
+| 5 | 38310 | clinical_codes | condition_occurrence | 2008-12-14 | 2008-12-14 | 4019 | ICD9CM | hypertension | default |
+| 6 | 76645 | clinical_codes | condition_occurrence | 2010-02-23 | 2010-02-23 | 4019 | ICD9CM | hypertension | default |
+| 7 | 15942 | clinical_codes | condition_occurrence | 2008-04-23 | 2008-04-23 | 25000 | ICD9CM | diabetes | default |
+| 8 | 55867 | clinical_codes | condition_occurrence | 2008-02-27 | 2008-02-27 | 4019 | ICD9CM | hypertension | default |
+| 9 | 27621 | clinical_codes | condition_occurrence | 2009-10-12 | 2009-10-19 | 4019 | ICD9CM | hypertension | default |
+| 11 | 73103 | clinical_codes | condition_occurrence | 2008-06-17 | 2008-06-17 | 25000 | ICD9CM | diabetes | default |
+| 12 | 34937 | clinical_codes | condition_occurrence | 2008-09-17 | 2008-09-17 | 4019 | ICD9CM | hypertension | default |
 
 ---
 
@@ -2104,16 +2105,16 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ```
 
-![Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms](README/b49baf16725f3db294f24ee0ca80835e6399de7bde5e9342f74f5d7df6e9be60.png)
+![Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms](README/724cda0587b7ec8240c8e16f9bd29fe9bc5a15cee3e000624b802310a46f4a23.svg)
 
 | person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
 | --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 2 | 397 | condition_occurrence | 2009-04-18 | 2009-04-18 | 7843 |
+| 2 | 397 | condition_occurrence | 2009-04-12 | 2009-04-18 | 7843 |
 | 7 | 27644 | condition_occurrence | 2008-09-21 | 2008-09-30 | 3320 |
 | 14 | 35530 | condition_occurrence | 2009-07-04 | 2009-07-04 | 3310 |
 | 15 | 60361 | condition_occurrence | 2010-09-01 | 2010-09-01 | 78039 |
 | 19 | 63713 | condition_occurrence | 2009-01-09 | 2009-01-09 | 3310 |
-| 28 | 131 | condition_occurrence | 2008-04-30 | 2008-04-30 | 3310 |
+| 28 | 131 | condition_occurrence | 2008-04-26 | 2008-04-30 | 3310 |
 | 35 | 34819 | condition_occurrence | 2009-05-02 | 2009-05-02 | 340 |
 | 40 | 33044 | condition_occurrence | 2010-05-31 | 2010-05-31 | 3319 |
 | 42 | 72000 | condition_occurrence | 2008-08-28 | 2008-08-28 | 3310 |
@@ -2158,7 +2159,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ```
 
-![](README/44ec6743d5d77d15b8a487c2058bf3e455d34adc91c46ea05767f6e0e471a75e.png)
+![](README/cd6277083b471ef3f717389ba595e7ff39b2dff802fdc0d4d140abbff6e480e0.svg)
 
 ```No Results found.```
 
@@ -2182,7 +2183,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ```
 
-![](README/62d85f4c74032695aeb7033c62a511240ed564216e7c636f1c5788c5c3c85785.png)
+![](README/88e5543e5158640e16f9180de5623f9e6a4a1c531f278cd01d1f379eab26ef6a.svg)
 
 ```No Results found.```
 
@@ -2195,3 +2196,15 @@ ConceptQL was originally developed to query data from the [OMOP Common Data Mode
 As the OMOP CDM continued to evolve and as its ETL requirements continued to spiral, [Outcomes Insights, Inc](https://outins.com) developed the [GDM](https://github.com/outcomesinsights/generalized_data_model) and ConceptQL was adapted to support querying both data models.  Eventually support for OMOP's CDM was removed from ConceptQL because it was no longer used in any production applications of ConceptQL.  However, this experience has demonstrated that ConceptQL can be adapted to support other data models should the need arise.
 
 ConceptQL was originally implemented to work against PostgreSQL, but was adapted to work against MSSQL, Oracle, and Impala.  We have since refocused ConceptQL to work against PostgreSQL, but we have shown that, with a modest amount of effort, ConceptQL can be made to support most RDBMS systems that support most features found in [SQL:2003](https://en.wikipedia.org/wiki/SQL:2003), such as window functions.  Most SQL generated by ConceptQL is fairly "vanilla" in that it does not rely on special quirks or query hints specific to a particular RDBMS in order to function.
+
+# Appendix D - Regenerating This Document
+
+`README.md` is generated from `README.cql.md`, so edit `README.cql.md` and then run `./prep_readme.sh` (add `--clean` to throw away cached results and diagrams first).
+
+For each `ConceptQL` block, `exe/knit.rb` runs the statement against a GDM database to produce the example's results table, and draws its diagram with the [Jigsaw](https://jigsaw.io) Diagram Editor's renderer, labelling each stream with the rows (`rows=`) and people (`n=`) flowing along it and listing each operator's options.  Each diagram is saved as a self-contained SVG named after the SHA-256 of its statement, under `README/`.
+
+Regenerating needs:
+
+- Ruby with Bundler (`bundle install`), plus [mdl](https://github.com/markdownlint/markdownlint) (in the Gemfile) and [doctoc](https://github.com/thlorenz/doctoc) (run through `npx` when it is not installed).
+- A GDM database.  Connection settings come from `SEQUELIZER_*` environment variables or a `.env` file, and `CONCEPTQL_DATA_MODEL` picks the data model (default `gdm`).  The results and counts in this document come from ConceptQL's test data (the `test_data` service in ConceptQL's `docker-compose.yml`), with `SEQUELIZER_SEARCH_PATH=slim,gdm_vocabs`.
+- Node.js 22 or later, and the diagram renderer's command-line tool from a checkout of the Jigsaw Diagram Editor.  Run `npm ci` in its `frontend/lib/conceptql-diagram/cli` directory, then set `CONCEPTQL_DIAGRAM_CLI` to the full path of `frontend/lib/conceptql-diagram/cli/bin/conceptql-diagram.js` in that checkout.  `prep_readme.sh` stops with an error when `CONCEPTQL_DIAGRAM_CLI` is not set.

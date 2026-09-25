@@ -120,8 +120,6 @@ GEM
     reline (0.7.0)
       io-console (~> 0.5)
     rexml (3.4.4)
-    ruby-graphviz (1.2.5)
-      rexml
     securerandom (0.4.1)
     sequel (5.108.0)
       bigdecimal
@@ -141,7 +139,6 @@ DEPENDENCIES
   mdl
   pg (~> 1.6)
   pry-byebug (~> 3.12)
-  ruby-graphviz (~> 1.2)
   sequelizer!
 
 BUNDLED WITH

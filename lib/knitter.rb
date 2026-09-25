@@ -1,8 +1,7 @@
 require "conceptql"
 require "sequelizer"
 require "digest"
-require_relative "annotater"
-require_relative "annotate_grapher"
+require_relative "diagram_renderer"
 
 class Knitter
   include Sequelizer
@@ -41,11 +40,15 @@ class Knitter
   end
 
   def diagram_path(stmt, &block)
-    png_contents = cache.fetch_or_create(stmt.inspect, &block)
-    file_name = (cache.hash_it(stmt) + ".png")
+    file_name = (cache.hash_it(stmt) + ".svg")
+    svg_contents = cache.fetch_or_create(stmt.inspect, &block)
     new_path = (diagram_dir + file_name)
-    new_path.write(png_contents)
+    new_path.write(svg_contents)
     diagram_relative_path + file_name
+  end
+
+  def renderer
+    @renderer ||= DiagramRenderer.new(cdb)
   end
 
   def query(stmt)
@@ -170,9 +173,8 @@ class Knitter
     end
 
     def diagram(stmt)
-      knitter.diagram_path(stmt) do |path_name|
-        annotated = Annotater.new(knitter.cdb, stmt).annotate
-        AnnotateGrapher.new.graph_it(annotated, path_name, output_type: 'png')
+      knitter.diagram_path(stmt) do
+        knitter.renderer.svg(stmt)
       end
     end
   end
@@ -208,8 +210,12 @@ class Knitter
       @cache_dir ||= (file.dirname + ".#{hash_it(hash_fodder)}").tap { |d| d.mkpath }
     end
 
+    # CACHE_VERSION keeps a cache written by an older pipeline (GraphViz PNGs,
+    # and output chunks that reference them) from being read by this one.
+    CACHE_VERSION = "conceptql-diagram/v1"
+
     def hash_fodder
-      (ENV["SEQUELIZER_URL"] + file.basename.to_s)
+      (ENV["SEQUELIZER_URL"] + file.basename.to_s + CACHE_VERSION)
     end
 
     def hash_it(str)
