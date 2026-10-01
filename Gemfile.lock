@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outcomesinsights/conceptql.git
-  revision: 6985c32dd953a36c3fecbd39db03b4f14a392358
+  revision: 12770f3618f4275e25dae5c4393e4e01a2751f38
   branch: main
   specs:
     conceptql (0.3.0)
@@ -113,7 +113,7 @@ GEM
       logger
       prism (>= 1.6.0)
       tsort
-    rdoc (8.0.0)
+    rdoc (8.1.0)
       erb
       prism (>= 1.6.0)
       rbs (>= 4.0.0)
