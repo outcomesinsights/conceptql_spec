@@ -13,4 +13,4 @@ gem "pry-byebug", "~> 3.12"
 
 gem "pg", "~> 1.6"
 
-gem "facets", "~> 3.2"
+gem "facets", "~> 4.0"
