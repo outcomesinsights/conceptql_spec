@@ -97,7 +97,7 @@ GEM
     mixlib-shellout (3.4.10)
       chef-utils
     ostruct (0.6.3)
-    pg (1.6.3)
+    pg (1.7.0)
     pp (0.6.4)
       prettyprint
     prettyprint (0.2.0)
@@ -138,7 +138,7 @@ DEPENDENCIES
   conceptql!
   facets (~> 3.2)
   mdl
-  pg (~> 1.6)
+  pg (~> 1.7)
   pry-byebug (~> 3.12)
   sequelizer!
 

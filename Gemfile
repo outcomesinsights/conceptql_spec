@@ -11,6 +11,6 @@ gem "mdl"
 # only as a development dependency, so the bundle must supply it.
 gem "pry-byebug", "~> 3.12"
 
-gem "pg", "~> 1.6"
+gem "pg", "~> 1.7"
 
 gem "facets", "~> 3.2"
