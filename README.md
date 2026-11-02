@@ -53,7 +53,6 @@
     - [Considerations](#considerations)
     - [Temporal Operators and Person Streams](#temporal-operators-and-person-streams)
   - [`Episode` Operator](#episode-operator)
-  - [`Concurrent Within` Operator](#concurrent-within-operator)
 - [Inline-Filter Operators](#inline-filter-operators)
   - [`Place of Service Filter` Operator](#place-of-service-filter-operator)
   - [`Provenance` Operator](#provenance-operator)
@@ -1601,41 +1600,6 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHR of a [temporal operator](#temporal-comparison-operators).
 
-## `Concurrent Within` Operator
-
-This operator compares a set of incoming streams.  A record is only passed along if there is a corresponding record in each of the other streams that occurs within the specified time frame.
-
-For instance, say the operator is passed two streams, A and B, and the time frame is 30 days before or after.  If a record in A occurs within 30 days of a record in B, both the record from A and the record from B get passed along.
-
-The impetus for this operator was to be able to find procedures that occur within a certain period of time from a diagnosis and to be able to get both the procedure record and the diagnosis record as output.
-
----
-
-**Example 44 - Diabetes diagnosis within 30 days of an office visit**
-
-```JSON
-
-["concurrent_within",["cpt_or_hcpcs","99214"],["icd9","250.00"],{"start":"-30d","end":"30d"}]
-
-```
-
-![Diabetes diagnosis within 30 days of an office visit](README/874959f71c29aa3b3de23d5fb56324784531ff1088623d7c673d8338545f8fd5.svg)
-
-| person_id | criterion_id | criterion_domain | start_date | end_date | source_value |
-| --------- | ------------ | ---------------- | ---------- | -------- | ------------ |
-| 177 | 31686 | condition_occurrence | 2009-12-15 | 2009-12-15 | 25000 |
-| 230 | 20490 | condition_occurrence | 2008-09-11 | 2008-10-01 | 25000 |
-| 19 | 62873 | procedure_occurrence | 2008-05-10 | 2008-05-10 | 99214 |
-| 77 | 52511 | condition_occurrence | 2008-10-26 | 2008-10-26 | 25000 |
-| 86 | 68057 | procedure_occurrence | 2009-04-21 | 2009-04-21 | 99214 |
-| 105 | 85026 | condition_occurrence | 2008-03-07 | 2008-03-07 | 25000 |
-| 247 | 351 | condition_occurrence | 2008-02-07 | 2008-02-10 | 25000 |
-| 98 | 56125 | procedure_occurrence | 2009-11-16 | 2009-11-18 | 99214 |
-| 178 | 87444 | condition_occurrence | 2009-02-04 | 2009-02-04 | 25000 |
-| 83 | 52455 | condition_occurrence | 2010-10-26 | 2010-10-26 | 25000 |
-
----
-
 # Inline-Filter Operators
 
 There are a several operators that filter an incoming stream before passing it along.
@@ -1646,7 +1610,7 @@ Often in claims data, an event is reported with a place of service via the CMS p
 
 ---
 
-**Example 45**
+**Example 44**
 
 ```JSON
 
@@ -1668,7 +1632,7 @@ For better or worse, provenance, or rather information about the origin of claim
 
 ---
 
-**Example 46**
+**Example 45**
 
 ```JSON
 
@@ -1710,7 +1674,7 @@ Here we look for diabetes diagnoses whose attending physician was an endocrinolo
 
 ---
 
-**Example 47 - Diabetes diagnoses with an endocrinologist as the attending physician**
+**Example 46 - Diabetes diagnoses with an endocrinologist as the attending physician**
 
 ```JSON
 
@@ -1737,7 +1701,7 @@ We have created an operator that handles this pattern: `One In Two Out`
 
 ---
 
-**Example 48 - First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses**
+**Example 47 - First of diabetes diagnoses, either found once in the inpatient file, or twice in the outpatient file with a minimum of 30 days between outpatient diagnoses**
 
 ```JSON
 
@@ -1819,7 +1783,7 @@ Unlike the `Except` operator, the `Person Filter` operator will use all types of
 
 ---
 
-**Example 49 - All MI Conditions for people who are male**
+**Example 48 - All MI Conditions for people who are male**
 
 ```JSON
 
@@ -1848,7 +1812,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 50 - All MI Conditions for people who had an office visit at some point in the data**
+**Example 49 - All MI Conditions for people who had an office visit at some point in the data**
 
 ```JSON
 
@@ -1875,7 +1839,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 51 - All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)**
+**Example 50 - All MI Conditions for people who had an office visit at some point in the data (an explicit representation of what's happening in the diagram above)**
 
 ```JSON
 
@@ -1902,7 +1866,7 @@ But we can get crazier.  The right-hand side doesn't have to be a person stream.
 
 ---
 
-**Example 52 - All MI Conditions for people who are Male OR had an office visit at some point in the data**
+**Example 51 - All MI Conditions for people who are Male OR had an office visit at some point in the data**
 
 ```JSON
 
@@ -1931,7 +1895,7 @@ And don't forget the left-hand side can have multiple types of streams:
 
 ---
 
-**Example 53 - Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male**
+**Example 52 - Yields two streams: a stream of all MI Conditions for people who are Male and a stream of all office visit Procedures for people who are Male**
 
 ```JSON
 
@@ -1977,7 +1941,7 @@ The operator takes two or more streams.  Events in each stream must be reported 
 
 ---
 
-**Example 54 - Diabetes diagnosis reported as part the reason for an office visit**
+**Example 53 - Diabetes diagnosis reported as part the reason for an office visit**
 
 ```JSON
 
@@ -2014,7 +1978,7 @@ For instance, here are some diabetes diagnoses with a label applied:
 
 ---
 
-**Example 55**
+**Example 54**
 
 ```JSON
 
@@ -2043,7 +2007,7 @@ The most recent upstream `label` is the one that is output:
 
 ---
 
-**Example 56**
+**Example 55**
 
 ```JSON
 
@@ -2072,7 +2036,7 @@ The idea behind this is to create hints about what is being output:
 
 ---
 
-**Example 57**
+**Example 56**
 
 ```JSON
 
@@ -2108,7 +2072,7 @@ A stream must be have a label applied to it before `Recall` can use it.
 
 ---
 
-**Example 58 - Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
+**Example 57 - Save away a stream of records to build the 1 inpatient, 2 outpatient pattern used in claims data algorithms**
 
 ```JSON
 
@@ -2162,7 +2126,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 59**
+**Example 58**
 
 ```JSON
 
@@ -2186,7 +2150,7 @@ Here are some algorithms from [OMOP's Health Outcomes of Interest](http://omop.o
 
 ---
 
-**Example 60**
+**Example 59**
 
 ```JSON
 

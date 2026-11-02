@@ -998,27 +998,6 @@ There are rare occasions when we'd like to stitch a set of events together into 
 
 One side-effect of this operator is that the `criterion_domain` is set to "episode" and each row no longer contains a reference back to a `criterion_id` or `criterion_table` because one or more records are folded into a single row after passing through the episode operator.  Often, the episode operator is best-suited to act as the RHR of a [temporal operator](#temporal-comparison-operators).
 
-## `Concurrent Within` Operator
-
-This operator compares a set of incoming streams.  A record is only passed along if there is a corresponding record in each of the other streams that occurs within the specified time frame.
-
-For instance, say the operator is passed two streams, A and B, and the time frame is 30 days before or after.  If a record in A occurs within 30 days of a record in B, both the record from A and the record from B get passed along.
-
-The impetus for this operator was to be able to find procedures that occur within a certain period of time from a diagnosis and to be able to get both the procedure record and the diagnosis record as output.
-
-```ConceptQL
-# Diabetes diagnosis within 30 days of an office visit
-[
-  "concurrent_within",
-  ["cpt_or_hcpcs", "99214"],
-  ["icd9", "250.00"],
-  {
-    "start": "-30d",
-    "end": "30d"
-  }
-]
-```
-
 # Inline-Filter Operators
 
 There are a several operators that filter an incoming stream before passing it along.
