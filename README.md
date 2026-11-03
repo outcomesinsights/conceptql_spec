@@ -10,7 +10,6 @@
   - [Streams Have Types](#streams-have-types)
   - [Why Types?](#why-types)
   - [What *are* Streams Really?](#what-are-streams-really)
-  - [Operator Quick Reference](#operator-quick-reference)
 - [Selection Operators](#selection-operators)
   - [`Vocabulary` Operator](#vocabulary-operator)
   - [Person-related Operators](#person-related-operators)
@@ -70,6 +69,7 @@
   - [Mortality after Myocardial Infarction #3](#mortality-after-myocardial-infarction-3)
 - [Appendix C - History of ConceptQL and Its Evolution](#appendix-c---history-of-conceptql-and-its-evolution)
 - [Appendix D - Regenerating This Document](#appendix-d---regenerating-this-document)
+- [Appendix E - Operator Quick Reference](#appendix-e---operator-quick-reference)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -198,7 +198,7 @@ ConceptQL in YAML or JSON can be hard to read. A directed graph is often easier 
 
 ---
 
-Each node in a diagram is an operator. An arrow between two operators shows that the records of the operator at the tail of the arrow flow into the operator at the head of the arrow. Each line is labeled with the number of records (`rows=`) and people (`n=`) that flow along it in our test data. Here is a slightly larger example:
+Each node in a diagram is an operator. A line between two operators shows that the records of the upper operator flow down into the lower operator. Each line is labeled with the number of records (`rows=`) and people (`n=`) that flow along it in our test data. Here is a slightly larger example:
 
 ---
 
@@ -229,19 +229,19 @@ Each node in a diagram is an operator. An arrow between two operators shows that
 
 The diagram above reads "get all procedures that match CPT 99214 (office visit), and then keep only the first one (by date) for each person". More briefly: "get the first office visit for each patient". To read a diagram accurately, you need to know how each operator works. This document describes each operator.
 
-Every diagram ends with an arrow that points at nothing. The next section explains why.
+Every diagram ends with a line that leads to nothing. The next section explains why.
 
 ## Think of Records as a Stream
 
 A ConceptQL diagram has the "leaf" operators at the top and the "trunk" operator at the bottom. Think of the records of a ConceptQL statement as a stream of data. The leaf operators select records from the database, and they act as the sources of the stream. The records flow down through the diagram. Some operators combine streams, and others remove records, until one stream comes out at the bottom of the diagram.
 
-The trailing arrow in each diagram is a reminder that every ConceptQL statement yields a stream of records.
+The trailing line in each diagram is a reminder that every ConceptQL statement yields a stream of records.
 
 ## Streams Have Types
 
 Each record has a type. The type is the `criterion_domain` column of the record. A vocabulary operator takes its type from the vocabulary's domain. For example, ICD-9-CM records are `condition_occurrence` records, and CPT records are `procedure_occurrence` records. Other operators produce a fixed type, such as `person` or `death`.
 
-The diagrams use color to show types. The node of an operator and the arrows that leave it have the color of the types that it outputs:
+The diagrams use color to show types. The node of an operator and the lines that leave it have the color of the types that it outputs:
 
 | Type                 | Color  | Comes from, for example                                                  |
 | -------------------- | ------ | ------------------------------------------------------------------------ |
@@ -254,7 +254,7 @@ The diagrams use color to show types. The node of an operator and the arrows tha
 | observation          | gray   | lab codes (loinc)                                                        |
 | episode              | gray   | episode                                                                  |
 
-An operator that outputs more than one type has a gray node, and its arrow shows one colored line for each type.
+An operator that outputs more than one type has a gray node, and the line that leaves it is drawn as one colored line for each type, side by side.
 
 The type stays with each record as it moves through the operators. Some operators use the type when they compare records. For example, `filter` and `except` match a record only with a record from the same table. Other operators, such as `first` and `person_filter`, ignore the type. Each operator's description says which applies.
 
@@ -349,33 +349,7 @@ A ConceptQL statement yields the rows that pass all of its criteria. What to do 
 
 That kind of aggregation and analysis is outside the scope of ConceptQL. ConceptQL finds the rows that you are interested in. Other parts of the system decide what to do with them.
 
-## Operator Quick Reference
-
-The Jigsaw category of each operator is the group in which Jigsaw's operator palette shows it. Every operator also takes the [`label`](#label-option-and-its-features) option.
-
-| Operator                                                                                                                                                         | Jigsaw category          | What it does                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------- |
-| [vocabulary operators](#vocabulary-operator) (`icd9cm`, `cpt4`, ...)                                                                                            | Select by Clinical Codes | Selects the records that have any of the given codes                      |
-| [`gender`](#gender-operator), [`race`](#race-operator), [`ethnicity`](#ethnicity-operator)                                                                       | Select by Property       | Selects patients with the given demographic values                        |
-| [`date_range`](#date-range-operator)                                                                                                                             | Select by Property       | Makes one record per patient with the given dates                         |
-| [`hospitalization`](#hospitalization-operator), [`snf`](#snf-operator), [`hospice`](#hospice-operator)                                                           | Select by Property       | Selects inpatient, skilled nursing or hospice admissions                  |
-| [`person`](#person-operator), [`death`](#death-operator)                                                                                                         | Get Related Data         | Selects patients or deaths, for all patients or for the patients upstream |
-| [`information_periods`](#information-periods-operator)                                                                                                           | Get Related Data         | Selects the periods in which each patient has data                        |
-| [`recall`](#recall-operator)                                                                                                                                     | Get Related Data         | Reuses the records of a labeled operator                                 |
-| [`time_window`](#time-window-operator)                                                                                                                           | Modify Data              | Moves each record's start_date and end_date                               |
-| [`episode`](#episode-operator)                                                                                                                                   | Modify Data              | Merges records that are close in time into episodes                       |
-| [`union`](#union-operator)                                                                                                                                       | Combine Streams          | Combines streams into one stream                                          |
-| [`co_reported`](#co-reported-operator)                                                                                                                           | Combine Streams          | Keeps records reported in the same claim as records of every other stream |
-| [`except`](#except-operator)                                                                                                                                     | Filter by Comparing      | Removes left-hand records that also appear on the right                   |
-| [`filter`](#filter-operator), [`match`](#match-operator)                                                                                                         | Filter by Comparing      | Keeps left-hand records that also appear on the right                     |
-| [`person_filter`](#person-filter-operator)                                                                                                                       | Filter by Comparing      | Keeps left-hand records of the patients on the right                      |
-| [`during`](#during-operator), [`contains`](#contains-operator), [`any_overlap`](#any-overlap-operator), [`before`](#before-operator), [`after`](#after-operator) | Filter by Comparing      | Keep left-hand records by comparing their dates with right-hand records   |
-| [`trim_date_start`](#trim-date-start-operator), [`trim_date_end`](#trim-date-end-operator)                                                                       | Filter by Comparing      | Shorten left-hand records with the dates of right-hand records            |
-| [`equal`](#equal-operator)                                                                                                                                       | Filter by Comparing      | Keeps left-hand records with the same value as a right-hand record        |
-| [`occurrence`](#nth-occurrence-operator), [`first`](#first-operator), [`last`](#last-operator)                                                                   | Filter Single Stream     | Keep the nth record of each patient                                       |
-| [`place_of_service_filter`](#place-of-service-filter-operator), [`provenance`](#provenance-operator), [`provider_filter`](#provider-filter-operator)             | Filter Single Stream     | Keep records by place of service, source file or provider                 |
-| [`one_in_two_out`](#one-in-two-out-operator)                                                                                                                     | Filter Single Stream     | Keeps conditions confirmed by one inpatient or two outpatient records     |
-| [`numeric_filter`](#numeric-filter-operator)                                                                                                                     | Filter Single Stream     | Keeps records whose value is in a range                                   |
+The rest of this document describes each operator. [Appendix E](#appendix-e---operator-quick-reference) lists every operator in one table.
 
 # Selection Operators
 
@@ -2279,3 +2253,31 @@ Regenerating needs:
 - Ruby 4.0, pinned in `mise.toml` and `.ruby-version`, with Bundler (`bundle install`), plus [mdl](https://github.com/markdownlint/markdownlint) (in the Gemfile) and [doctoc](https://github.com/thlorenz/doctoc) (run through `npx` when it is not installed). With [mise](https://mise.jdx.dev), run `mise trust` once in a fresh checkout and `mise install` if the pinned Ruby is missing. `prep_readme.sh` then runs Ruby and Bundler through `mise exec`, so the pinned Ruby is used even when another Ruby comes first on `PATH`. Without mise, it uses whichever `ruby` and `bundle` are on `PATH`.
 - A GDM database. `exe/knit.rb` reads the connection settings from a `.env` file, which must exist and must set `SEQUELIZER_URL`. `CONCEPTQL_DATA_MODEL` picks the data model (default `gdm`). The results and counts in this document come from ConceptQL's test data, with `SEQUELIZER_SEARCH_PATH=slim,gdm_vocabs`. This repository's `docker-compose.yml` runs the `outcomesinsights/misc:test_data.ignitor` image on `127.0.0.1:55432`. Start it with `docker compose up -d --wait test_data`, and copy `.env.example` to `.env`. `.env.example` also points `LEXICON_URL` at the same database, for the vocabulary tables. `just readme` starts the database and then runs `prep_readme.sh`.
 - Node.js 22 or later, and the diagram renderer's command-line tool from a checkout of the Jigsaw Diagram Editor. Run `npm ci` in its `frontend/lib/conceptql-diagram/cli` directory, and then set `CONCEPTQL_DIAGRAM_CLI` to the full path of `frontend/lib/conceptql-diagram/cli/bin/conceptql-diagram.js` in that checkout. `prep_readme.sh` stops with an error when `CONCEPTQL_DIAGRAM_CLI` is not set.
+
+# Appendix E - Operator Quick Reference
+
+The Jigsaw category of each operator is the group in which Jigsaw's operator palette shows it. Every operator also takes the [`label`](#label-option-and-its-features) option.
+
+| Operator                                                                                                                                                         | Jigsaw category          | What it does                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------- |
+| [vocabulary operators](#vocabulary-operator) (`icd9cm`, `cpt4`, ...)                                                                                            | Select by Clinical Codes | Selects the records that have any of the given codes                      |
+| [`gender`](#gender-operator), [`race`](#race-operator), [`ethnicity`](#ethnicity-operator)                                                                       | Select by Property       | Selects patients with the given demographic values                        |
+| [`date_range`](#date-range-operator)                                                                                                                             | Select by Property       | Makes one record per patient with the given dates                         |
+| [`hospitalization`](#hospitalization-operator), [`snf`](#snf-operator), [`hospice`](#hospice-operator)                                                           | Select by Property       | Selects inpatient, skilled nursing or hospice admissions                  |
+| [`person`](#person-operator), [`death`](#death-operator)                                                                                                         | Get Related Data         | Selects patients or deaths, for all patients or for the patients upstream |
+| [`information_periods`](#information-periods-operator)                                                                                                           | Get Related Data         | Selects the periods in which each patient has data                        |
+| [`recall`](#recall-operator)                                                                                                                                     | Get Related Data         | Reuses the records of a labeled operator                                 |
+| [`time_window`](#time-window-operator)                                                                                                                           | Modify Data              | Moves each record's start_date and end_date                               |
+| [`episode`](#episode-operator)                                                                                                                                   | Modify Data              | Merges records that are close in time into episodes                       |
+| [`union`](#union-operator)                                                                                                                                       | Combine Streams          | Combines streams into one stream                                          |
+| [`co_reported`](#co-reported-operator)                                                                                                                           | Combine Streams          | Keeps records reported in the same claim as records of every other stream |
+| [`except`](#except-operator)                                                                                                                                     | Filter by Comparing      | Removes left-hand records that also appear on the right                   |
+| [`filter`](#filter-operator), [`match`](#match-operator)                                                                                                         | Filter by Comparing      | Keeps left-hand records that also appear on the right                     |
+| [`person_filter`](#person-filter-operator)                                                                                                                       | Filter by Comparing      | Keeps left-hand records of the patients on the right                      |
+| [`during`](#during-operator), [`contains`](#contains-operator), [`any_overlap`](#any-overlap-operator), [`before`](#before-operator), [`after`](#after-operator) | Filter by Comparing      | Keep left-hand records by comparing their dates with right-hand records   |
+| [`trim_date_start`](#trim-date-start-operator), [`trim_date_end`](#trim-date-end-operator)                                                                       | Filter by Comparing      | Shorten left-hand records with the dates of right-hand records            |
+| [`equal`](#equal-operator)                                                                                                                                       | Filter by Comparing      | Keeps left-hand records with the same value as a right-hand record        |
+| [`occurrence`](#nth-occurrence-operator), [`first`](#first-operator), [`last`](#last-operator)                                                                   | Filter Single Stream     | Keep the nth record of each patient                                       |
+| [`place_of_service_filter`](#place-of-service-filter-operator), [`provenance`](#provenance-operator), [`provider_filter`](#provider-filter-operator)             | Filter Single Stream     | Keep records by place of service, source file or provider                 |
+| [`one_in_two_out`](#one-in-two-out-operator)                                                                                                                     | Filter Single Stream     | Keeps conditions confirmed by one inpatient or two outpatient records     |
+| [`numeric_filter`](#numeric-filter-operator)                                                                                                                     | Filter Single Stream     | Keeps records whose value is in a range                                   |
