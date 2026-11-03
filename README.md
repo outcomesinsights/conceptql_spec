@@ -75,7 +75,7 @@
 
 # ConceptQL Specification
 
-[ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that lets researchers define their research algorithms without ambiguity. It has run in production for many years as the core of our study-building software, [Jigsaw](https://jigsaw.io).
+[ConceptQL](https://github.com/outcomesinsights/conceptql) (pronounced concept-Q-L) is a high-level language that lets researchers define their research algorithms without ambiguity. It has run in production since 2014 as the core of our study-building software, [Jigsaw](https://jigsaw.io).
 
 Its implementation has changed considerably over that time, but it has kept its original goals.
 
@@ -198,7 +198,7 @@ ConceptQL in YAML or JSON can be hard to read. A directed graph is often easier 
 
 ---
 
-Each node in a diagram is an operator. An arrow between two operators shows that the records of the operator at the tail of the arrow flow into the operator at the head of the arrow. Each arrow is labelled with the number of records (`rows=`) and people (`n=`) that flow along it in our test data. Here is a slightly larger example:
+Each node in a diagram is an operator. An arrow between two operators shows that the records of the operator at the tail of the arrow flow into the operator at the head of the arrow. Each line is labeled with the number of records (`rows=`) and people (`n=`) that flow along it in our test data. Here is a slightly larger example:
 
 ---
 
@@ -251,10 +251,10 @@ The diagrams use color to show types. The node of an operator and the arrows tha
 | person               | blue   | person, gender, race, ethnicity, date_range                              |
 | procedure_occurrence | green  | procedure codes (cpt4, hcpcs, icd9proc, icd10pcs)                        |
 | observation_period   | teal   | information_periods                                                      |
-| observation          | grey   | lab codes (loinc)                                                        |
-| episode              | grey   | episode                                                                  |
+| observation          | gray   | lab codes (loinc)                                                        |
+| episode              | gray   | episode                                                                  |
 
-An operator that outputs more than one type has a grey node, and its arrow shows one colored line for each type.
+An operator that outputs more than one type has a gray node, and its arrow shows one colored line for each type.
 
 The type stays with each record as it moves through the operators. Some operators use the type when they compare records. For example, `filter` and `except` match a record only with a record from the same table. Other operators, such as `first` and `person_filter`, ignore the type. Each operator's description says which applies.
 
@@ -361,7 +361,7 @@ The Jigsaw category of each operator is the group in which Jigsaw's operator pal
 | [`hospitalization`](#hospitalization-operator), [`snf`](#snf-operator), [`hospice`](#hospice-operator)                                                           | Select by Property       | Selects inpatient, skilled nursing or hospice admissions                  |
 | [`person`](#person-operator), [`death`](#death-operator)                                                                                                         | Get Related Data         | Selects patients or deaths, for all patients or for the patients upstream |
 | [`information_periods`](#information-periods-operator)                                                                                                           | Get Related Data         | Selects the periods in which each patient has data                        |
-| [`recall`](#recall-operator)                                                                                                                                     | Get Related Data         | Reuses the records of a labelled operator                                 |
+| [`recall`](#recall-operator)                                                                                                                                     | Get Related Data         | Reuses the records of a labeled operator                                 |
 | [`time_window`](#time-window-operator)                                                                                                                           | Modify Data              | Moves each record's start_date and end_date                               |
 | [`episode`](#episode-operator)                                                                                                                                   | Modify Data              | Merges records that are close in time into episodes                       |
 | [`union`](#union-operator)                                                                                                                                       | Combine Streams          | Combines streams into one stream                                          |
@@ -2082,7 +2082,7 @@ For example, here are some diabetes diagnoses with a label:
 
 ---
 
-The label of the nearest labelled operator is the one in the output:
+The label of the nearest labeled operator is the one in the output:
 
 ---
 
@@ -2149,7 +2149,7 @@ When an algorithm is complex, or uses a stream of records more than once, it hel
 - **Arguments:** one label. The label must match exactly, including case.
 - **Upstream:** none.
 
-Each label that `recall` uses must exist in the statement. It can appear before or after the `recall`. A statement in which labelled streams recall each other in a loop is invalid.
+Each label that `recall` uses must exist in the statement. It can appear before or after the `recall`. A statement in which labeled streams recall each other in a loop is invalid.
 
 ---
 
