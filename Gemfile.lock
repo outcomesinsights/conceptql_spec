@@ -49,7 +49,7 @@ GEM
     csv (3.3.7)
     dotenv (3.2.0)
     drb (2.2.3)
-    facets (3.2.2)
+    facets (4.0.1)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     json (3.1.0)
@@ -118,7 +118,7 @@ PLATFORMS
 
 DEPENDENCIES
   conceptql!
-  facets (~> 3.2)
+  facets (~> 4.0)
   mdl
   pg (~> 1.7)
   sequelizer!
