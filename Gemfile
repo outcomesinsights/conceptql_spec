@@ -9,4 +9,4 @@ gem "mdl"
 
 gem "pg", "~> 1.7"
 
-gem "facets", "~> 3.2"
+gem "facets", "~> 4.0"
